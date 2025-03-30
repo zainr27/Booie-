@@ -29,7 +29,7 @@ const Index = () => {
                   </Button>
                 </Link>
                 <Link to="/income-projection">
-                  <Button size="lg" variant="outline" className="border-white text-booie-700 hover:bg-booie-100">
+                  <Button size="lg" variant="outline" className="border-white text-booie-700 hover:bg-booie-100 hover:text-booie-700">
                     Project Your Income
                   </Button>
                 </Link>
