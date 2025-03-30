@@ -108,20 +108,20 @@ const Index = () => {
         </div>
       </section>
       
-      {/* CTA Section */}
+      {/* CTA Section with improved visibility */}
       <section className="py-16 bg-gray-50">
         <div className="container-custom">
           <div className="bg-white rounded-lg shadow-lg p-8 md:p-12">
             <div className="flex flex-col md:flex-row items-center justify-between gap-8">
               <div className="md:w-2/3 space-y-4">
-                <h2 className="text-3xl font-bold">Ready to invest in your education?</h2>
-                <p className="text-lg text-gray-600">
+                <h2 className="text-3xl font-bold text-gray-900">Ready to invest in your education?</h2>
+                <p className="text-lg text-gray-700">
                   Get personalized loan options and see how Booie can help finance your educational journey.
                 </p>
               </div>
               <div className="md:w-1/3 flex justify-center md:justify-end">
                 <Link to="/signup">
-                  <Button size="lg" className="bg-booie-600 hover:bg-booie-700">
+                  <Button size="lg" className="bg-booie-600 hover:bg-booie-700 text-white">
                     Apply Now
                   </Button>
                 </Link>
