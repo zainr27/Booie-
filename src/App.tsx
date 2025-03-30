@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import IncomeProjection from "./pages/IncomeProjection";
 import FAQ from "./pages/FAQ";
 import LoanCalculator from "./pages/LoanCalculator";
+import Comparison from "./pages/Comparison";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const AnimatedRoutes = () => {
         <Route path="/" element={<Index />} />
         <Route path="/income-projection" element={<IncomeProjection />} />
         <Route path="/loan-calculator" element={<LoanCalculator />} />
+        <Route path="/comparison" element={<Comparison />} />
         <Route path="/faq" element={<FAQ />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
