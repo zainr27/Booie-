@@ -37,12 +37,12 @@ const Header = () => {
         
         {/* Right section: Authentication buttons */}
         <div className="flex items-center gap-4">
-          <Link to="/login">
+          <Link to="/auth">
             <Button variant="outline" className="font-medium">
               Login
             </Button>
           </Link>
-          <Link to="/signup">
+          <Link to="/auth?tab=signup">
             <Button className="font-medium bg-booie-600 hover:bg-booie-700">
               Get Started
             </Button>
