@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,10 +10,10 @@ import IncomeProjection from "./pages/IncomeProjection";
 import FAQ from "./pages/FAQ";
 import LoanCalculator from "./pages/LoanCalculator";
 import Comparison from "./pages/Comparison";
+import Fees from "./pages/Fees";
 
 const queryClient = new QueryClient();
 
-// Animated routes wrapper component
 const AnimatedRoutes = () => {
   const location = useLocation();
   
@@ -25,8 +24,8 @@ const AnimatedRoutes = () => {
         <Route path="/income-projection" element={<IncomeProjection />} />
         <Route path="/loan-calculator" element={<LoanCalculator />} />
         <Route path="/comparison" element={<Comparison />} />
+        <Route path="/fees" element={<Fees />} />
         <Route path="/faq" element={<FAQ />} />
-        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>
