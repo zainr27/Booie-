@@ -2,12 +2,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { GraduationCap } from 'lucide-react';
+import { GraduationCap, Menu } from 'lucide-react';
 
 const Header = () => {
   return (
     <header className="border-b bg-white">
       <div className="container-custom flex h-16 items-center justify-between">
+        {/* Left section: Logo */}
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2">
             <GraduationCap className="h-8 w-8 text-booie-600" />
@@ -15,6 +16,7 @@ const Header = () => {
           </Link>
         </div>
         
+        {/* Center section: Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
           <Link to="/income-projection" className="text-gray-600 hover:text-booie-700 font-medium">
             Income Projection
@@ -33,6 +35,7 @@ const Header = () => {
           </Link>
         </nav>
         
+        {/* Right section: Authentication buttons */}
         <div className="flex items-center gap-4">
           <Link to="/login">
             <Button variant="outline" className="font-medium">
@@ -44,6 +47,11 @@ const Header = () => {
               Get Started
             </Button>
           </Link>
+          
+          {/* Mobile menu toggle */}
+          <button className="md:hidden text-gray-600 hover:text-booie-700">
+            <Menu className="h-6 w-6" />
+          </button>
         </div>
       </div>
     </header>
