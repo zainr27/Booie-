@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -28,7 +29,7 @@ const Index = () => {
                   </Button>
                 </Link>
                 <Link to="/income-projection">
-                  <Button size="lg" variant="outline" className="border-white text-booie-700 hover:bg-white/20">
+                  <Button size="lg" variant="outline" className="border-white text-booie-700 hover:bg-booie-100">
                     Project Your Income
                   </Button>
                 </Link>
