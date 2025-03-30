@@ -9,6 +9,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import {
   LineChart,
   Line,
@@ -17,8 +21,16 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer
+  ResponsiveContainer,
+  Area,
+  AreaChart
 } from 'recharts';
+import { 
+  TrendingUp, 
+  DollarSign, 
+  Download,
+  Share2
+} from 'lucide-react';
 import { 
   degreePrograms, 
   schools, 
@@ -31,20 +43,61 @@ const IncomeProjection = () => {
   const [selectedDegree, setSelectedDegree] = useState<string>('cs-bs');
   const [selectedSchool, setSelectedSchool] = useState<string>('mit');
   const [projectionData, setProjectionData] = useState<Array<{year: number, income: number}>>([]);
+  const [projectionYears, setProjectionYears] = useState<number>(15);
+  const [showInflationAdjusted, setShowInflationAdjusted] = useState<boolean>(false);
+  const [isComparing, setIsComparing] = useState<boolean>(false);
+  const [comparisonData, setComparisonData] = useState<Array<{year: number, income: number, comparison: number}>>([]);
+  const [comparisonDegree, setComparisonDegree] = useState<string>('business-bs');
+  const [comparisonSchool, setComparisonSchool] = useState<string>('berkeley');
+  
+  const { toast } = useToast();
   
   // Calculate income projection when inputs change
   useEffect(() => {
-    const incomes = calculateIncomeProjection(selectedDegree, selectedSchool, 15);
-    const formattedData = incomes.map((income, index) => ({
-      year: index + 1,
-      income,
-    }));
+    calculateProjections();
+  }, [selectedDegree, selectedSchool, projectionYears, showInflationAdjusted, comparisonDegree, comparisonSchool, isComparing]);
+  
+  const calculateProjections = () => {
+    const incomes = calculateIncomeProjection(selectedDegree, selectedSchool, projectionYears);
+    
+    let formattedData;
+    
+    if (isComparing) {
+      const comparisonIncomes = calculateIncomeProjection(comparisonDegree, comparisonSchool, projectionYears);
+      
+      formattedData = incomes.map((income, index) => {
+        const comparisonIncome = comparisonIncomes[index];
+        return {
+          year: index + 1,
+          income: adjustForInflation(income),
+          comparison: adjustForInflation(comparisonIncome)
+        };
+      });
+      
+      setComparisonData(formattedData);
+    } else {
+      formattedData = incomes.map((income, index) => ({
+        year: index + 1,
+        income: adjustForInflation(income),
+      }));
+    }
+    
     setProjectionData(formattedData);
-  }, [selectedDegree, selectedSchool]);
+  };
+  
+  const adjustForInflation = (value: number): number => {
+    if (showInflationAdjusted) {
+      // Simple inflation adjustment (3% annual inflation)
+      return value / Math.pow(1.03, projectionYears / 2);
+    }
+    return value;
+  };
   
   // Find currently selected degree and school objects
   const selectedDegreeObj = degreePrograms.find(d => d.id === selectedDegree);
   const selectedSchoolObj = schools.find(s => s.id === selectedSchool);
+  const comparisonDegreeObj = degreePrograms.find(d => d.id === comparisonDegree);
+  const comparisonSchoolObj = schools.find(s => s.id === comparisonSchool);
   
   const formatYAxis = (value: number) => {
     if (value >= 1000000) {
@@ -53,6 +106,40 @@ const IncomeProjection = () => {
       return `$${(value / 1000).toFixed(0)}K`;
     }
     return `$${value}`;
+  };
+  
+  const handleShareResults = () => {
+    const shareData = {
+      title: 'My Income Projection',
+      text: `Check out my ${projectionYears}-year income projection for a ${selectedDegreeObj?.level} in ${selectedDegreeObj?.name} from ${selectedSchoolObj?.name}!`,
+      url: window.location.href,
+    };
+    
+    if (navigator.share && navigator.canShare(shareData)) {
+      navigator.share(shareData)
+        .then(() => toast({
+          title: "Shared successfully",
+          description: "Your projection has been shared!"
+        }))
+        .catch((error) => console.log('Error sharing:', error));
+    } else {
+      // Fallback for browsers that don't support sharing
+      navigator.clipboard.writeText(window.location.href);
+      toast({
+        title: "Link copied to clipboard",
+        description: "Share this link with others to show your projection."
+      });
+    }
+  };
+  
+  const toggleComparison = () => {
+    setIsComparing(!isComparing);
+    if (!isComparing) {
+      toast({
+        title: "Comparison mode enabled",
+        description: "You can now compare two different degree paths."
+      });
+    }
   };
   
   return (
@@ -70,10 +157,13 @@ const IncomeProjection = () => {
           {/* Input Section */}
           <div className="md:col-span-1">
             <Card>
-              <CardHeader>
-                <CardTitle>Program Information</CardTitle>
+              <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg">
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="text-booie-600" />
+                  Program Information
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-6 p-6">
                 <div className="space-y-2">
                   <Label htmlFor="degree-select">Degree Program</Label>
                   <Select value={selectedDegree} onValueChange={setSelectedDegree}>
@@ -105,6 +195,74 @@ const IncomeProjection = () => {
                     </SelectContent>
                   </Select>
                 </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="projection-years">Projection Years: {projectionYears}</Label>
+                  <Slider
+                    id="projection-years"
+                    min={5}
+                    max={30}
+                    step={1}
+                    value={[projectionYears]}
+                    onValueChange={(value) => setProjectionYears(value[0])}
+                    className="py-4"
+                  />
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="inflation-switch">Adjust for Inflation</Label>
+                  <Switch
+                    id="inflation-switch"
+                    checked={showInflationAdjusted}
+                    onCheckedChange={setShowInflationAdjusted}
+                  />
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="comparison-switch">Compare Programs</Label>
+                  <Switch
+                    id="comparison-switch"
+                    checked={isComparing}
+                    onCheckedChange={toggleComparison}
+                  />
+                </div>
+                
+                {isComparing && (
+                  <div className="pt-4 border-t border-gray-100 space-y-4">
+                    <h3 className="text-lg font-semibold">Comparison Program</h3>
+                    <div className="space-y-2">
+                      <Label htmlFor="comparison-degree">Degree Program</Label>
+                      <Select value={comparisonDegree} onValueChange={setComparisonDegree}>
+                        <SelectTrigger id="comparison-degree">
+                          <SelectValue placeholder="Select comparison degree" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {degreePrograms.map((degree) => (
+                            <SelectItem key={degree.id} value={degree.id}>
+                              {degree.level} in {degree.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="comparison-school">School</Label>
+                      <Select value={comparisonSchool} onValueChange={setComparisonSchool}>
+                        <SelectTrigger id="comparison-school">
+                          <SelectValue placeholder="Select comparison school" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {schools.map((school) => (
+                            <SelectItem key={school.id} value={school.id}>
+                              {school.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                )}
                 
                 {selectedDegreeObj && selectedSchoolObj && (
                   <div className="pt-4 border-t border-gray-100">
@@ -144,53 +302,133 @@ const IncomeProjection = () => {
           {/* Projection Chart */}
           <div className="md:col-span-2">
             <Card className="h-full">
-              <CardHeader>
-                <CardTitle>15-Year Income Projection</CardTitle>
+              <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg flex flex-row justify-between items-center">
+                <CardTitle className="flex items-center gap-2">
+                  <DollarSign className="text-booie-600" />
+                  {projectionYears}-Year Income Projection
+                </CardTitle>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={handleShareResults}>
+                    <Share2 className="mr-1 h-4 w-4" />
+                    Share
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    <Download className="mr-1 h-4 w-4" />
+                    Export
+                  </Button>
+                </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart
-                      data={projectionData}
-                      margin={{
-                        top: 20,
-                        right: 30,
-                        left: 40,
-                        bottom: 5,
-                      }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis 
-                        dataKey="year"
-                        label={{ 
-                          value: 'Years After Graduation', 
-                          position: 'insideBottom', 
-                          offset: -5 
+                    {!isComparing ? (
+                      <AreaChart
+                        data={projectionData}
+                        margin={{
+                          top: 20,
+                          right: 30,
+                          left: 40,
+                          bottom: 5,
                         }}
-                      />
-                      <YAxis 
-                        tickFormatter={formatYAxis}
-                        label={{ 
-                          value: 'Annual Income', 
-                          angle: -90, 
-                          position: 'insideLeft',
-                          style: { textAnchor: 'middle' }
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis 
+                          dataKey="year"
+                          label={{ 
+                            value: 'Years After Graduation', 
+                            position: 'insideBottom', 
+                            offset: -5 
+                          }}
+                        />
+                        <YAxis 
+                          tickFormatter={formatYAxis}
+                          label={{ 
+                            value: 'Annual Income', 
+                            angle: -90, 
+                            position: 'insideLeft',
+                            style: { textAnchor: 'middle' }
+                          }}
+                        />
+                        <Tooltip 
+                          formatter={(value) => [formatCurrency(value as number), 'Projected Income']}
+                          labelFormatter={(label) => `Year ${label}`}
+                          contentStyle={{ background: 'rgba(255, 255, 255, 0.9)', border: '1px solid #ccc', borderRadius: '4px' }}
+                        />
+                        <Legend />
+                        <Area
+                          type="monotone"
+                          dataKey="income"
+                          name="Projected Income"
+                          stroke="#0071c6"
+                          fill="url(#colorIncome)"
+                          strokeWidth={2}
+                        />
+                        <defs>
+                          <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#0071c6" stopOpacity={0.8}/>
+                            <stop offset="95%" stopColor="#0071c6" stopOpacity={0.1}/>
+                          </linearGradient>
+                        </defs>
+                      </AreaChart>
+                    ) : (
+                      <LineChart
+                        data={comparisonData}
+                        margin={{
+                          top: 20,
+                          right: 30,
+                          left: 40,
+                          bottom: 5,
                         }}
-                      />
-                      <Tooltip 
-                        formatter={(value) => [formatCurrency(value as number), 'Projected Income']}
-                        labelFormatter={(label) => `Year ${label}`}
-                      />
-                      <Legend />
-                      <Line
-                        type="monotone"
-                        dataKey="income"
-                        name="Projected Income"
-                        stroke="#0071c6"
-                        activeDot={{ r: 8 }}
-                        strokeWidth={2}
-                      />
-                    </LineChart>
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis 
+                          dataKey="year"
+                          label={{ 
+                            value: 'Years After Graduation', 
+                            position: 'insideBottom', 
+                            offset: -5 
+                          }}
+                        />
+                        <YAxis 
+                          tickFormatter={formatYAxis}
+                          label={{ 
+                            value: 'Annual Income', 
+                            angle: -90, 
+                            position: 'insideLeft',
+                            style: { textAnchor: 'middle' }
+                          }}
+                        />
+                        <Tooltip 
+                          formatter={(value, name) => {
+                            const label = name === 'income' 
+                              ? `${selectedDegreeObj?.name} (${selectedSchoolObj?.name})` 
+                              : `${comparisonDegreeObj?.name} (${comparisonSchoolObj?.name})`;
+                            return [formatCurrency(value as number), label];
+                          }}
+                          labelFormatter={(label) => `Year ${label}`}
+                          contentStyle={{ background: 'rgba(255, 255, 255, 0.9)', border: '1px solid #ccc', borderRadius: '4px' }}
+                        />
+                        <Legend />
+                        <Line
+                          type="monotone"
+                          dataKey="income"
+                          name="Primary"
+                          stroke="#0071c6"
+                          strokeWidth={2}
+                          dot={{ r: 3 }}
+                          activeDot={{ r: 6 }}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="comparison"
+                          name="Comparison"
+                          stroke="#e04a59"
+                          strokeWidth={2}
+                          dot={{ r: 3 }}
+                          activeDot={{ r: 6 }}
+                        />
+                      </LineChart>
+                    )}
                   </ResponsiveContainer>
                 </div>
                 
@@ -211,6 +449,25 @@ const IncomeProjection = () => {
                     <p>
                       <strong>10-Year Projection:</strong> {formatCurrency(projectionData[9]?.income || 0)} annual income.
                     </p>
+                    
+                    {isComparing && comparisonDegreeObj && comparisonSchoolObj && (
+                      <div className="mt-4 pt-4 border-t border-gray-100">
+                        <h4 className="font-semibold mb-2">Comparison Analysis</h4>
+                        <p>
+                          <strong>Comparison Growth Rate:</strong> {(comparisonDegreeObj?.growthRate || 0) * 100}% for {comparisonDegreeObj?.name} graduates.
+                        </p>
+                        <p>
+                          <strong>Difference in 10-Year Income:</strong> {formatCurrency(
+                            Math.abs((comparisonData[9]?.income || 0) - (comparisonData[9]?.comparison || 0))
+                          )} {(comparisonData[9]?.income || 0) > (comparisonData[9]?.comparison || 0) ? 'higher' : 'lower'}.
+                        </p>
+                        <p>
+                          <strong>Lifetime Earning Difference:</strong> Approximately {formatCurrency(
+                            comparisonData.reduce((total, year) => total + ((year.income || 0) - (year.comparison || 0)), 0)
+                          )}.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
