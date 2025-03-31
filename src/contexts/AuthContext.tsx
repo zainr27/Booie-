@@ -7,6 +7,8 @@ type AuthContextType = {
   session: Session | null;
   user: User | null;
   loading: boolean;
+  hasCompletedOnboarding: boolean;
+  setHasCompletedOnboarding: (value: boolean) => void;
   signOut: () => Promise<void>;
 };
 
@@ -16,6 +18,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
 
   useEffect(() => {
     // Set up auth state listener
@@ -45,6 +48,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     session,
     user,
     loading,
+    hasCompletedOnboarding,
+    setHasCompletedOnboarding,
     signOut,
   };
 
