@@ -12,10 +12,11 @@ const OnboardingProgress = () => {
           <div 
             key={idx}
             className={`text-xs font-medium ${
-              idx <= currentStep ? 'text-blue-600' : 'text-gray-400'
+              idx < currentStep ? 'text-blue-600' : idx === currentStep ? 'text-blue-600 font-bold' : 'text-gray-400'
             }`}
           >
             {step}
+            {idx === currentStep && <span className="ml-1">•</span>}
           </div>
         ))}
       </div>
