@@ -37,10 +37,10 @@ const DemographicStep = () => {
     }
   };
 
-  // Show next question
-  const showNextQuestion = () => {
-    if (visibleQuestions < totalQuestions) {
-      setVisibleQuestions(prev => prev + 1);
+  // Show next question only if current question is filled
+  const showNextQuestion = (questionNumber: number) => {
+    if (visibleQuestions === questionNumber && questionNumber < totalQuestions) {
+      setVisibleQuestions(questionNumber + 1);
     }
   };
 
@@ -83,7 +83,7 @@ const DemographicStep = () => {
               updateDemographicData({ 
                 age: e.target.value ? parseInt(e.target.value) : null 
               });
-              if (e.target.value) showNextQuestion();
+              if (e.target.value) showNextQuestion(1);
             }}
             className={errors.age ? 'border-red-500' : ''}
             placeholder="Your age"
@@ -105,7 +105,7 @@ const DemographicStep = () => {
             value={data.demographic.gender}
             onValueChange={(value) => {
               updateDemographicData({ gender: value });
-              showNextQuestion();
+              showNextQuestion(2);
             }}
           >
             <SelectTrigger className={errors.gender ? 'border-red-500' : ''}>
@@ -135,7 +135,7 @@ const DemographicStep = () => {
             value={data.demographic.ethnicity}
             onValueChange={(value) => {
               updateDemographicData({ ethnicity: value });
-              showNextQuestion();
+              showNextQuestion(3);
             }}
           >
             <SelectTrigger>
