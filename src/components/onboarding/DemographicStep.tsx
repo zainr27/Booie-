@@ -10,6 +10,8 @@ import { motion } from 'framer-motion';
 const DemographicStep = () => {
   const { data, updateDemographicData, setCurrentStep } = useOnboarding();
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [visibleQuestions, setVisibleQuestions] = useState(1);
+  const totalQuestions = 4;
 
   const validateAndNext = () => {
     const newErrors: Record<string, string> = {};
@@ -35,6 +37,19 @@ const DemographicStep = () => {
     }
   };
 
+  // Show next question
+  const showNextQuestion = () => {
+    if (visibleQuestions < totalQuestions) {
+      setVisibleQuestions(prev => prev + 1);
+    }
+  };
+
+  // Animation variants for questions
+  const questionVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -49,8 +64,14 @@ const DemographicStep = () => {
         </p>
       </div>
       
-      <div className="space-y-4">
-        <div className="space-y-2">
+      <div className="space-y-6">
+        {/* Age Question */}
+        <motion.div 
+          className="space-y-2"
+          initial="hidden"
+          animate={visibleQuestions >= 1 ? "visible" : "hidden"}
+          variants={questionVariants}
+        >
           <Label htmlFor="age" className="text-sm font-medium text-blue-600">
             Age
           </Label>
@@ -58,22 +79,34 @@ const DemographicStep = () => {
             id="age"
             type="number"
             value={data.demographic.age || ''}
-            onChange={(e) => updateDemographicData({ 
-              age: e.target.value ? parseInt(e.target.value) : null 
-            })}
+            onChange={(e) => {
+              updateDemographicData({ 
+                age: e.target.value ? parseInt(e.target.value) : null 
+              });
+              if (e.target.value) showNextQuestion();
+            }}
             className={errors.age ? 'border-red-500' : ''}
             placeholder="Your age"
           />
           {errors.age && <p className="text-sm text-red-500">{errors.age}</p>}
-        </div>
+        </motion.div>
         
-        <div className="space-y-2">
+        {/* Gender Question */}
+        <motion.div 
+          className="space-y-2"
+          initial="hidden"
+          animate={visibleQuestions >= 2 ? "visible" : "hidden"}
+          variants={questionVariants}
+        >
           <Label htmlFor="gender" className="text-sm font-medium text-blue-600">
             Gender
           </Label>
           <Select 
             value={data.demographic.gender}
-            onValueChange={(value) => updateDemographicData({ gender: value })}
+            onValueChange={(value) => {
+              updateDemographicData({ gender: value });
+              showNextQuestion();
+            }}
           >
             <SelectTrigger className={errors.gender ? 'border-red-500' : ''}>
               <SelectValue placeholder="Select gender" />
@@ -86,15 +119,24 @@ const DemographicStep = () => {
             </SelectContent>
           </Select>
           {errors.gender && <p className="text-sm text-red-500">{errors.gender}</p>}
-        </div>
+        </motion.div>
         
-        <div className="space-y-2">
+        {/* Ethnicity Question */}
+        <motion.div 
+          className="space-y-2"
+          initial="hidden"
+          animate={visibleQuestions >= 3 ? "visible" : "hidden"}
+          variants={questionVariants}
+        >
           <Label htmlFor="ethnicity" className="text-sm font-medium text-blue-600">
             Race/Ethnicity (Optional)
           </Label>
           <Select 
             value={data.demographic.ethnicity}
-            onValueChange={(value) => updateDemographicData({ ethnicity: value })}
+            onValueChange={(value) => {
+              updateDemographicData({ ethnicity: value });
+              showNextQuestion();
+            }}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select ethnicity" />
@@ -110,9 +152,15 @@ const DemographicStep = () => {
               <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
             </SelectContent>
           </Select>
-        </div>
+        </motion.div>
         
-        <div className="space-y-2">
+        {/* ZIP Code Question */}
+        <motion.div 
+          className="space-y-2"
+          initial="hidden"
+          animate={visibleQuestions >= 4 ? "visible" : "hidden"}
+          variants={questionVariants}
+        >
           <Label htmlFor="zipCode" className="text-sm font-medium text-blue-600">
             ZIP Code
           </Label>
@@ -124,7 +172,7 @@ const DemographicStep = () => {
             placeholder="Your ZIP code"
           />
           {errors.zipCode && <p className="text-sm text-red-500">{errors.zipCode}</p>}
-        </div>
+        </motion.div>
       </div>
       
       <Button 
