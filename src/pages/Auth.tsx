@@ -1,19 +1,22 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Eye, EyeOff, Facebook, Github, Mail } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import PageTransition from "@/components/layout/PageTransition";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Check if user is already logged in
   useEffect(() => {
@@ -37,6 +40,27 @@ const Auth = () => {
     
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  // Check URL parameters for tab
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const tab = searchParams.get("tab");
+    
+    if (tab === "signup") {
+      setIsLogin(false);
+    } else {
+      setIsLogin(true);
+    }
+  }, [location.search]);
+
+  const toggleView = () => {
+    setIsLogin(!isLogin);
+    // Update URL without reloading the page
+    const newUrl = isLogin 
+      ? "/auth?tab=signup" 
+      : "/auth";
+    window.history.pushState({}, "", newUrl);
+  };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,9 +119,7 @@ const Auth = () => {
     }
   };
 
-  const handlePasswordReset = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const handlePasswordReset = async () => {
     if (!email) {
       toast({
         variant: "destructive",
@@ -131,129 +153,144 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-extrabold text-gray-900">Booie Education Platform</h1>
-          <p className="mt-2 text-sm text-gray-600">Sign in to access your account</p>
+    <PageTransition>
+      <div className="min-h-screen flex">
+        {/* Left section (form) */}
+        <div className="w-full lg:w-1/2 flex flex-col justify-center px-4 sm:px-6 lg:px-8 py-12">
+          <div className="max-w-md w-full mx-auto space-y-8">
+            <div className="text-center sm:text-left">
+              <h2 className="text-2xl font-semibold text-gray-600">Start your journey</h2>
+              <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                {isLogin ? "Sign in to Booie" : "Sign up to Booie"}
+              </h1>
+            </div>
+            
+            <form onSubmit={isLogin ? handleSignIn : handleSignUp} className="mt-8 space-y-6">
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="block text-sm font-medium text-blue-600">
+                    E-mail
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="example@email.com"
+                      className="pl-3 pr-10 py-3 w-full border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                      required
+                    />
+                    <Mail className="absolute right-3 top-3 text-gray-400 h-5 w-5" />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="block text-sm font-medium text-blue-600">
+                    Password
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="pl-3 pr-10 py-3 w-full border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                      required
+                    />
+                    <button 
+                      type="button" 
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-3 text-gray-400"
+                    >
+                      {showPassword ? 
+                        <EyeOff className="h-5 w-5" /> : 
+                        <Eye className="h-5 w-5" />
+                      }
+                    </button>
+                  </div>
+                  
+                  {isLogin && (
+                    <div className="text-right">
+                      <button
+                        type="button"
+                        onClick={handlePasswordReset}
+                        className="text-sm text-blue-600 hover:text-blue-800 transition duration-150"
+                      >
+                        Forgot password?
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <Button 
+                type="submit" 
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition duration-150"
+                disabled={loading}
+              >
+                {loading ? 
+                  (isLogin ? "Signing in..." : "Creating account...") : 
+                  (isLogin ? "Sign In" : "Sign Up")
+                }
+              </Button>
+              
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">or sign {isLogin ? "in" : "up"} with</span>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-3 gap-3">
+                <button
+                  type="button"
+                  className="flex justify-center items-center py-2.5 border rounded-lg hover:bg-gray-50 transition duration-150"
+                >
+                  <Facebook className="h-5 w-5 text-blue-600" />
+                </button>
+                <button
+                  type="button"
+                  className="flex justify-center items-center py-2.5 border rounded-lg hover:bg-gray-50 transition duration-150"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line></svg>
+                </button>
+                <button
+                  type="button"
+                  className="flex justify-center items-center py-2.5 border rounded-lg hover:bg-gray-50 transition duration-150"
+                >
+                  <Github className="h-5 w-5" />
+                </button>
+              </div>
+              
+              <div className="text-center mt-4">
+                <p className="text-sm text-gray-600">
+                  {isLogin ? "Don't have an account? " : "Already have an account? "}
+                  <button
+                    type="button"
+                    onClick={toggleView}
+                    className="text-blue-600 hover:text-blue-800 font-medium transition duration-150"
+                  >
+                    {isLogin ? "Sign up" : "Sign in"}
+                  </button>
+                </p>
+              </div>
+            </form>
+          </div>
         </div>
-        
-        <Tabs defaultValue="signin" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="signin">Sign In</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
-            <TabsTrigger value="reset">Reset</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="signin">
-            <Card>
-              <CardHeader>
-                <CardTitle>Sign In</CardTitle>
-                <CardDescription>Enter your email and password to sign in to your account</CardDescription>
-              </CardHeader>
-              <form onSubmit={handleSignIn}>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signin-email">Email</Label>
-                    <Input
-                      id="signin-email"
-                      type="email"
-                      placeholder="email@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signin-password">Password</Label>
-                    <Input
-                      id="signin-password"
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? "Signing in..." : "Sign In"}
-                  </Button>
-                </CardFooter>
-              </form>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="signup">
-            <Card>
-              <CardHeader>
-                <CardTitle>Create an account</CardTitle>
-                <CardDescription>Enter your email and create a password</CardDescription>
-              </CardHeader>
-              <form onSubmit={handleSignUp}>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      placeholder="email@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password">Password</Label>
-                    <Input
-                      id="signup-password"
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? "Creating account..." : "Create Account"}
-                  </Button>
-                </CardFooter>
-              </form>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="reset">
-            <Card>
-              <CardHeader>
-                <CardTitle>Reset Password</CardTitle>
-                <CardDescription>Enter your email to reset your password</CardDescription>
-              </CardHeader>
-              <form onSubmit={handlePasswordReset}>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="reset-email">Email</Label>
-                    <Input
-                      id="reset-email"
-                      type="email"
-                      placeholder="email@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? "Sending link..." : "Send Reset Link"}
-                  </Button>
-                </CardFooter>
-              </form>
-            </Card>
-          </TabsContent>
-        </Tabs>
+
+        {/* Right section (gradient background) */}
+        <div className="hidden lg:block lg:w-1/2">
+          <div className="h-full w-full bg-gradient-to-br from-blue-200 via-pink-200 to-blue-300 bg-opacity-90 overflow-hidden">
+            <div className="h-full w-full flex items-center justify-center">
+              {/* You can add decorative elements here */}
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </PageTransition>
   );
 };
 
