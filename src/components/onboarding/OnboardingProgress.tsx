@@ -3,7 +3,7 @@ import { useOnboarding } from '@/contexts/OnboardingContext';
 
 const OnboardingProgress = () => {
   const { currentStep } = useOnboarding();
-  const steps = ['Demographics', 'Financial', 'Academic'];
+  const steps = ['Demographics', 'Academic', 'Financial'];
   
   return (
     <div className="mb-8">

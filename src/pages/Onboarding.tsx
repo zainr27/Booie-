@@ -16,8 +16,8 @@ const OnboardingSteps = () => {
   return (
     <AnimatePresence mode="wait">
       {currentStep === 0 && <DemographicStep key="demographic" />}
-      {currentStep === 1 && <FinancialStep key="financial" />}
-      {currentStep === 2 && <AcademicStep key="academic" />}
+      {currentStep === 1 && <AcademicStep key="academic" />}
+      {currentStep === 2 && <FinancialStep key="financial" />}
     </AnimatePresence>
   );
 };
@@ -51,7 +51,7 @@ const Onboarding = () => {
           </div>
         </div>
         
-        {/* Right section (gradient background) - same as Auth page */}
+        {/* Right section (gradient background) */}
         <div className="hidden lg:block lg:w-1/2">
           <div className="h-full w-full bg-gradient-to-br from-blue-200 via-pink-200 to-blue-300 bg-opacity-90 overflow-hidden">
             <div className="h-full w-full flex items-center justify-center">

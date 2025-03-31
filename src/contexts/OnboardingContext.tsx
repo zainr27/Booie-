@@ -13,6 +13,11 @@ export type FinancialData = {
   currentIncome: number | null;
   householdIncome: number | null;
   dependents: number | null;
+  fundingRequired: number | null;
+  yearOfFirstPayment: number | null;
+  incomeFloor: number | null;
+  maxTermYears: number | null;
+  repaymentCapMultiple: number | null;
 };
 
 export type AcademicData = {
@@ -24,8 +29,8 @@ export type AcademicData = {
 
 export type OnboardingData = {
   demographic: DemographicData;
-  financial: FinancialData;
   academic: AcademicData;
+  financial: FinancialData;
 };
 
 type OnboardingContextType = {
@@ -45,16 +50,21 @@ const defaultOnboardingData: OnboardingData = {
     ethnicity: '',
     zipCode: '',
   },
-  financial: {
-    currentIncome: null,
-    householdIncome: null,
-    dependents: null,
-  },
   academic: {
     school: '',
     degreeProgram: '',
     major: '',
     graduationYear: null,
+  },
+  financial: {
+    currentIncome: null,
+    householdIncome: null,
+    dependents: null,
+    fundingRequired: 20000, // Default value
+    yearOfFirstPayment: 1, // Default value
+    incomeFloor: null,
+    maxTermYears: null,
+    repaymentCapMultiple: null,
   },
 };
 
