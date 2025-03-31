@@ -69,6 +69,9 @@ const Auth = () => {
     
     try {
       setLoading(true);
+      // Get the current origin (hostname including protocol) for the redirect URL
+      const redirectTo = `${window.location.origin}/auth`;
+      
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -77,7 +80,7 @@ const Auth = () => {
             first_name: "",
             last_name: "",
           },
-          emailRedirectTo: `${window.location.origin}/auth`, // Specify the correct redirect URL
+          emailRedirectTo: redirectTo, // Use dynamic redirect based on current origin
         },
       });
       
@@ -134,8 +137,11 @@ const Auth = () => {
     
     try {
       setLoading(true);
+      // Get the current origin (hostname including protocol) for the redirect URL
+      const redirectTo = `${window.location.origin}/auth?tab=update-password`;
+      
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth?tab=update-password`,
+        redirectTo: redirectTo, // Use dynamic redirect based on current origin
       });
       
       if (error) throw error;

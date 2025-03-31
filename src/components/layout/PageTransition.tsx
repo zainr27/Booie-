@@ -24,7 +24,7 @@ const pageVariants = {
 const pageTransition = {
   type: 'tween',
   ease: 'easeInOut',
-  duration: 0.5
+  duration: 0.4 // Slightly faster for a more responsive feel
 };
 
 const PageTransition = ({ children }: PageTransitionProps) => {
