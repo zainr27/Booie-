@@ -281,7 +281,6 @@ export const saveLoanCalculation = async (
 export const fetchLatestLoanCalculation = async (userId: string): Promise<LoanApplication | null> => {
   // Import at function level to avoid circular dependencies
   const { supabase } = await import('@/integrations/supabase/client');
-  const { LoanApplication } = await import('@/types/custom');
   
   try {
     const { data, error } = await supabase
