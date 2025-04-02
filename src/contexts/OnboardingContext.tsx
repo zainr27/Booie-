@@ -1,5 +1,6 @@
 
 import { createContext, useContext, useState, ReactNode } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 // Define types for the onboarding data
 export type DemographicData = {
@@ -105,9 +106,72 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const saveAllData = async () => {
-    // This function would save the data to Supabase or any other storage
-    // For now it just returns a resolved promise
-    return Promise.resolve();
+    // Get the current authenticated user
+    const { data: authData } = await supabase.auth.getUser();
+    
+    if (!authData.user) {
+      throw new Error("No authenticated user found");
+    }
+    
+    const userId = authData.user.id;
+    
+    // Begin transaction by inserting all data in parallel
+    const [demographicResult, academicResult, financialResult] = await Promise.all([
+      // Save demographic data
+      supabase
+        .from('user_demographic_data')
+        .upsert({
+          user_id: userId,
+          age: data.demographic.age,
+          gender: data.demographic.gender,
+          ethnicity: data.demographic.ethnicity,
+          zip_code: data.demographic.zipCode,
+        }),
+      
+      // Save academic data
+      supabase
+        .from('user_academic_data')
+        .upsert({
+          user_id: userId,
+          school: data.academic.school,
+          degree_program: data.academic.degreeProgram,
+          major: data.academic.major,
+          graduation_year: data.academic.graduationYear,
+        }),
+      
+      // Save financial data
+      supabase
+        .from('user_financial_data')
+        .upsert({
+          user_id: userId,
+          current_income: data.financial.currentIncome,
+          household_income: data.financial.householdIncome,
+          dependents: data.financial.dependents,
+          funding_required: data.financial.fundingRequired,
+          year_of_first_payment: data.financial.yearOfFirstPayment,
+          income_floor: data.financial.incomeFloor,
+          max_term_years: data.financial.maxTermYears,
+          repayment_cap_multiple: data.financial.repaymentCapMultiple,
+        }),
+    ]);
+    
+    // Check for errors
+    if (demographicResult.error) {
+      console.error('Error saving demographic data:', demographicResult.error);
+      throw demographicResult.error;
+    }
+    
+    if (academicResult.error) {
+      console.error('Error saving academic data:', academicResult.error);
+      throw academicResult.error;
+    }
+    
+    if (financialResult.error) {
+      console.error('Error saving financial data:', financialResult.error);
+      throw financialResult.error;
+    }
+    
+    console.log('All onboarding data saved successfully');
   };
 
   const value = {

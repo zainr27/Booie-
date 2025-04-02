@@ -8,6 +8,9 @@ import AcademicStep from '@/components/onboarding/AcademicStep';
 import OnboardingProgress from '@/components/onboarding/OnboardingProgress';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
+import { useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 
 // Step renderer component
 const OnboardingSteps = () => {
@@ -24,8 +27,52 @@ const OnboardingSteps = () => {
 
 // Main onboarding component
 const Onboarding = () => {
-  const { user, hasCompletedOnboarding } = useAuth();
+  const { user, hasCompletedOnboarding, setHasCompletedOnboarding } = useAuth();
   const navigate = useNavigate();
+  
+  // Check if user has already completed onboarding
+  useEffect(() => {
+    const checkOnboardingStatus = async () => {
+      if (!user) return;
+      
+      try {
+        // Check if user has demographic data
+        const { data: demographicData, error: demographicError } = await supabase
+          .from('user_demographic_data')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        // Check if user has academic data
+        const { data: academicData, error: academicError } = await supabase
+          .from('user_academic_data')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        // Check if user has financial data
+        const { data: financialData, error: financialError } = await supabase
+          .from('user_financial_data')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        // If the user has all three types of data, they've completed onboarding
+        if (demographicData && academicData && financialData) {
+          setHasCompletedOnboarding(true);
+        }
+      } catch (error) {
+        console.error('Error checking onboarding status:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load your profile data.',
+          variant: 'destructive',
+        });
+      }
+    };
+    
+    checkOnboardingStatus();
+  }, [user, setHasCompletedOnboarding]);
   
   // Redirect if user has already completed onboarding
   if (hasCompletedOnboarding) {

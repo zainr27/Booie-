@@ -209,6 +209,72 @@ export type Database = {
         }
         Relationships: []
       }
+      user_academic_data: {
+        Row: {
+          created_at: string
+          degree_program: string
+          graduation_year: number | null
+          id: string
+          major: string
+          school: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          degree_program: string
+          graduation_year?: number | null
+          id?: string
+          major: string
+          school: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          degree_program?: string
+          graduation_year?: number | null
+          id?: string
+          major?: string
+          school?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_demographic_data: {
+        Row: {
+          age: number | null
+          created_at: string
+          ethnicity: string | null
+          gender: string | null
+          id: string
+          updated_at: string
+          user_id: string
+          zip_code: string | null
+        }
+        Insert: {
+          age?: number | null
+          created_at?: string
+          ethnicity?: string | null
+          gender?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+          zip_code?: string | null
+        }
+        Update: {
+          age?: number | null
+          created_at?: string
+          ethnicity?: string | null
+          gender?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+          zip_code?: string | null
+        }
+        Relationships: []
+      }
       user_documents: {
         Row: {
           document_type: string
@@ -246,6 +312,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_financial_data: {
+        Row: {
+          created_at: string
+          current_income: number | null
+          dependents: number | null
+          funding_required: number | null
+          household_income: number | null
+          id: string
+          income_floor: number | null
+          max_term_years: number | null
+          repayment_cap_multiple: number | null
+          updated_at: string
+          user_id: string
+          year_of_first_payment: number | null
+        }
+        Insert: {
+          created_at?: string
+          current_income?: number | null
+          dependents?: number | null
+          funding_required?: number | null
+          household_income?: number | null
+          id?: string
+          income_floor?: number | null
+          max_term_years?: number | null
+          repayment_cap_multiple?: number | null
+          updated_at?: string
+          user_id: string
+          year_of_first_payment?: number | null
+        }
+        Update: {
+          created_at?: string
+          current_income?: number | null
+          dependents?: number | null
+          funding_required?: number | null
+          household_income?: number | null
+          id?: string
+          income_floor?: number | null
+          max_term_years?: number | null
+          repayment_cap_multiple?: number | null
+          updated_at?: string
+          user_id?: string
+          year_of_first_payment?: number | null
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
