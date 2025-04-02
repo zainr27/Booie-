@@ -7,9 +7,25 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Check } from 'lucide-react';
+import { ArrowLeft, Check, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
+
+// Education mode options
+const educationModes = [
+  { value: 'full-time-in-person', label: 'Full-time in-person' },
+  { value: 'part-time-in-person', label: 'Part-time in-person' },
+  { value: 'full-time-online', label: 'Full-time online' },
+  { value: 'part-time-online', label: 'Part-time online' },
+  { value: 'full-time-hybrid', label: 'Full-time hybrid' },
+  { value: 'part-time-hybrid', label: 'Part-time hybrid' },
+];
 
 const FinancialStep = () => {
   const { data, updateFinancialData, setCurrentStep, saveAllData } = useOnboarding();
@@ -18,7 +34,7 @@ const FinancialStep = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [visibleQuestions, setVisibleQuestions] = useState(1);
-  const totalQuestions = 7;
+  const totalQuestions = 12; // Updated total number of questions
 
   // Show next question
   const showNextQuestion = () => {
@@ -32,6 +48,41 @@ const FinancialStep = () => {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
   };
+
+  // Default graduation date (May 2026)
+  const defaultGraduationDate = new Date(2026, 4, 15); // May 15, 2026
+  const [graduationDate, setGraduationDate] = useState<Date | undefined>(defaultGraduationDate);
+  const [employmentDate, setEmploymentDate] = useState<Date | undefined>(undefined);
+
+  // Set default employment date one month after graduation
+  useEffect(() => {
+    if (graduationDate) {
+      const employmentDefaultDate = new Date(graduationDate);
+      employmentDefaultDate.setMonth(employmentDefaultDate.getMonth() + 1);
+      setEmploymentDate(employmentDefaultDate);
+      updateFinancialData({ 
+        graduationDate: graduationDate.toISOString(),
+        employmentDate: employmentDefaultDate.toISOString()
+      });
+    }
+  }, [graduationDate]);
+
+  // Rate reducing factors
+  const [highGPA, setHighGPA] = useState(false);
+  const [topTestScore, setTopTestScore] = useState(false);
+  const [hasCosigner, setHasCosigner] = useState(false);
+  const [hasInternship, setHasInternship] = useState(false);
+  const [hasReturnOffer, setHasReturnOffer] = useState(false);
+
+  useEffect(() => {
+    updateFinancialData({
+      highGPA,
+      topTestScore,
+      hasCosigner,
+      hasInternship,
+      hasReturnOffer
+    });
+  }, [highGPA, topTestScore, hasCosigner, hasInternship, hasReturnOffer]);
 
   const formatCurrency = (value: number | null) => {
     if (value === null) return '';
@@ -60,6 +111,10 @@ const FinancialStep = () => {
     
     if (data.financial.repaymentCapMultiple === null) {
       newErrors.repaymentCapMultiple = 'Repayment cap multiple is required';
+    }
+    
+    if (!data.financial.educationMode) {
+      newErrors.educationMode = 'Education mode is required';
     }
     
     setErrors(newErrors);
@@ -136,12 +191,124 @@ const FinancialStep = () => {
           <p className="text-xs text-gray-500">Maximum amount: $50,000</p>
           {errors.fundingRequired && <p className="text-sm text-red-500">{errors.fundingRequired}</p>}
         </motion.div>
+
+        {/* Education Mode */}
+        <motion.div 
+          className="space-y-2"
+          initial="hidden"
+          animate={visibleQuestions >= 2 ? "visible" : "hidden"}
+          variants={questionVariants}
+        >
+          <Label htmlFor="educationMode" className="text-sm font-medium text-blue-600">
+            Mode of Education
+          </Label>
+          <Select
+            value={data.financial.educationMode || ''}
+            onValueChange={(value) => {
+              updateFinancialData({ educationMode: value });
+              showNextQuestion();
+            }}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select mode of education" />
+            </SelectTrigger>
+            <SelectContent>
+              {educationModes.map(mode => (
+                <SelectItem key={mode.value} value={mode.value}>
+                  {mode.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {errors.educationMode && <p className="text-sm text-red-500">{errors.educationMode}</p>}
+        </motion.div>
+        
+        {/* Graduation Date */}
+        <motion.div 
+          className="space-y-2"
+          initial="hidden"
+          animate={visibleQuestions >= 3 ? "visible" : "hidden"}
+          variants={questionVariants}
+        >
+          <Label htmlFor="graduationDate" className="text-sm font-medium text-blue-600">
+            Expected Graduation Date
+          </Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={`w-full justify-start text-left font-normal ${errors.graduationDate ? 'border-red-500' : ''}`}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {graduationDate ? format(graduationDate, "PPP") : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={graduationDate}
+                onSelect={(date) => {
+                  if (date) {
+                    setGraduationDate(date);
+                    showNextQuestion();
+                  }
+                }}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+          {errors.graduationDate && <p className="text-sm text-red-500">{errors.graduationDate}</p>}
+        </motion.div>
+
+        {/* Employment Date */}
+        <motion.div 
+          className="space-y-2"
+          initial="hidden"
+          animate={visibleQuestions >= 4 ? "visible" : "hidden"}
+          variants={questionVariants}
+        >
+          <Label htmlFor="employmentDate" className="text-sm font-medium text-blue-600">
+            Expected Full-Time Employment Date
+          </Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={`w-full justify-start text-left font-normal ${errors.employmentDate ? 'border-red-500' : ''}`}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {employmentDate ? format(employmentDate, "PPP") : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={employmentDate}
+                onSelect={(date) => {
+                  if (date) {
+                    setEmploymentDate(date);
+                    updateFinancialData({ employmentDate: date.toISOString() });
+                    showNextQuestion();
+                  }
+                }}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+          {employmentDate && graduationDate && new Date(employmentDate) > new Date(new Date(graduationDate).setMonth(graduationDate.getMonth() + 4)) && (
+            <div className="flex items-center space-x-1 text-amber-600 text-xs">
+              <AlertCircle className="w-3 h-3" />
+              <span>Employment date is more than 4 months after graduation. You will be asked to explain your post-graduation plans.</span>
+            </div>
+          )}
+          {errors.employmentDate && <p className="text-sm text-red-500">{errors.employmentDate}</p>}
+        </motion.div>
         
         {/* Year of First Payment */}
         <motion.div 
           className="space-y-2"
           initial="hidden"
-          animate={visibleQuestions >= 2 ? "visible" : "hidden"}
+          animate={visibleQuestions >= 5 ? "visible" : "hidden"}
           variants={questionVariants}
         >
           <Label htmlFor="yearOfFirstPayment" className="text-sm font-medium text-blue-600">
@@ -170,7 +337,7 @@ const FinancialStep = () => {
         <motion.div 
           className="space-y-2"
           initial="hidden"
-          animate={visibleQuestions >= 3 ? "visible" : "hidden"}
+          animate={visibleQuestions >= 6 ? "visible" : "hidden"}
           variants={questionVariants}
         >
           <Label htmlFor="incomeFloor" className="text-sm font-medium text-blue-600">
@@ -192,6 +359,9 @@ const FinancialStep = () => {
             <span>$0</span>
             <span>$40,000</span>
           </div>
+          <p className="text-xs text-gray-500">
+            Income below this amount is protected from repayment (the repayment rate applies only to income above this minimum)
+          </p>
           {errors.incomeFloor && <p className="text-sm text-red-500">{errors.incomeFloor}</p>}
         </motion.div>
         
@@ -199,7 +369,7 @@ const FinancialStep = () => {
         <motion.div 
           className="space-y-2"
           initial="hidden"
-          animate={visibleQuestions >= 4 ? "visible" : "hidden"}
+          animate={visibleQuestions >= 7 ? "visible" : "hidden"}
           variants={questionVariants}
         >
           <Label htmlFor="maxTermYears" className="text-sm font-medium text-blue-600">
@@ -228,7 +398,7 @@ const FinancialStep = () => {
         <motion.div 
           className="space-y-2"
           initial="hidden"
-          animate={visibleQuestions >= 5 ? "visible" : "hidden"}
+          animate={visibleQuestions >= 8 ? "visible" : "hidden"}
           variants={questionVariants}
         >
           <Label htmlFor="repaymentCapMultiple" className="text-sm font-medium text-blue-600">
@@ -257,7 +427,7 @@ const FinancialStep = () => {
         <motion.div 
           className="space-y-2"
           initial="hidden"
-          animate={visibleQuestions >= 6 ? "visible" : "hidden"}
+          animate={visibleQuestions >= 9 ? "visible" : "hidden"}
           variants={questionVariants}
         >
           <Label htmlFor="currentIncome" className="text-sm font-medium text-blue-600">
@@ -285,7 +455,7 @@ const FinancialStep = () => {
         <motion.div 
           className="space-y-2"
           initial="hidden"
-          animate={visibleQuestions >= 7 ? "visible" : "hidden"}
+          animate={visibleQuestions >= 10 ? "visible" : "hidden"}
           variants={questionVariants}
         >
           <Label htmlFor="householdIncome" className="text-sm font-medium text-blue-600">
@@ -296,9 +466,12 @@ const FinancialStep = () => {
               id="householdIncome"
               type="number"
               value={data.financial.householdIncome || ''}
-              onChange={(e) => updateFinancialData({ 
-                householdIncome: e.target.value ? parseInt(e.target.value) : null 
-              })}
+              onChange={(e) => {
+                updateFinancialData({ 
+                  householdIncome: e.target.value ? parseInt(e.target.value) : null 
+                });
+                showNextQuestion();
+              }}
               className={`pl-6`}
               placeholder="Total household income"
             />
@@ -306,11 +479,11 @@ const FinancialStep = () => {
           </div>
         </motion.div>
         
-        {/* Showing this at the end for completeness */}
+        {/* Dependents */}
         <motion.div 
           className="space-y-2"
           initial="hidden"
-          animate={visibleQuestions >= 7 ? "visible" : "hidden"}
+          animate={visibleQuestions >= 11 ? "visible" : "hidden"}
           variants={questionVariants}
         >
           <Label htmlFor="dependents" className="text-sm font-medium text-blue-600">
@@ -322,11 +495,74 @@ const FinancialStep = () => {
             min={0}
             max={10}
             step={1}
-            onValueChange={(value) => updateFinancialData({ dependents: value[0] })}
+            onValueChange={(value) => {
+              updateFinancialData({ dependents: value[0] });
+              showNextQuestion();
+            }}
           />
           <div className="flex justify-between text-xs text-gray-500">
             <span>0</span>
             <span>10</span>
+          </div>
+        </motion.div>
+        
+        {/* Rate-Reducing Factors */}
+        <motion.div 
+          className="space-y-2"
+          initial="hidden"
+          animate={visibleQuestions >= 12 ? "visible" : "hidden"}
+          variants={questionVariants}
+        >
+          <Label className="text-sm font-medium text-blue-600">Rate-Reducing Factors</Label>
+          <p className="text-xs text-gray-500 mb-3">
+            Check any that apply to you. These factors may reduce your repayment rate.
+          </p>
+          
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="highGPA" 
+                checked={highGPA} 
+                onCheckedChange={(checked) => setHighGPA(!!checked)} 
+              />
+              <Label htmlFor="highGPA" className="text-sm">Cumulative GPA ≥ 3.5/4.0</Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="topTestScore" 
+                checked={topTestScore} 
+                onCheckedChange={(checked) => setTopTestScore(!!checked)} 
+              />
+              <Label htmlFor="topTestScore" className="text-sm">Top 15% standardized test score</Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="hasCosigner" 
+                checked={hasCosigner} 
+                onCheckedChange={(checked) => setHasCosigner(!!checked)} 
+              />
+              <Label htmlFor="hasCosigner" className="text-sm">Will have a cosigner</Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="hasInternship" 
+                checked={hasInternship} 
+                onCheckedChange={(checked) => setHasInternship(!!checked)} 
+              />
+              <Label htmlFor="hasInternship" className="text-sm">Have relevant internship of 10+ weeks</Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="hasReturnOffer" 
+                checked={hasReturnOffer} 
+                onCheckedChange={(checked) => setHasReturnOffer(!!checked)} 
+              />
+              <Label htmlFor="hasReturnOffer" className="text-sm">Have return offer from internship</Label>
+            </div>
           </div>
         </motion.div>
       </div>

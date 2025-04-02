@@ -34,6 +34,42 @@ export interface UserDemographicData {
   updated_at: string;
 }
 
+// Add user financial data type
+export interface UserFinancialData {
+  id: string;
+  user_id: string;
+  funding_required: number | null;
+  year_of_first_payment: number | null;
+  income_floor: number | null;
+  max_term_years: number | null;
+  repayment_cap_multiple: number | null;
+  current_income: number | null;
+  household_income: number | null;
+  dependents: number | null;
+  educationMode?: string;
+  graduationDate?: string;
+  employmentDate?: string;
+  highGPA?: boolean;
+  topTestScore?: boolean;
+  hasCosigner?: boolean;
+  hasInternship?: boolean;
+  hasReturnOffer?: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// Add user academic data type
+export interface UserAcademicData {
+  id: string;
+  user_id: string;
+  school: string | null;
+  degree_program: string | null;
+  major: string | null;
+  graduation_year: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
 // Add types for regulatory information display
 export interface RegulatoryRequirement {
   id: string;
@@ -46,4 +82,32 @@ export interface CompliancePrinciple {
   id: string;
   title: string;
   description: string;
+}
+
+// Add education mode type
+export interface EducationMode {
+  value: string;
+  label: string;
+}
+
+// Add loan application type
+export interface LoanApplication {
+  id: string;
+  user_id: string;
+  loan_amount: number;
+  interest_rate: number;
+  term_months: number;
+  monthly_payment: number; // Used as repayment rate in ISA
+  institution_id: string;
+  degree_program_id: string;
+  status: 'draft' | 'submitted' | 'approved' | 'rejected';
+  created_at: string;
+  updated_at: string;
+}
+
+// Add income projection type
+export interface IncomeProjection {
+  year: number;
+  income: number;
+  payment?: number;
 }

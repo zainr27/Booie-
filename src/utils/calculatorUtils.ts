@@ -77,3 +77,100 @@ export const calculateBooieRepaymentRate = (
   const repaymentRate = baseRate * (1 + adjustmentFactor * 0.01);
   return Math.min(repaymentRate, 0.15); // Cap at 15% of income
 };
+
+// Calculate an array of monthly payments for an income-based repayment plan
+export const calculateIncomeBasedRepayments = (
+  annualIncome: number[],
+  repaymentRate: number,
+  minimumIncome: number,
+  maxTermMonths: number
+): number[] => {
+  // Convert annual income to monthly repayments
+  const monthlyPayments: number[] = [];
+  
+  for (let i = 0; i < Math.min(annualIncome.length, Math.ceil(maxTermMonths / 12)); i++) {
+    const yearlyIncome = annualIncome[i];
+    const incomeAboveMinimum = Math.max(0, yearlyIncome - minimumIncome);
+    const yearlyPayment = incomeAboveMinimum * repaymentRate;
+    
+    // If we're in the last year and don't need all 12 months
+    const monthsInThisYear = (i === Math.ceil(maxTermMonths / 12) - 1) 
+      ? (maxTermMonths % 12) || 12 // If maxTermMonths is divisible by 12, use 12 for the last year
+      : 12;
+    
+    // Add the monthly payments for this year
+    const monthlyPayment = yearlyPayment / 12;
+    for (let j = 0; j < monthsInThisYear; j++) {
+      monthlyPayments.push(monthlyPayment);
+    }
+  }
+  
+  return monthlyPayments;
+};
+
+// Calculate NPV (Net Present Value) of cash flows with given discount rate
+export const calculateNPV = (
+  initialOutlay: number,
+  cashFlows: number[],
+  annualDiscountRate: number
+): number => {
+  // Convert annual discount rate to monthly
+  const monthlyRate = annualDiscountRate / 12;
+  
+  // NPV = Initial outlay + Sum of PV of each cash flow
+  let npv = -initialOutlay;
+  
+  for (let i = 0; i < cashFlows.length; i++) {
+    // PV = FV / (1 + r)^t
+    npv += cashFlows[i] / Math.pow(1 + monthlyRate, i + 1);
+  }
+  
+  return npv;
+};
+
+// Calculate IRR (Internal Rate of Return) using iterative approach
+export const calculateIRR = (
+  initialOutlay: number,
+  cashFlows: number[],
+  maxIterations: number = 1000,
+  tolerance: number = 0.0001
+): number | null => {
+  // Initial guesses for IRR
+  let guess1 = 0.05; // 5%
+  let guess2 = 0.15; // 15%
+  
+  let npv1 = calculateNPV(initialOutlay, cashFlows, guess1);
+  let npv2 = calculateNPV(initialOutlay, cashFlows, guess2);
+  
+  for (let i = 0; i < maxIterations; i++) {
+    // If we're at zero (or very close), we found the IRR
+    if (Math.abs(npv1) < tolerance) {
+      return guess1;
+    }
+    if (Math.abs(npv2) < tolerance) {
+      return guess2;
+    }
+    
+    // Use secant method to get next guess
+    const newGuess = guess1 - npv1 * (guess2 - guess1) / (npv2 - npv1);
+    
+    // Update guesses for next iteration
+    guess1 = guess2;
+    npv1 = npv2;
+    guess2 = newGuess;
+    npv2 = calculateNPV(initialOutlay, cashFlows, guess2);
+  }
+  
+  // If we didn't converge within max iterations, return the closest guess
+  return Math.abs(npv1) < Math.abs(npv2) ? guess1 : guess2;
+};
+
+// Format currency for display
+export const formatCurrency = (amount: number): string => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+};

@@ -8,6 +8,9 @@ import PageTransition from '@/components/layout/PageTransition';
 import { supabase } from '@/integrations/supabase/client';
 import ComplianceSection from '@/components/dashboard/ComplianceSection';
 import { UserDemographicData } from '@/types/custom';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -103,11 +106,16 @@ const Dashboard = () => {
               </Card>
 
               <Card>
-                <CardHeader>
+                <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>Loan Calculator</CardTitle>
+                  <Link to="/advanced-loan-calculator">
+                    <Button variant="ghost" size="sm" className="gap-1">
+                      Advanced <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </Link>
                 </CardHeader>
                 <CardContent>
-                  <MiniLoanCalculator />
+                  <MiniLoanCalculator initialLoanAmount={userData?.financial?.funding_required || null} />
                 </CardContent>
               </Card>
             </div>
@@ -169,6 +177,14 @@ const Dashboard = () => {
                       </div>
                     </CardContent>
                   </Card>
+                </div>
+                
+                <div className="mt-6">
+                  <Link to="/advanced-loan-calculator">
+                    <Button className="w-full">
+                      Use Advanced Loan Calculator
+                    </Button>
+                  </Link>
                 </div>
               </div>
 

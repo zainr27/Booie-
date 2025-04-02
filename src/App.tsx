@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import IncomeProjection from "./pages/IncomeProjection";
 import FAQ from "./pages/FAQ";
 import LoanCalculator from "./pages/LoanCalculator";
+import AdvancedLoanCalculator from "./pages/AdvancedLoanCalculator";
 import Comparison from "./pages/Comparison";
 import Fees from "./pages/Fees";
 import Auth from "./pages/Auth";
@@ -67,6 +68,7 @@ const AnimatedRoutes = () => {
         <Route path="/" element={<IndexRoute />} />
         <Route path="/income-projection" element={<IncomeProjection />} />
         <Route path="/loan-calculator" element={<LoanCalculator />} />
+        <Route path="/advanced-loan-calculator" element={<AdvancedLoanCalculator />} />
         <Route path="/comparison" element={<Comparison />} />
         <Route path="/fees" element={<Fees />} />
         <Route path="/faq" element={<FAQ />} />

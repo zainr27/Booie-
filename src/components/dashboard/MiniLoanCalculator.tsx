@@ -2,7 +2,10 @@
 import { useState, useEffect } from 'react';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import { calculateMonthlyPayment } from '@/utils/calculatorUtils';
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 
 interface MiniLoanCalculatorProps {
   initialLoanAmount?: number | null;
@@ -88,6 +91,14 @@ const MiniLoanCalculator = ({ initialLoanAmount = 20000 }: MiniLoanCalculatorPro
             step={1}
             onValueChange={(value) => setTermYears(value[0])}
           />
+        </div>
+        
+        <div className="pt-2">
+          <Link to="/advanced-loan-calculator">
+            <Button variant="outline" className="w-full flex items-center justify-center gap-2">
+              Try Advanced Calculator <ArrowRight className="w-4 h-4" />
+            </Button>
+          </Link>
         </div>
       </div>
     </div>
