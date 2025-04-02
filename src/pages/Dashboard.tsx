@@ -21,6 +21,7 @@ import PageTransition from '@/components/layout/PageTransition';
 import { toast } from '@/hooks/use-toast';
 import MiniLoanCalculator from '@/components/dashboard/MiniLoanCalculator';
 import ProfileSummary from '@/components/dashboard/ProfileSummary';
+import { UserDemographicData } from '@/types/custom';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -42,7 +43,7 @@ const Dashboard = () => {
         if (financialResponse.error) throw financialResponse.error;
 
         return {
-          demographic: demographicResponse.data,
+          demographic: demographicResponse.data as UserDemographicData,
           academic: academicResponse.data,
           financial: financialResponse.data
         };

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -14,15 +13,10 @@ import Layout from '@/components/layout/Layout';
 import PageTransition from '@/components/layout/PageTransition';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LogOut, Save } from 'lucide-react';
+import { UserDemographicData } from '@/types/custom';
 
 type UserData = {
-  demographic?: {
-    id: string;
-    age: number | null;
-    gender: string | null;
-    ethnicity: string | null;
-    zip_code: string | null;
-  };
+  demographic?: UserDemographicData;
   academic?: {
     id: string;
     school: string;
@@ -48,12 +42,10 @@ const Profile = () => {
   const navigate = useNavigate();
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // State for form values
   const [demographic, setDemographic] = useState<UserData['demographic'] | null>(null);
   const [academic, setAcademic] = useState<UserData['academic'] | null>(null);
   const [financial, setFinancial] = useState<UserData['financial'] | null>(null);
 
-  // Fetch user data
   const { data: userData, refetch } = useQuery({
     queryKey: ['profileData'],
     queryFn: async () => {
@@ -69,7 +61,7 @@ const Profile = () => {
         if (financialResponse.error) throw financialResponse.error;
 
         return {
-          demographic: demographicResponse.data,
+          demographic: demographicResponse.data as UserDemographicData,
           academic: academicResponse.data,
           financial: financialResponse.data
         };
@@ -85,7 +77,6 @@ const Profile = () => {
     },
   });
 
-  // Set form values when data is loaded
   useEffect(() => {
     if (userData) {
       setDemographic(userData.demographic || null);
@@ -152,7 +143,6 @@ const Profile = () => {
       
       const results = await Promise.all(updates);
       
-      // Check for errors
       const hasError = results.some(result => result.error);
       
       if (hasError) {
@@ -164,7 +154,6 @@ const Profile = () => {
         description: "Your profile information has been updated successfully.",
       });
       
-      // Refresh data
       refetch();
       
     } catch (error) {

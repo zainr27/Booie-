@@ -1,18 +1,11 @@
-
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { UserDemographicData } from '@/types/custom';
 
 type UserData = {
-  demographic?: {
-    age: number | null;
-    gender: string | null;
-    ethnicity: string | null;
-    zip_code: string | null;
-    first_name?: string | null;
-    last_name?: string | null;
-  };
+  demographic?: UserDemographicData;
   academic?: {
     school: string;
     degree_program: string;
