@@ -252,9 +252,9 @@ export const calculateISAIRR = (
   
   const cashflows = [-initialAmount, ...yearlyPayments];
   
-  // Calculate NPV at initial guess rates
-  const npv1 = calculateNPV(cashflows, rate1);
-  const npv2 = calculateNPV(cashflows, rate2);
+  // Calculate NPV at initial guess rates - use let instead of const since we'll reassign these
+  let npv1 = calculateNPV(cashflows, rate1);
+  let npv2 = calculateNPV(cashflows, rate2);
   
   // Iterate to find the rate that gives NPV = 0
   for (let i = 0; i < maxIterations; i++) {

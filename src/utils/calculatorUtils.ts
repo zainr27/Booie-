@@ -1,4 +1,3 @@
-
 // Loan calculator utility functions
 
 // Calculate monthly payment based on loan amount, interest rate, and term
@@ -394,4 +393,43 @@ export const calculateLoanSummary = async (userId: string) => {
     console.error('Error calculating loan summary:', error);
     return null;
   }
+};
+
+/**
+ * Calculate the repayment rate for Booie's income-based financing
+ * @param loanAmount The amount of the loan
+ * @param incomeProjection Projected income over the years
+ * @param termYears Loan term in years
+ * @returns Repayment rate as a decimal (e.g., 0.05 for 5%)
+ */
+export const calculateBooieRepaymentRate = (
+  loanAmount: number,
+  incomeProjection: number[],
+  termYears: number
+): number => {
+  // If no income projection data, return a default rate
+  if (!incomeProjection.length || !loanAmount) {
+    return 0.05; // Default to 5%
+  }
+
+  // Calculate a rate that would approximately recover 1.5x the loan amount
+  // over the term, adjusting for the projected income
+  const targetTotal = loanAmount * 1.5;
+  
+  // Get average annual income from the projection (excluding zeros)
+  const validIncomes = incomeProjection.filter(income => income > 0);
+  const avgAnnualIncome = validIncomes.length > 0 
+    ? validIncomes.reduce((sum, income) => sum + income, 0) / validIncomes.length
+    : 50000; // Fallback average income
+  
+  // Calculate annual payment needed to reach target
+  const annualPayment = targetTotal / termYears;
+  
+  // Calculate rate as a percentage of income
+  let rate = annualPayment / avgAnnualIncome;
+  
+  // Cap the rate at reasonable bounds
+  rate = Math.max(0.02, Math.min(0.15, rate));
+  
+  return parseFloat(rate.toFixed(4)); // Return with 4 decimal precision
 };
