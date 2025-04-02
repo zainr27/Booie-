@@ -1,9 +1,10 @@
+
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ProfileSummary from '@/components/dashboard/ProfileSummary';
 import MiniLoanCalculator from '@/components/dashboard/MiniLoanCalculator';
 import { useAuth } from '@/contexts/AuthContext';
-import { PageTransition } from '@/components/ui/page-transition';
+import PageTransition from '@/components/layout/PageTransition';
 import { supabase } from '@/integrations/supabase/client';
 import ComplianceSection from '@/components/dashboard/ComplianceSection';
 import { UserDemographicData } from '@/types/custom';
