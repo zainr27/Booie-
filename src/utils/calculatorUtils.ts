@@ -1,4 +1,5 @@
 // Loan calculator utility functions
+import { LoanApplication } from '@/types/custom';
 
 // Calculate monthly payment based on loan amount, interest rate, and term
 export const calculateMonthlyPayment = (
@@ -277,9 +278,10 @@ export const saveLoanCalculation = async (
 };
 
 // Fetch the most recent loan calculation from Supabase
-export const fetchLatestLoanCalculation = async (userId: string) => {
+export const fetchLatestLoanCalculation = async (userId: string): Promise<LoanApplication | null> => {
   // Import at function level to avoid circular dependencies
   const { supabase } = await import('@/integrations/supabase/client');
+  const { LoanApplication } = await import('@/types/custom');
   
   try {
     const { data, error } = await supabase
@@ -298,7 +300,7 @@ export const fetchLatestLoanCalculation = async (userId: string) => {
       throw error;
     }
     
-    return data;
+    return data as LoanApplication;
   } catch (error) {
     console.error('Error fetching loan calculation:', error);
     return null;
