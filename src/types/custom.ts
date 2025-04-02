@@ -19,3 +19,17 @@ export interface LoanCalculationResult {
   totalPayment: number;
   apr: number;
 }
+
+// Add user demographic data type
+export interface UserDemographicData {
+  id: string;
+  user_id: string;
+  age: number | null;
+  gender: string | null;
+  ethnicity: string | null;
+  zip_code: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  created_at: string;
+  updated_at: string;
+}

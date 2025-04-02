@@ -247,8 +247,10 @@ export type Database = {
           age: number | null
           created_at: string
           ethnicity: string | null
+          first_name: string | null
           gender: string | null
           id: string
+          last_name: string | null
           updated_at: string
           user_id: string
           zip_code: string | null
@@ -257,8 +259,10 @@ export type Database = {
           age?: number | null
           created_at?: string
           ethnicity?: string | null
+          first_name?: string | null
           gender?: string | null
           id?: string
+          last_name?: string | null
           updated_at?: string
           user_id: string
           zip_code?: string | null
@@ -267,8 +271,10 @@ export type Database = {
           age?: number | null
           created_at?: string
           ethnicity?: string | null
+          first_name?: string | null
           gender?: string | null
           id?: string
+          last_name?: string | null
           updated_at?: string
           user_id?: string
           zip_code?: string | null

@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
@@ -9,6 +8,8 @@ export type DemographicData = {
   gender: string;
   ethnicity: string;
   zipCode: string;
+  firstName: string;
+  lastName: string;
 };
 
 export type FinancialData = {
@@ -38,6 +39,7 @@ export type OnboardingData = {
 type OnboardingContextType = {
   currentStep: number;
   setCurrentStep: (step: number) => void;
+  nextStep: () => void;
   data: OnboardingData;
   updateDemographicData: (data: Partial<DemographicData>) => void;
   updateFinancialData: (data: Partial<FinancialData>) => void;
@@ -51,6 +53,8 @@ const defaultOnboardingData: OnboardingData = {
     gender: '',
     ethnicity: '',
     zipCode: '',
+    firstName: '',
+    lastName: '',
   },
   academic: {
     school: '',
@@ -62,8 +66,8 @@ const defaultOnboardingData: OnboardingData = {
     currentIncome: null,
     householdIncome: null,
     dependents: null,
-    fundingRequired: 20000, // Default value
-    yearOfFirstPayment: 1, // Default value
+    fundingRequired: 20000,
+    yearOfFirstPayment: 1,
     incomeFloor: null,
     maxTermYears: null,
     repaymentCapMultiple: null,
@@ -75,6 +79,10 @@ const OnboardingContext = createContext<OnboardingContextType | undefined>(undef
 export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<OnboardingData>(defaultOnboardingData);
+
+  const nextStep = () => {
+    setCurrentStep((prev) => prev + 1);
+  };
 
   const updateDemographicData = (newData: Partial<DemographicData>) => {
     setData((prev) => ({
@@ -107,7 +115,6 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const saveAllData = async () => {
-    // Get the current authenticated user
     const { data: authData } = await supabase.auth.getUser();
     
     if (!authData.user) {
@@ -117,22 +124,21 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
     const userId = authData.user.id;
     
     try {
-      // Begin transaction by inserting all data in parallel
       const [demographicResult, academicResult, financialResult] = await Promise.all([
-        // Save demographic data
         supabase
-          .from('user_demographic_data' as any)
+          .from('user_demographic_data')
           .upsert({
             user_id: userId,
             age: data.demographic.age,
             gender: data.demographic.gender,
             ethnicity: data.demographic.ethnicity,
             zip_code: data.demographic.zipCode,
+            first_name: data.demographic.firstName,
+            last_name: data.demographic.lastName,
           }),
         
-        // Save academic data
         supabase
-          .from('user_academic_data' as any)
+          .from('user_academic_data')
           .upsert({
             user_id: userId,
             school: data.academic.school,
@@ -141,9 +147,8 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
             graduation_year: data.academic.graduationYear,
           }),
         
-        // Save financial data
         supabase
-          .from('user_financial_data' as any)
+          .from('user_financial_data')
           .upsert({
             user_id: userId,
             current_income: data.financial.currentIncome,
@@ -157,7 +162,6 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
           }),
       ]);
       
-      // Check for errors
       if (demographicResult.error) {
         console.error('Error saving demographic data:', demographicResult.error);
         throw demographicResult.error;
@@ -175,7 +179,6 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
       
       console.log('All onboarding data saved successfully');
       
-      // Show success toast
       toast({
         title: "Profile saved",
         description: "Your profile information has been saved successfully.",
@@ -196,6 +199,7 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   const value = {
     currentStep,
     setCurrentStep,
+    nextStep,
     data,
     updateDemographicData,
     updateFinancialData,

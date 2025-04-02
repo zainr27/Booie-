@@ -11,7 +11,7 @@ import { toast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
 
 const DemographicStep = () => {
-  const { nextStep } = useOnboarding();
+  const { nextStep, updateDemographicData } = useOnboarding();
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -38,6 +38,16 @@ const DemographicStep = () => {
     setIsSubmitting(true);
     
     try {
+      // Update the onboarding context with form data
+      updateDemographicData({
+        firstName,
+        lastName,
+        age: age ? parseInt(age) : null,
+        gender,
+        ethnicity,
+        zipCode
+      });
+      
       const { error } = await supabase
         .from('user_demographic_data')
         .insert([
