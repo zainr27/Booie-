@@ -109,41 +109,62 @@ export type Database = {
       }
       loan_applications: {
         Row: {
+          apr: number | null
           created_at: string
           degree_program_id: string
           id: string
+          income_floor: number | null
           institution_id: string
           interest_rate: number
+          is_isa: boolean | null
           loan_amount: number
           monthly_payment: number | null
+          repayment_cap: number | null
+          repayment_rate: number | null
           status: string
           term_months: number
+          total_interest: number | null
+          total_payment: number | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          apr?: number | null
           created_at?: string
           degree_program_id: string
           id?: string
+          income_floor?: number | null
           institution_id: string
           interest_rate: number
+          is_isa?: boolean | null
           loan_amount: number
           monthly_payment?: number | null
+          repayment_cap?: number | null
+          repayment_rate?: number | null
           status?: string
           term_months: number
+          total_interest?: number | null
+          total_payment?: number | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          apr?: number | null
           created_at?: string
           degree_program_id?: string
           id?: string
+          income_floor?: number | null
           institution_id?: string
           interest_rate?: number
+          is_isa?: boolean | null
           loan_amount?: number
           monthly_payment?: number | null
+          repayment_cap?: number | null
+          repayment_rate?: number | null
           status?: string
           term_months?: number
+          total_interest?: number | null
+          total_payment?: number | null
           updated_at?: string
           user_id?: string
         }

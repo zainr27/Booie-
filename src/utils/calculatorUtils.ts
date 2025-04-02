@@ -260,6 +260,8 @@ export const saveLoanCalculation = async (
         repayment_rate: loanData.repaymentRate,
         income_floor: loanData.incomeFloor,
         repayment_cap: loanData.repaymentCap,
+        institution_id: '00000000-0000-0000-0000-000000000000',
+        degree_program_id: '00000000-0000-0000-0000-000000000000',
         status: 'draft'
       })
       .select('id')

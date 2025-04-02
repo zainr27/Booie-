@@ -90,7 +90,7 @@ export interface EducationMode {
   label: string;
 }
 
-// Add loan application type
+// Add loan application type with all fields from the database
 export interface LoanApplication {
   id: string;
   user_id: string;
@@ -118,4 +118,3 @@ export interface IncomeProjection {
   income: number;
   payment?: number;
 }
-
