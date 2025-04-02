@@ -144,7 +144,14 @@ export const schools: School[] = [
 export const calculateIncomeProjection = (
   degreeId: string,
   schoolId: string,
-  years: number = 15
+  years: number = 15,
+  yearOfFirstIncome: number = 0,
+  personalFactors: {
+    highGPA?: boolean;
+    topTestScore?: boolean;
+    hasInternship?: boolean;
+    hasReturnOffer?: boolean;
+  } = {}
 ): number[] => {
   const degree = degreePrograms.find((d) => d.id === degreeId);
   const school = schools.find((s) => s.id === schoolId);
@@ -153,14 +160,26 @@ export const calculateIncomeProjection = (
     return Array(years).fill(0);
   }
   
-  // Calculate starting salary based on degree and school factors
-  const baseSalary = degree.avgStartingSalary * school.employmentFactor;
+  // Calculate base starting salary from degree and school
+  let baseSalary = degree.avgStartingSalary * school.employmentFactor;
+  
+  // Apply personal factors
+  if (personalFactors.highGPA) baseSalary *= 1.05;      // +5% for high GPA
+  if (personalFactors.topTestScore) baseSalary *= 1.03; // +3% for top scores
+  if (personalFactors.hasInternship) baseSalary *= 1.07; // +7% for internship
+  if (personalFactors.hasReturnOffer) baseSalary *= 1.15; // +15% for return offer
   
   // Project salary growth over specified number of years
   const incomeProjection = Array(years).fill(0).map((_, index) => {
-    // Compound growth formula: P(1 + r)^t
-    const projectedSalary = baseSalary * Math.pow(1 + degree.growthRate, index);
-    return Math.round(projectedSalary);
+    if (index < yearOfFirstIncome) {
+      // No income before starting employment
+      return 0;
+    } else {
+      // Compound growth formula: P(1 + r)^t
+      const yearsAfterStart = index - yearOfFirstIncome;
+      const projectedSalary = baseSalary * Math.pow(1 + degree.growthRate, yearsAfterStart);
+      return Math.round(projectedSalary);
+    }
   });
   
   return incomeProjection;
@@ -174,4 +193,96 @@ export const formatCurrency = (amount: number): string => {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);
+};
+
+// Generate repayment schedule based on income projections and ISA terms
+export const generateRepaymentSchedule = (
+  incomeProjection: number[],
+  repaymentRate: number,
+  incomeFloor: number,
+  loanAmount: number,
+  repaymentCapMultiple: number
+): Array<{year: number, income: number, payment: number, remainingBalance: number}> => {
+  const repaymentCap = loanAmount * repaymentCapMultiple;
+  let remainingBalance = loanAmount;
+  let totalPaid = 0;
+  
+  return incomeProjection.map((income, index) => {
+    // If cap reached or income is 0, no additional payments
+    if (totalPaid >= repaymentCap || income === 0) {
+      return {
+        year: index + 1,
+        income,
+        payment: 0,
+        remainingBalance: 0
+      };
+    }
+    
+    // Calculate payment based on income above floor
+    const incomeAboveFloor = Math.max(0, income - incomeFloor);
+    let yearlyPayment = incomeAboveFloor * repaymentRate;
+    
+    // Don't exceed the repayment cap
+    const remainingToCap = repaymentCap - totalPaid;
+    yearlyPayment = Math.min(yearlyPayment, remainingToCap);
+    
+    // Update totals
+    totalPaid += yearlyPayment;
+    remainingBalance = Math.max(0, repaymentCap - totalPaid);
+    
+    return {
+      year: index + 1,
+      income,
+      payment: yearlyPayment,
+      remainingBalance
+    };
+  });
+};
+
+// Calculate the IRR (Internal Rate of Return) for the ISA
+export const calculateISAIRR = (
+  initialAmount: number,
+  yearlyPayments: number[],
+  maxIterations: number = 1000,
+  tolerance: number = 0.0000001
+): number => {
+  // Initial guess rates
+  let rate1 = 0.01; // 1%
+  let rate2 = 0.15; // 15%
+  
+  const cashflows = [-initialAmount, ...yearlyPayments];
+  
+  // Calculate NPV at initial guess rates
+  const npv1 = calculateNPV(cashflows, rate1);
+  const npv2 = calculateNPV(cashflows, rate2);
+  
+  // Iterate to find the rate that gives NPV = 0
+  for (let i = 0; i < maxIterations; i++) {
+    if (Math.abs(npv1) < tolerance) {
+      return rate1 * 100; // Convert to percentage
+    }
+    
+    if (Math.abs(npv2) < tolerance) {
+      return rate2 * 100; // Convert to percentage
+    }
+    
+    // Use secant method
+    const newRate = rate1 - npv1 * (rate2 - rate1) / (npv2 - npv1);
+    
+    // Update for next iteration
+    rate1 = rate2;
+    npv1 = npv2;
+    rate2 = newRate;
+    npv2 = calculateNPV(cashflows, newRate);
+  }
+  
+  // Fall back to the better approximation
+  return (Math.abs(npv1) < Math.abs(npv2) ? rate1 : rate2) * 100;
+};
+
+// Helper function to calculate NPV
+const calculateNPV = (cashflows: number[], rate: number): number => {
+  return cashflows.reduce((npv, cf, year) => {
+    return npv + cf / Math.pow(1 + rate, year);
+  }, 0);
 };

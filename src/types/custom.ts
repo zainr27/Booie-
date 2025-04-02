@@ -1,3 +1,4 @@
+
 import type { Database } from '../integrations/supabase/types';
 
 // Re-export database types for convenience
@@ -96,9 +97,16 @@ export interface LoanApplication {
   loan_amount: number;
   interest_rate: number;
   term_months: number;
-  monthly_payment: number; // Used as repayment rate in ISA
-  institution_id: string;
-  degree_program_id: string;
+  monthly_payment: number;
+  total_interest?: number;
+  total_payment?: number;
+  apr?: number;
+  is_isa?: boolean;
+  repayment_rate?: number;
+  income_floor?: number;
+  repayment_cap?: number;
+  institution_id?: string;
+  degree_program_id?: string;
   status: 'draft' | 'submitted' | 'approved' | 'rejected';
   created_at: string;
   updated_at: string;
