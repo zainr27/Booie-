@@ -1,6 +1,7 @@
 
 import { createContext, useContext, useState, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 
 // Define types for the onboarding data
 export type DemographicData = {
@@ -115,63 +116,81 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
     
     const userId = authData.user.id;
     
-    // Begin transaction by inserting all data in parallel
-    const [demographicResult, academicResult, financialResult] = await Promise.all([
-      // Save demographic data
-      supabase
-        .from('user_demographic_data')
-        .upsert({
-          user_id: userId,
-          age: data.demographic.age,
-          gender: data.demographic.gender,
-          ethnicity: data.demographic.ethnicity,
-          zip_code: data.demographic.zipCode,
-        }),
+    try {
+      // Begin transaction by inserting all data in parallel
+      const [demographicResult, academicResult, financialResult] = await Promise.all([
+        // Save demographic data
+        supabase
+          .from('user_demographic_data' as any)
+          .upsert({
+            user_id: userId,
+            age: data.demographic.age,
+            gender: data.demographic.gender,
+            ethnicity: data.demographic.ethnicity,
+            zip_code: data.demographic.zipCode,
+          }),
+        
+        // Save academic data
+        supabase
+          .from('user_academic_data' as any)
+          .upsert({
+            user_id: userId,
+            school: data.academic.school,
+            degree_program: data.academic.degreeProgram,
+            major: data.academic.major,
+            graduation_year: data.academic.graduationYear,
+          }),
+        
+        // Save financial data
+        supabase
+          .from('user_financial_data' as any)
+          .upsert({
+            user_id: userId,
+            current_income: data.financial.currentIncome,
+            household_income: data.financial.householdIncome,
+            dependents: data.financial.dependents,
+            funding_required: data.financial.fundingRequired,
+            year_of_first_payment: data.financial.yearOfFirstPayment,
+            income_floor: data.financial.incomeFloor,
+            max_term_years: data.financial.maxTermYears,
+            repayment_cap_multiple: data.financial.repaymentCapMultiple,
+          }),
+      ]);
       
-      // Save academic data
-      supabase
-        .from('user_academic_data')
-        .upsert({
-          user_id: userId,
-          school: data.academic.school,
-          degree_program: data.academic.degreeProgram,
-          major: data.academic.major,
-          graduation_year: data.academic.graduationYear,
-        }),
+      // Check for errors
+      if (demographicResult.error) {
+        console.error('Error saving demographic data:', demographicResult.error);
+        throw demographicResult.error;
+      }
       
-      // Save financial data
-      supabase
-        .from('user_financial_data')
-        .upsert({
-          user_id: userId,
-          current_income: data.financial.currentIncome,
-          household_income: data.financial.householdIncome,
-          dependents: data.financial.dependents,
-          funding_required: data.financial.fundingRequired,
-          year_of_first_payment: data.financial.yearOfFirstPayment,
-          income_floor: data.financial.incomeFloor,
-          max_term_years: data.financial.maxTermYears,
-          repayment_cap_multiple: data.financial.repaymentCapMultiple,
-        }),
-    ]);
-    
-    // Check for errors
-    if (demographicResult.error) {
-      console.error('Error saving demographic data:', demographicResult.error);
-      throw demographicResult.error;
+      if (academicResult.error) {
+        console.error('Error saving academic data:', academicResult.error);
+        throw academicResult.error;
+      }
+      
+      if (financialResult.error) {
+        console.error('Error saving financial data:', financialResult.error);
+        throw financialResult.error;
+      }
+      
+      console.log('All onboarding data saved successfully');
+      
+      // Show success toast
+      toast({
+        title: "Profile saved",
+        description: "Your profile information has been saved successfully.",
+        variant: "default",
+      });
+      
+    } catch (error) {
+      console.error('Error in saveAllData:', error);
+      toast({
+        title: "Error saving profile",
+        description: "There was a problem saving your information. Please try again.",
+        variant: "destructive",
+      });
+      throw error;
     }
-    
-    if (academicResult.error) {
-      console.error('Error saving academic data:', academicResult.error);
-      throw academicResult.error;
-    }
-    
-    if (financialResult.error) {
-      console.error('Error saving financial data:', financialResult.error);
-      throw financialResult.error;
-    }
-    
-    console.log('All onboarding data saved successfully');
   };
 
   const value = {

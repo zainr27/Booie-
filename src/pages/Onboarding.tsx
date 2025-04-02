@@ -38,21 +38,21 @@ const Onboarding = () => {
       try {
         // Check if user has demographic data
         const { data: demographicData, error: demographicError } = await supabase
-          .from('user_demographic_data')
+          .from('user_demographic_data' as any)
           .select('id')
           .eq('user_id', user.id)
           .maybeSingle();
         
         // Check if user has academic data
         const { data: academicData, error: academicError } = await supabase
-          .from('user_academic_data')
+          .from('user_academic_data' as any)
           .select('id')
           .eq('user_id', user.id)
           .maybeSingle();
         
         // Check if user has financial data
         const { data: financialData, error: financialError } = await supabase
-          .from('user_financial_data')
+          .from('user_financial_data' as any)
           .select('id')
           .eq('user_id', user.id)
           .maybeSingle();
