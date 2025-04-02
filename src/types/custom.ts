@@ -118,3 +118,4 @@ export interface IncomeProjection {
   income: number;
   payment?: number;
 }
+
