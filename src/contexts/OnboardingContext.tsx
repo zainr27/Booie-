@@ -21,6 +21,14 @@ export type FinancialData = {
   incomeFloor: number | null;
   maxTermYears: number | null;
   repaymentCapMultiple: number | null;
+  educationMode?: string;
+  graduationDate?: string;
+  employmentDate?: string;
+  highGPA?: boolean;
+  topTestScore?: boolean;
+  hasCosigner?: boolean;
+  hasInternship?: boolean;
+  hasReturnOffer?: boolean;
 };
 
 export type AcademicData = {
@@ -71,6 +79,12 @@ const defaultOnboardingData: OnboardingData = {
     incomeFloor: null,
     maxTermYears: null,
     repaymentCapMultiple: null,
+    educationMode: '',
+    highGPA: false,
+    topTestScore: false,
+    hasCosigner: false,
+    hasInternship: false,
+    hasReturnOffer: false,
   },
 };
 
@@ -159,6 +173,14 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
             income_floor: data.financial.incomeFloor,
             max_term_years: data.financial.maxTermYears,
             repayment_cap_multiple: data.financial.repaymentCapMultiple,
+            education_mode: data.financial.educationMode,
+            graduation_date: data.financial.graduationDate,
+            employment_date: data.financial.employmentDate,
+            high_gpa: data.financial.highGPA,
+            top_test_score: data.financial.topTestScore,
+            has_cosigner: data.financial.hasCosigner,
+            has_internship: data.financial.hasInternship,
+            has_return_offer: data.financial.hasReturnOffer,
           }),
       ]);
       

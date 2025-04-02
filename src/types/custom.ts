@@ -1,4 +1,3 @@
-
 import type { Database } from '../integrations/supabase/types';
 
 // Re-export database types for convenience
@@ -46,14 +45,14 @@ export interface UserFinancialData {
   current_income: number | null;
   household_income: number | null;
   dependents: number | null;
-  educationMode?: string;
-  graduationDate?: string;
-  employmentDate?: string;
-  highGPA?: boolean;
-  topTestScore?: boolean;
-  hasCosigner?: boolean;
-  hasInternship?: boolean;
-  hasReturnOffer?: boolean;
+  education_mode?: string;
+  graduation_date?: string;
+  employment_date?: string;
+  high_gpa?: boolean;
+  top_test_score?: boolean;
+  has_cosigner?: boolean;
+  has_internship?: boolean;
+  has_return_offer?: boolean;
   created_at: string;
   updated_at: string;
 }
