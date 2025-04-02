@@ -10,6 +10,8 @@ type UserData = {
     gender: string | null;
     ethnicity: string | null;
     zip_code: string | null;
+    first_name?: string | null;
+    last_name?: string | null;
   };
   academic?: {
     school: string;
@@ -34,8 +36,24 @@ const ProfileSummary = ({ userData }: ProfileSummaryProps) => {
   const { user } = useAuth();
   
   const getInitials = () => {
+    if (userData?.demographic?.first_name && userData?.demographic?.last_name) {
+      return `${userData.demographic.first_name.charAt(0)}${userData.demographic.last_name.charAt(0)}`.toUpperCase();
+    }
+    if (userData?.demographic?.first_name) {
+      return userData.demographic.first_name.substring(0, 2).toUpperCase();
+    }
     if (!user?.email) return '?';
     return user.email.substring(0, 2).toUpperCase();
+  };
+
+  const getDisplayName = () => {
+    if (userData?.demographic?.first_name && userData?.demographic?.last_name) {
+      return `${userData.demographic.first_name} ${userData.demographic.last_name}`;
+    }
+    if (userData?.demographic?.first_name) {
+      return userData.demographic.first_name;
+    }
+    return user?.email;
   };
 
   return (
@@ -46,7 +64,7 @@ const ProfileSummary = ({ userData }: ProfileSummaryProps) => {
           <AvatarFallback>{getInitials()}</AvatarFallback>
         </Avatar>
         <div>
-          <p className="font-medium">{user?.email}</p>
+          <p className="font-medium">{getDisplayName()}</p>
           <p className="text-sm text-muted-foreground">
             {userData?.demographic?.zip_code && `Location: ${userData.demographic.zip_code}`}
           </p>

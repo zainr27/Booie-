@@ -110,7 +110,9 @@ const Profile = () => {
               age: demographic.age,
               gender: demographic.gender,
               ethnicity: demographic.ethnicity,
-              zip_code: demographic.zip_code
+              zip_code: demographic.zip_code,
+              first_name: demographic.first_name,
+              last_name: demographic.last_name
             })
             .eq('id', demographic.id)
         );
@@ -216,7 +218,7 @@ const Profile = () => {
                     <AvatarFallback className="text-lg">{getInitials()}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <CardTitle>{user?.email}</CardTitle>
+                    <CardTitle>{demographic?.first_name ? `${demographic.first_name} ${demographic.last_name || ''}` : user?.email}</CardTitle>
                     <CardDescription>Account created: {new Date(user?.created_at || '').toLocaleDateString()}</CardDescription>
                   </div>
                 </div>
@@ -237,6 +239,32 @@ const Profile = () => {
                     <CardDescription>Update your personal details</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="firstName">First Name</Label>
+                        <Input
+                          id="firstName"
+                          value={demographic?.first_name || ''}
+                          onChange={(e) => setDemographic(prev => ({ 
+                            ...prev!, 
+                            first_name: e.target.value 
+                          }))}
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="lastName">Last Name</Label>
+                        <Input
+                          id="lastName"
+                          value={demographic?.last_name || ''}
+                          onChange={(e) => setDemographic(prev => ({ 
+                            ...prev!, 
+                            last_name: e.target.value 
+                          }))}
+                        />
+                      </div>
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="age">Age</Label>

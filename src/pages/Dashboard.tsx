@@ -70,13 +70,29 @@ const Dashboard = () => {
     );
   }
 
+  // Get user's display name
+  const getDisplayName = () => {
+    if (userData?.demographic?.first_name && userData?.demographic?.last_name) {
+      return `${userData.demographic.first_name} ${userData.demographic.last_name}`;
+    }
+    if (userData?.demographic?.first_name) {
+      return userData.demographic.first_name;
+    }
+    if (userData?.academic?.school) {
+      return `${userData.academic.school} student`;
+    }
+    return '';
+  };
+
   return (
     <PageTransition>
       <Layout>
         <div className="container-custom py-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Welcome back{userData?.academic ? `, ${userData.academic.school} student` : ''}</h1>
+              <h1 className="text-3xl font-bold mb-2">
+                Welcome back{getDisplayName() ? `, ${getDisplayName()}` : ''}
+              </h1>
               <p className="text-muted-foreground">
                 Your dashboard provides an overview of your financing options and profile information.
               </p>

@@ -1,186 +1,190 @@
 
-import { useState } from 'react';
-import { useOnboarding } from '@/contexts/OnboardingContext';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useOnboarding } from '@/contexts/OnboardingContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
 
 const DemographicStep = () => {
-  const { data, updateDemographicData, setCurrentStep } = useOnboarding();
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [visibleQuestions, setVisibleQuestions] = useState(1);
-  const totalQuestions = 4;
+  const { nextStep } = useOnboarding();
+  const { user } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Form state
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [age, setAge] = useState('');
+  const [gender, setGender] = useState('');
+  const [ethnicity, setEthnicity] = useState('');
+  const [zipCode, setZipCode] = useState('');
 
-  const validateAndNext = () => {
-    const newErrors: Record<string, string> = {};
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     
-    if (!data.demographic.age) {
-      newErrors.age = 'Age is required';
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be signed in to complete onboarding.",
+        variant: "destructive",
+      });
+      return;
     }
     
-    if (!data.demographic.gender) {
-      newErrors.gender = 'Please select a gender';
-    }
+    setIsSubmitting(true);
     
-    if (!data.demographic.zipCode) {
-      newErrors.zipCode = 'ZIP code is required';
-    } else if (!/^\d{5}(-\d{4})?$/.test(data.demographic.zipCode)) {
-      newErrors.zipCode = 'Please enter a valid ZIP code';
+    try {
+      const { error } = await supabase
+        .from('user_demographic_data')
+        .insert([
+          {
+            user_id: user.id,
+            age: age ? parseInt(age) : null,
+            gender,
+            ethnicity,
+            zip_code: zipCode,
+            first_name: firstName,
+            last_name: lastName
+          },
+        ]);
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Success",
+        description: "Your demographic information has been saved.",
+      });
+      
+      nextStep();
+    } catch (error: any) {
+      console.error("Error saving demographic data:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save your information. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
-    
-    setErrors(newErrors);
-    
-    if (Object.keys(newErrors).length === 0) {
-      setCurrentStep(1);
-    }
-  };
-
-  // Show next question only if current question is filled
-  const showNextQuestion = (questionNumber: number) => {
-    if (visibleQuestions === questionNumber && questionNumber < totalQuestions) {
-      setVisibleQuestions(questionNumber + 1);
-    }
-  };
-
-  // Animation variants for questions
-  const questionVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
   };
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      transition={{ duration: 0.3 }}
       className="space-y-6"
     >
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Tell us about yourself</h2>
-        <p className="text-sm text-gray-500">
-          This information helps us personalize your experience
+        <h2 className="text-2xl font-bold tracking-tight">Personal Information</h2>
+        <p className="text-muted-foreground mt-2">
+          Let's start with some basic information about you.
         </p>
       </div>
       
-      <div className="space-y-6">
-        {/* Age Question */}
-        <motion.div 
-          className="space-y-2"
-          initial="hidden"
-          animate={visibleQuestions >= 1 ? "visible" : "hidden"}
-          variants={questionVariants}
-        >
-          <Label htmlFor="age" className="text-sm font-medium text-blue-600">
-            Age
-          </Label>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Name fields */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="firstName">First Name</Label>
+            <Input
+              id="firstName"
+              placeholder="Enter your first name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="lastName">Last Name</Label>
+            <Input
+              id="lastName"
+              placeholder="Enter your last name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
+          </div>
+        </div>
+        
+        {/* Age field */}
+        <div className="space-y-2">
+          <Label htmlFor="age">Age</Label>
           <Input
             id="age"
             type="number"
-            value={data.demographic.age || ''}
-            onChange={(e) => {
-              updateDemographicData({ 
-                age: e.target.value ? parseInt(e.target.value) : null 
-              });
-              if (e.target.value) showNextQuestion(1);
-            }}
-            className={errors.age ? 'border-red-500' : ''}
-            placeholder="Your age"
+            placeholder="e.g., 25"
+            value={age}
+            onChange={(e) => setAge(e.target.value)}
           />
-          {errors.age && <p className="text-sm text-red-500">{errors.age}</p>}
-        </motion.div>
+        </div>
         
-        {/* Gender Question */}
-        <motion.div 
-          className="space-y-2"
-          initial="hidden"
-          animate={visibleQuestions >= 2 ? "visible" : "hidden"}
-          variants={questionVariants}
-        >
-          <Label htmlFor="gender" className="text-sm font-medium text-blue-600">
-            Gender
-          </Label>
-          <Select 
-            value={data.demographic.gender}
-            onValueChange={(value) => {
-              updateDemographicData({ gender: value });
-              showNextQuestion(2);
-            }}
-          >
-            <SelectTrigger className={errors.gender ? 'border-red-500' : ''}>
+        {/* Gender selection */}
+        <div className="space-y-2">
+          <Label htmlFor="gender">Gender</Label>
+          <Select value={gender} onValueChange={setGender}>
+            <SelectTrigger>
               <SelectValue placeholder="Select gender" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="male">Male</SelectItem>
-              <SelectItem value="female">Female</SelectItem>
-              <SelectItem value="non-binary">Non-binary</SelectItem>
-              <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+              <SelectItem value="Male">Male</SelectItem>
+              <SelectItem value="Female">Female</SelectItem>
+              <SelectItem value="Non-binary">Non-binary</SelectItem>
+              <SelectItem value="Prefer not to say">Prefer not to say</SelectItem>
             </SelectContent>
           </Select>
-          {errors.gender && <p className="text-sm text-red-500">{errors.gender}</p>}
-        </motion.div>
+        </div>
         
-        {/* Ethnicity Question */}
-        <motion.div 
-          className="space-y-2"
-          initial="hidden"
-          animate={visibleQuestions >= 3 ? "visible" : "hidden"}
-          variants={questionVariants}
-        >
-          <Label htmlFor="ethnicity" className="text-sm font-medium text-blue-600">
-            Race/Ethnicity (Optional)
-          </Label>
-          <Select 
-            value={data.demographic.ethnicity}
-            onValueChange={(value) => {
-              updateDemographicData({ ethnicity: value });
-              showNextQuestion(3);
-            }}
-          >
+        {/* Ethnicity selection */}
+        <div className="space-y-2">
+          <Label htmlFor="ethnicity">Ethnicity</Label>
+          <Select value={ethnicity} onValueChange={setEthnicity}>
             <SelectTrigger>
               <SelectValue placeholder="Select ethnicity" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="asian">Asian</SelectItem>
-              <SelectItem value="black">Black or African American</SelectItem>
-              <SelectItem value="hispanic">Hispanic or Latino</SelectItem>
-              <SelectItem value="native-american">Native American</SelectItem>
-              <SelectItem value="pacific-islander">Pacific Islander</SelectItem>
-              <SelectItem value="white">White</SelectItem>
-              <SelectItem value="other">Other</SelectItem>
-              <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+              <SelectItem value="African American">African American</SelectItem>
+              <SelectItem value="Asian">Asian</SelectItem>
+              <SelectItem value="Hispanic/Latino">Hispanic/Latino</SelectItem>
+              <SelectItem value="Native American">Native American</SelectItem>
+              <SelectItem value="Pacific Islander">Pacific Islander</SelectItem>
+              <SelectItem value="White">White</SelectItem>
+              <SelectItem value="Multiple ethnicities">Multiple ethnicities</SelectItem>
+              <SelectItem value="Prefer not to say">Prefer not to say</SelectItem>
             </SelectContent>
           </Select>
-        </motion.div>
+        </div>
         
-        {/* ZIP Code Question */}
-        <motion.div 
-          className="space-y-2"
-          initial="hidden"
-          animate={visibleQuestions >= 4 ? "visible" : "hidden"}
-          variants={questionVariants}
-        >
-          <Label htmlFor="zipCode" className="text-sm font-medium text-blue-600">
-            ZIP Code
-          </Label>
+        {/* Zip code field */}
+        <div className="space-y-2">
+          <Label htmlFor="zipCode">Zip Code</Label>
           <Input
             id="zipCode"
-            value={data.demographic.zipCode}
-            onChange={(e) => updateDemographicData({ zipCode: e.target.value })}
-            className={errors.zipCode ? 'border-red-500' : ''}
-            placeholder="Your ZIP code"
+            placeholder="e.g., 90210"
+            value={zipCode}
+            onChange={(e) => setZipCode(e.target.value)}
           />
-          {errors.zipCode && <p className="text-sm text-red-500">{errors.zipCode}</p>}
-        </motion.div>
-      </div>
-      
-      <Button 
-        onClick={validateAndNext}
-        className="w-full bg-blue-600 hover:bg-blue-700"
-      >
-        Continue
-      </Button>
+        </div>
+        
+        <Button 
+          type="submit" 
+          className="w-full"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              <span className="ml-2">Saving...</span>
+            </div>
+          ) : (
+            'Continue to Next Step'
+          )}
+        </Button>
+      </form>
     </motion.div>
   );
 };
