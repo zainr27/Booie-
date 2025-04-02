@@ -33,3 +33,17 @@ export interface UserDemographicData {
   created_at: string;
   updated_at: string;
 }
+
+// Add types for regulatory information display
+export interface RegulatoryRequirement {
+  id: string;
+  title: string;
+  description: string;
+  requirements: string[];
+}
+
+export interface CompliancePrinciple {
+  id: string;
+  title: string;
+  description: string;
+}
