@@ -14,6 +14,8 @@ import Comparison from "./pages/Comparison";
 import Fees from "./pages/Fees";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
+import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
@@ -33,19 +35,52 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+// After onboarding route component
+const IndexRoute = () => {
+  const { user, loading, hasCompletedOnboarding } = useAuth();
+  
+  // Show loading spinner while checking authentication status
+  if (loading) {
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  }
+
+  // If not logged in, show the index page
+  if (!user) {
+    return <Index />;
+  }
+  
+  // If logged in but hasn't completed onboarding
+  if (!hasCompletedOnboarding) {
+    return <Navigate to="/onboarding" replace />;
+  }
+  
+  // If logged in and has completed onboarding
+  return <Navigate to="/dashboard" replace />;
+};
+
 const AnimatedRoutes = () => {
   const location = useLocation();
   
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Index />} />
+        <Route path="/" element={<IndexRoute />} />
         <Route path="/income-projection" element={<IncomeProjection />} />
         <Route path="/loan-calculator" element={<LoanCalculator />} />
         <Route path="/comparison" element={<Comparison />} />
         <Route path="/fees" element={<Fees />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        } />
         <Route path="/onboarding" element={
           <ProtectedRoute>
             <Onboarding />
