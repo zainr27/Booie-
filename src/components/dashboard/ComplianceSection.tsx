@@ -171,46 +171,48 @@ const ComplianceSection = () => {
               Projected income growth over the next 10 years
             </CardDescription>
           </CardHeader>
-          <CardContent className="pt-2 pb-4">
+          <CardContent className="pt-2">
             {loading ? (
               <div className="h-64 flex items-center justify-center">
                 <p className="text-muted-foreground">Loading projection data...</p>
               </div>
             ) : incomeData.length > 0 ? (
-              <ChartContainer 
-                className="h-64" 
-                config={chartConfig}
-              >
-                <LineChart 
-                  data={incomeData}
-                  margin={{ top: 10, right: 30, left: 20, bottom: 30 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="year" 
-                    angle={-45}
-                    textAnchor="end"
-                    height={60}
-                    tickMargin={15}
-                  />
-                  <YAxis 
-                    tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                  />
-                  <ChartTooltip
-                    content={<ChartTooltipContent 
+              <div className="h-64 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart 
+                    data={incomeData}
+                    margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="year" 
+                      angle={-45}
+                      textAnchor="end"
+                      height={60}
+                      tickMargin={15}
+                      fontSize={12}
+                    />
+                    <YAxis 
+                      tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                      width={60}
+                      fontSize={12}
+                    />
+                    <Tooltip
                       formatter={(value) => [`$${value.toLocaleString()}`, 'Income']}
-                    />}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="income" 
-                    stroke="var(--color-income)" 
-                    strokeWidth={2}
-                    dot={{ stroke: 'var(--color-income)', strokeWidth: 2, fill: 'white' }}
-                    activeDot={{ r: 6 }}
-                  />
-                </LineChart>
-              </ChartContainer>
+                      labelFormatter={(label) => `Year: ${label}`}
+                      contentStyle={{ fontSize: '12px' }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="income" 
+                      stroke="#0070f3" 
+                      strokeWidth={2}
+                      dot={{ stroke: '#0070f3', strokeWidth: 2, fill: 'white', r: 3 }}
+                      activeDot={{ r: 5 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             ) : (
               <div className="h-64 flex flex-col items-center justify-center gap-2">
                 <AlertTriangle className="h-8 w-8 text-yellow-500" />
@@ -228,31 +230,44 @@ const ComplianceSection = () => {
               Comparison of your loan options
             </CardDescription>
           </CardHeader>
-          <CardContent className="pt-2 pb-4">
+          <CardContent className="pt-2">
             {loading ? (
               <div className="h-64 flex items-center justify-center">
                 <p className="text-muted-foreground">Loading loan data...</p>
               </div>
             ) : loanData.length > 0 ? (
-              <ChartContainer 
-                className="h-64" 
-                config={chartConfig}
-              >
-                <BarChart
-                  data={loanData}
-                  margin={{ top: 10, right: 30, left: 20, bottom: 30 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} />
-                  <ChartTooltip
-                    content={<ChartTooltipContent />}
-                  />
-                  <Bar dataKey="amount" name="amount" fill="var(--color-amount)" />
-                  <Bar dataKey="interest" name="interest" fill="var(--color-interest)" />
-                  <ChartLegend content={<ChartLegendContent />} />
-                </BarChart>
-              </ChartContainer>
+              <div className="h-64 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={loanData}
+                    margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
+                    barSize={25}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="name" 
+                      fontSize={12}
+                      height={50}
+                      interval={0}
+                    />
+                    <YAxis 
+                      tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} 
+                      width={60}
+                      fontSize={12}
+                    />
+                    <Tooltip
+                      formatter={(value) => [`$${value.toLocaleString()}`, value === 'amount' ? 'Principal' : value === 'interest' ? 'Interest' : 'Value']}
+                      labelFormatter={(label) => `${label}`}
+                      contentStyle={{ fontSize: '12px' }}
+                    />
+                    <Bar dataKey="amount" name="Principal" fill="#0070f3" />
+                    <Bar dataKey="interest" name="Interest" fill="#f97316" />
+                    <Legend
+                      wrapperStyle={{ fontSize: '12px', marginTop: '10px' }}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             ) : (
               <div className="h-64 flex flex-col items-center justify-center gap-2">
                 <AlertTriangle className="h-8 w-8 text-yellow-500" />
