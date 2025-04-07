@@ -1,14 +1,16 @@
 
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { GraduationCap, Menu } from 'lucide-react';
+import { GraduationCap, Menu, Home } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
 
 const Header = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isDashboard = location.pathname === '/dashboard';
   
   const handleAuthAction = async () => {
     if (user) {
@@ -29,6 +31,10 @@ const Header = () => {
     } else {
       navigate('/auth');
     }
+  };
+
+  const goToHomePage = () => {
+    navigate('/');
   };
 
   return (
@@ -63,6 +69,17 @@ const Header = () => {
         
         {/* Right section: Authentication buttons */}
         <div className="flex items-center gap-4">
+          {isDashboard && (
+            <Button 
+              variant="outline" 
+              className="font-medium gap-2"
+              onClick={goToHomePage}
+            >
+              <Home className="h-4 w-4" />
+              Home
+            </Button>
+          )}
+          
           <Button 
             variant="outline" 
             className="font-medium"
