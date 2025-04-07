@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from "recharts";
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -209,6 +209,7 @@ const ComplianceSection = () => {
                       strokeWidth={2}
                       dot={{ stroke: '#0070f3', strokeWidth: 2, fill: 'white', r: 3 }}
                       activeDot={{ r: 5 }}
+                      name="Income"
                     />
                   </LineChart>
                 </ResponsiveContainer>
