@@ -6,12 +6,15 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { formatCurrency, projectIncomeGrowth } from "@/utils/calculatorUtils";
+import { useToast } from "@/hooks/use-toast";
+import { AlertTriangle } from "lucide-react";
 
 const ComplianceSection = () => {
   const { user } = useAuth();
   const [incomeData, setIncomeData] = useState([]);
   const [loanData, setLoanData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,40 +24,53 @@ const ComplianceSection = () => {
         setLoading(true);
 
         // Fetch financial data
-        const { data: financialData } = await supabase
+        const { data: financialData, error: financialError } = await supabase
           .from('user_financial_data')
           .select('*')
           .eq('user_id', user.id)
           .single();
 
-        // Fetch loan application data
-        const { data: loanApplications } = await supabase
+        if (financialError && financialError.code !== 'PGRST116') {
+          console.error("Error fetching financial data:", financialError);
+          toast({
+            title: "Could not load financial data",
+            description: "Please try again later or contact support",
+            variant: "destructive",
+          });
+        }
+
+        // Fetch loan application data - allow this to fail gracefully
+        const { data: loanApplications, error: loanError } = await supabase
           .from('loan_applications')
           .select('*')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false });
 
-        if (financialData) {
-          const startingIncome = financialData.current_income || 60000;
-          const growthRate = 0.05; // 5% annual income growth
-          const years = 10;
-
-          // Generate projected income data for the next 10 years
-          const projectedIncomes = projectIncomeGrowth(
-            startingIncome,
-            growthRate,
-            years,
-            0
-          );
-
-          const incomeChartData = projectedIncomes.map((income, index) => ({
-            year: new Date().getFullYear() + index,
-            income: income
-          }));
-
-          setIncomeData(incomeChartData);
+        if (loanError) {
+          console.error("Error fetching loan data:", loanError);
         }
 
+        // Generate income data regardless of whether we have financial data
+        const startingIncome = financialData?.current_income || 60000;
+        const growthRate = 0.05; // 5% annual income growth
+        const years = 10;
+
+        // Generate projected income data for the next 10 years
+        const projectedIncomes = projectIncomeGrowth(
+          startingIncome,
+          growthRate,
+          years,
+          0
+        );
+
+        const incomeChartData = projectedIncomes.map((income, index) => ({
+          year: new Date().getFullYear() + index,
+          income: income
+        }));
+
+        setIncomeData(incomeChartData);
+
+        // Process loan data if available
         if (loanApplications && loanApplications.length > 0) {
           // Prepare data for loan comparison chart
           const compareData = loanApplications.slice(0, 5).map((loan, index) => {
@@ -68,16 +84,49 @@ const ComplianceSection = () => {
           });
           
           setLoanData(compareData);
+        } else {
+          // Create sample data for visualization
+          if (financialData?.funding_required) {
+            const sampleLoan = {
+              id: 0,
+              name: "Sample Loan",
+              amount: financialData.funding_required,
+              interest: financialData.funding_required * 0.05,
+              payment: financialData.funding_required * 1.05
+            };
+            setLoanData([sampleLoan]);
+          }
         }
       } catch (error) {
         console.error("Error fetching data for charts:", error);
+        toast({
+          title: "Could not load chart data",
+          description: "Using sample data instead",
+          variant: "default",
+        });
+        
+        // Set fallback data
+        const fallbackIncomeData = Array(10).fill(0).map((_, index) => ({
+          year: new Date().getFullYear() + index,
+          income: 60000 * Math.pow(1.05, index)
+        }));
+        setIncomeData(fallbackIncomeData);
+        
+        const fallbackLoanData = [{
+          id: 0,
+          name: "Sample Loan",
+          amount: 50000,
+          interest: 2500,
+          payment: 52500
+        }];
+        setLoanData(fallbackLoanData);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [user]);
+  }, [user, toast]);
 
   const chartConfig = {
     income: {
@@ -127,7 +176,7 @@ const ComplianceSection = () => {
               <div className="h-64 flex items-center justify-center">
                 <p className="text-muted-foreground">Loading projection data...</p>
               </div>
-            ) : (
+            ) : incomeData.length > 0 ? (
               <ChartContainer 
                 className="h-64" 
                 config={chartConfig}
@@ -162,6 +211,11 @@ const ComplianceSection = () => {
                   />
                 </LineChart>
               </ChartContainer>
+            ) : (
+              <div className="h-64 flex flex-col items-center justify-center gap-2">
+                <AlertTriangle className="h-8 w-8 text-yellow-500" />
+                <p className="text-muted-foreground text-center">No income data available</p>
+              </div>
             )}
           </CardContent>
         </Card>
@@ -200,8 +254,9 @@ const ComplianceSection = () => {
                 </BarChart>
               </ChartContainer>
             ) : (
-              <div className="h-64 flex items-center justify-center">
-                <p className="text-muted-foreground">No loan data available. Try using the loan calculator to see comparisons.</p>
+              <div className="h-64 flex flex-col items-center justify-center gap-2">
+                <AlertTriangle className="h-8 w-8 text-yellow-500" />
+                <p className="text-muted-foreground text-center">No loan data available. Try using the loan calculator to see comparisons.</p>
               </div>
             )}
           </CardContent>
