@@ -12,6 +12,9 @@ const Header = () => {
   const location = useLocation();
   const isDashboard = location.pathname === '/dashboard';
   
+  console.log('Current route:', location.pathname); // Added diagnostic log
+  console.log('Is Dashboard:', isDashboard); // Added diagnostic log
+
   const handleAuthAction = async () => {
     if (user) {
       try {
