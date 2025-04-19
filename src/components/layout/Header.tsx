@@ -10,10 +10,9 @@ const Header = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const isDashboard = location.pathname === '/dashboard';
+  const isHome = location.pathname === '/';
   
-  console.log('Current route:', location.pathname); // Added diagnostic log
-  console.log('Is Dashboard:', isDashboard); // Added diagnostic log
+  console.log('Current route:', location.pathname);
 
   const handleAuthAction = async () => {
     if (user) {
@@ -72,7 +71,7 @@ const Header = () => {
         
         {/* Right section: Authentication buttons */}
         <div className="flex items-center gap-4">
-          {isDashboard && (
+          {!isHome && (
             <Button 
               variant="outline" 
               className="font-medium gap-2"

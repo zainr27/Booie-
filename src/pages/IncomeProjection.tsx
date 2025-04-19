@@ -10,7 +10,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -29,33 +28,40 @@ import {
   TrendingUp, 
   DollarSign, 
   Download,
-  Share2
+  Share2,
+  Info
 } from 'lucide-react';
 import { 
   degreePrograms, 
   schools, 
   calculateIncomeProjection,
-  formatCurrency
+  formatCurrency,
+  calculateLEP,
+  roundHundred
 } from '@/utils/incomeUtils';
 import { Label } from '@/components/ui/label';
+import { TooltipProvider, Tooltip as UITooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 const IncomeProjection = () => {
   const [selectedDegree, setSelectedDegree] = useState<string>('cs-bs');
   const [selectedSchool, setSelectedSchool] = useState<string>('mit');
   const [projectionData, setProjectionData] = useState<Array<{year: number, income: number}>>([]);
   const [projectionYears, setProjectionYears] = useState<number>(15);
-  const [showInflationAdjusted, setShowInflationAdjusted] = useState<boolean>(false);
   const [isComparing, setIsComparing] = useState<boolean>(false);
   const [comparisonData, setComparisonData] = useState<Array<{year: number, income: number, comparison: number}>>([]);
   const [comparisonDegree, setComparisonDegree] = useState<string>('business-bs');
   const [comparisonSchool, setComparisonSchool] = useState<string>('berkeley');
   
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   
   // Calculate income projection when inputs change
   useEffect(() => {
     calculateProjections();
-  }, [selectedDegree, selectedSchool, projectionYears, showInflationAdjusted, comparisonDegree, comparisonSchool, isComparing]);
+  }, [selectedDegree, selectedSchool, projectionYears, comparisonDegree, comparisonSchool, isComparing]);
   
   const calculateProjections = () => {
     const incomes = calculateIncomeProjection(selectedDegree, selectedSchool, projectionYears);
@@ -69,8 +75,8 @@ const IncomeProjection = () => {
         const comparisonIncome = comparisonIncomes[index];
         return {
           year: index + 1,
-          income: adjustForInflation(income),
-          comparison: adjustForInflation(comparisonIncome)
+          income: income,
+          comparison: comparisonIncome
         };
       });
       
@@ -78,19 +84,17 @@ const IncomeProjection = () => {
     } else {
       formattedData = incomes.map((income, index) => ({
         year: index + 1,
-        income: adjustForInflation(income),
+        income: income,
       }));
     }
     
     setProjectionData(formattedData);
   };
   
-  const adjustForInflation = (value: number): number => {
-    if (showInflationAdjusted) {
-      // Simple inflation adjustment (3% annual inflation)
-      return value / Math.pow(1.03, projectionYears / 2);
-    }
-    return value;
+  // Log event function (placeholder)
+  const logEvent = (eventName: string) => {
+    console.log(`Event logged: ${eventName}`);
+    // In the future, this would connect to an analytics service
   };
   
   // Find currently selected degree and school objects
@@ -139,6 +143,15 @@ const IncomeProjection = () => {
         title: "Comparison mode enabled",
         description: "You can now compare two different degree paths."
       });
+    }
+  };
+
+  const handleApplyButtonClick = () => {
+    logEvent('cta_apply_booie_plan');
+    if (user) {
+      navigate('/loan-application');
+    } else {
+      navigate('/auth');
     }
   };
   
@@ -210,21 +223,13 @@ const IncomeProjection = () => {
                 </div>
                 
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="inflation-switch">Adjust for Inflation</Label>
-                  <Switch
-                    id="inflation-switch"
-                    checked={showInflationAdjusted}
-                    onCheckedChange={setShowInflationAdjusted}
-                  />
-                </div>
-                
-                <div className="flex items-center justify-between">
                   <Label htmlFor="comparison-switch">Compare Programs</Label>
-                  <Switch
-                    id="comparison-switch"
-                    checked={isComparing}
-                    onCheckedChange={toggleComparison}
-                  />
+                  <Button 
+                    variant={isComparing ? "default" : "outline"}
+                    onClick={toggleComparison}
+                  >
+                    {isComparing ? "Comparing" : "Compare"}
+                  </Button>
                 </div>
                 
                 {isComparing && (
@@ -288,13 +293,47 @@ const IncomeProjection = () => {
                         <dt className="text-gray-600">Starting Salary:</dt>
                         <dd className="font-medium">
                           {formatCurrency(
-                            selectedDegreeObj.avgStartingSalary * selectedSchoolObj.employmentFactor
+                            roundHundred(selectedDegreeObj.avgStartingSalary * selectedSchoolObj.employmentFactor)
                           )}
                         </dd>
                       </div>
+                      <div className="grid grid-cols-2">
+                        <dt className="text-gray-600">
+                          <div className="flex items-center">
+                            <span>Employment Factor</span>
+                            <TooltipProvider>
+                              <UITooltip>
+                                <TooltipTrigger asChild>
+                                  <Info className="h-4 w-4 ml-1 text-gray-400" />
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-xs">
+                                  <p>Probability a graduate is employed full-time one year after completion (0-1).</p>
+                                </TooltipContent>
+                              </UITooltip>
+                            </TooltipProvider>
+                          </div>
+                        </dt>
+                        <dd className="font-medium">{selectedSchoolObj.employmentFactor.toFixed(2)}</dd>
+                      </div>
+                      <div className="grid grid-cols-2">
+                        <dt className="text-gray-600">Annual Growth Rate†:</dt>
+                        <dd className="font-medium">xx%</dd>
+                      </div>
                     </dl>
+                    <p className="text-xs text-gray-500 mt-2">
+                      †Calculated from historical earnings for {selectedSchoolObj.name} {selectedDegreeObj.name} grads, industry growth, and inflation forecasts.
+                    </p>
                   </div>
                 )}
+
+                <div className="mt-6">
+                  <Button 
+                    className="w-full bg-booie-600 hover:bg-booie-700 font-medium"
+                    onClick={handleApplyButtonClick}
+                  >
+                    Apply for your Booie Plan
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -463,7 +502,7 @@ const IncomeProjection = () => {
                         </p>
                         <p>
                           <strong>Lifetime Earning Difference:</strong> Approximately {formatCurrency(
-                            comparisonData.reduce((total, year) => total + ((year.income || 0) - (year.comparison || 0)), 0)
+                            roundHundred(comparisonData.reduce((total, year) => total + ((year.income || 0) - (year.comparison || 0)), 0))
                           )}.
                         </p>
                       </div>
@@ -471,8 +510,16 @@ const IncomeProjection = () => {
                   </div>
                 </div>
                 
-                <div className="mt-6 bg-gray-50 p-4 rounded-md text-sm">
-                  <p className="text-gray-600">
+                <div className="mt-6 bg-gray-50 p-4 rounded-md">
+                  <div className="mb-4">
+                    <h3 className="font-semibold mb-2" data-testid="lep-card">Lifetime Earning Potential (LEP)</h3>
+                    <div className="flex items-center justify-between">
+                      <p>Value based on degree, school, and historical factors</p>
+                      <span className="font-bold text-lg">TBD</span>
+                    </div>
+                  </div>
+                  
+                  <p className="text-gray-600 text-sm">
                     <strong>Note:</strong> These projections are estimates based on historical data and industry trends.
                     Individual outcomes may vary based on location, economic conditions, and personal factors.
                   </p>

@@ -178,12 +178,15 @@ export const calculateIncomeProjection = (
       // Compound growth formula: P(1 + r)^t
       const yearsAfterStart = index - yearOfFirstIncome;
       const projectedSalary = baseSalary * Math.pow(1 + degree.growthRate, yearsAfterStart);
-      return Math.round(projectedSalary);
+      return roundHundred(projectedSalary);
     }
   });
   
   return incomeProjection;
 };
+
+// Round to nearest hundred
+export const roundHundred = (n: number): number => Math.round(n / 100) * 100;
 
 // Format currency for display
 export const formatCurrency = (amount: number): string => {
@@ -193,6 +196,12 @@ export const formatCurrency = (amount: number): string => {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);
+};
+
+// Calculate Lifetime Earning Potential (LEP)
+export const calculateLEP = (programId: string, schoolId: string): null => {
+  // TODO: Implement real calculation logic in the future
+  return null;
 };
 
 // Generate repayment schedule based on income projections and ISA terms
