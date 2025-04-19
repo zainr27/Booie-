@@ -9,6 +9,13 @@ export type UserPlan = {
   mitigants: string[];
   createdAt: string;
   updatedAt: string;
+  // Additional fields for loan simulator
+  school?: string;
+  degree?: string;
+  loanAmount?: number;
+  loanTerm?: number;
+  incomeFloor?: number;
+  repaymentCap?: number;
 };
 
 export function useUserPlan(enabled = true) {
@@ -41,6 +48,13 @@ export function useUserPlan(enabled = true) {
           mitigants: ['upfront_payment', 'bonus_pledge'], // Example selected mitigants
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
+          // Additional mock data for loan simulator
+          school: 'University of California, Berkeley',
+          degree: 'Master of Computer Science',
+          loanAmount: 45000,
+          loanTerm: 10,
+          incomeFloor: 60000,
+          repaymentCap: 90000
         };
         
         setPlan(mockPlan);

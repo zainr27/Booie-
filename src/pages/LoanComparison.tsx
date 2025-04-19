@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import RateTable from '@/components/loan-comparison/RateTable';
 import MitigantSidebar from '@/components/loan-comparison/MitigantSidebar';
@@ -128,6 +128,16 @@ const LoanComparison = () => {
               />
             )}
           </div>
+        </div>
+        
+        {/* Detailed Comparison Link */}
+        <div className="mt-6 text-center">
+          <Link 
+            to="/compare/detailed" 
+            className="text-booie-600 hover:text-booie-800 underline font-medium"
+          >
+            Want to see a year-by-year breakdown? Try our detailed payment simulator →
+          </Link>
         </div>
         
         {/* Apply CTA Button */}

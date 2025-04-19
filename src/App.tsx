@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +12,7 @@ import LoanCalculator from "./pages/LoanCalculator";
 import AdvancedLoanCalculator from "./pages/AdvancedLoanCalculator";
 import Comparison from "./pages/Comparison";
 import LoanComparison from "./pages/LoanComparison";
+import DetailedLoanComparison from "./pages/DetailedLoanComparison";
 import Fees from "./pages/Fees";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
@@ -77,6 +77,7 @@ const AnimatedRoutes = () => {
             <LoanComparison />
           </ProtectedRoute>
         } />
+        <Route path="/compare/detailed" element={<DetailedLoanComparison />} />
         <Route path="/fees" element={<Fees />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/auth" element={<Auth />} />
