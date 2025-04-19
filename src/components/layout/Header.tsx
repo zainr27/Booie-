@@ -58,8 +58,8 @@ const Header = () => {
           <Link to="/loan-calculator" className="text-gray-600 hover:text-booie-700 font-medium">
             Loan Calculator
           </Link>
-          <Link to="/comparison" className="text-gray-600 hover:text-booie-700 font-medium">
-            Comparison
+          <Link to="/compare" className="text-gray-600 hover:text-booie-700 font-medium">
+            Loan Comparison
           </Link>
           <Link to="/fees" className="text-gray-600 hover:text-booie-700 font-medium">
             Fee Structure
