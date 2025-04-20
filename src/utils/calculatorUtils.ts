@@ -373,7 +373,7 @@ export const calculateLoanSummary = async (userId: string) => {
       expectedStartingIncome, 
       growthRate, 
       maxTermYears, 
-      financialData.year_of_first_payment || 1
+      1 // Default first payment in 1 year
     );
     
     // Calculate monthly payments

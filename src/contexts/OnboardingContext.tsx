@@ -13,11 +13,7 @@ export type DemographicData = {
 };
 
 export type FinancialData = {
-  currentIncome: number | null;
-  householdIncome: number | null;
-  dependents: number | null;
   fundingRequired: number | null;
-  yearOfFirstPayment: number | null;
   incomeFloor: number | null;
   maxTermYears: number | null;
   repaymentCapMultiple: number | null;
@@ -81,14 +77,10 @@ const defaultOnboardingData: OnboardingData = {
     isCustomMajor: false,
   },
   financial: {
-    currentIncome: null,
-    householdIncome: null,
-    dependents: null,
     fundingRequired: 20000,
-    yearOfFirstPayment: 1,
     incomeFloor: null,
-    maxTermYears: null,
-    repaymentCapMultiple: null,
+    maxTermYears: 10,
+    repaymentCapMultiple: 2.0,
     educationMode: '',
     highGPA: false,
     topTestScore: false,
@@ -180,11 +172,7 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
           .from('user_financial_data')
           .upsert({
             user_id: userId,
-            current_income: data.financial.currentIncome,
-            household_income: data.financial.householdIncome,
-            dependents: data.financial.dependents,
             funding_required: data.financial.fundingRequired,
-            year_of_first_payment: data.financial.yearOfFirstPayment,
             income_floor: data.financial.incomeFloor,
             max_term_years: data.financial.maxTermYears,
             repayment_cap_multiple: data.financial.repaymentCapMultiple,

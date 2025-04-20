@@ -26,11 +26,7 @@ type UserData = {
   };
   financial?: {
     id: string;
-    current_income: number | null;
-    household_income: number | null;
-    dependents: number | null;
     funding_required: number | null;
-    year_of_first_payment: number | null;
     income_floor: number | null;
     max_term_years: number | null;
     repayment_cap_multiple: number | null;
@@ -128,11 +124,7 @@ const Profile = () => {
           supabase
             .from('user_financial_data')
             .update({
-              current_income: financial.current_income,
-              household_income: financial.household_income,
-              dependents: financial.dependents,
               funding_required: financial.funding_required,
-              year_of_first_payment: financial.year_of_first_payment,
               income_floor: financial.income_floor,
               max_term_years: financial.max_term_years,
               repayment_cap_multiple: financial.repayment_cap_multiple

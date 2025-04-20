@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ProfileSummary from '@/components/dashboard/ProfileSummary';
@@ -13,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, TrendingUp, DollarSign, Clock, Percent } from 'lucide-react';
 import { fetchLatestLoanCalculation, calculateLoanSummary, formatCurrency } from '@/utils/calculatorUtils';
 
-// Interface for loan metrics
 interface LoanMetrics {
   fundingRequired: number;
   repaymentRate: number;
@@ -37,7 +35,6 @@ const Dashboard = () => {
   const [calculationLoading, setCalculationLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  // Fetch user data from Supabase
   useEffect(() => {
     const fetchUserData = async () => {
       if (!user) {
@@ -96,7 +93,6 @@ const Dashboard = () => {
     fetchUserData();
   }, [user]);
 
-  // Fetch or calculate loan metrics
   useEffect(() => {
     const fetchLoanMetrics = async () => {
       if (!user) return;
@@ -104,11 +100,9 @@ const Dashboard = () => {
       try {
         setCalculationLoading(true);
         
-        // Try to fetch the latest saved calculation
         const latestCalc = await fetchLatestLoanCalculation(user.id);
         
         if (latestCalc) {
-          // Use saved calculation
           setLoanMetrics({
             fundingRequired: latestCalc.loan_amount,
             repaymentRate: latestCalc.repayment_rate || 0.1,
@@ -120,7 +114,6 @@ const Dashboard = () => {
             maxTermYears: Math.ceil(latestCalc.term_months / 12)
           });
         } else {
-          // Calculate new metrics based on user data
           const calculatedMetrics = await calculateLoanSummary(user.id);
           
           if (calculatedMetrics) {
@@ -143,7 +136,6 @@ const Dashboard = () => {
     <PageTransition>
       <div className="container py-10">
         <div className="flex flex-col gap-8">
-          {/* Page header */}
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
             <p className="text-muted-foreground mt-2">
@@ -151,9 +143,7 @@ const Dashboard = () => {
             </p>
           </div>
 
-          {/* Main content */}
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            {/* Left column - User profile and mini calculator */}
             <div className="lg:col-span-1 space-y-8">
               <Card>
                 <CardHeader>
@@ -179,9 +169,7 @@ const Dashboard = () => {
               </Card>
             </div>
 
-            {/* Right column - Stats and regulatory information */}
             <div className="lg:col-span-2 space-y-8">
-              {/* Financial Overview */}
               <div>
                 <h2 className="text-2xl font-bold tracking-tight mb-4">Financial Overview</h2>
                 
@@ -326,7 +314,6 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Compliance & Regulatory Section */}
               <ComplianceSection />
             </div>
           </div>

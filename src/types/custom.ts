@@ -1,4 +1,3 @@
-
 import type { Database } from '../integrations/supabase/types';
 
 // Re-export database types for convenience
@@ -39,13 +38,9 @@ export interface UserFinancialData {
   id: string;
   user_id: string;
   funding_required: number | null;
-  year_of_first_payment: number | null;
   income_floor: number | null;
   max_term_years: number | null;
   repayment_cap_multiple: number | null;
-  current_income: number | null;
-  household_income: number | null;
-  dependents: number | null;
   education_mode?: string;
   graduation_date?: string;
   employment_date?: string;
