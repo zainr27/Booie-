@@ -36,6 +36,11 @@ export type AcademicData = {
   degreeProgram: string;
   major: string;
   graduationYear: number | null;
+  graduationMonth: number | null;
+  studyMode: string;
+  deliveryMode: string;
+  isCustomSchool?: boolean;
+  isCustomMajor?: boolean;
 };
 
 export type OnboardingData = {
@@ -69,6 +74,11 @@ const defaultOnboardingData: OnboardingData = {
     degreeProgram: '',
     major: '',
     graduationYear: null,
+    graduationMonth: null,
+    studyMode: '',
+    deliveryMode: '',
+    isCustomSchool: false,
+    isCustomMajor: false,
   },
   financial: {
     currentIncome: null,
@@ -159,6 +169,11 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
             degree_program: data.academic.degreeProgram,
             major: data.academic.major,
             graduation_year: data.academic.graduationYear,
+            graduation_month: data.academic.graduationMonth,
+            study_mode: data.academic.studyMode,
+            delivery_mode: data.academic.deliveryMode,
+            is_custom_school: data.academic.isCustomSchool,
+            is_custom_major: data.academic.isCustomMajor,
           }),
         
         supabase
