@@ -343,45 +343,57 @@ export type Database = {
       user_financial_data: {
         Row: {
           created_at: string
-          current_income: number | null
-          dependents: number | null
+          education_mode: string | null
+          employment_date: string | null
           funding_required: number | null
-          household_income: number | null
+          graduation_date: string | null
+          has_cosigner: boolean | null
+          has_internship: boolean | null
+          has_return_offer: boolean | null
+          high_gpa: boolean | null
           id: string
           income_floor: number | null
           max_term_years: number | null
           repayment_cap_multiple: number | null
+          top_test_score: boolean | null
           updated_at: string
           user_id: string
-          year_of_first_payment: number | null
         }
         Insert: {
           created_at?: string
-          current_income?: number | null
-          dependents?: number | null
+          education_mode?: string | null
+          employment_date?: string | null
           funding_required?: number | null
-          household_income?: number | null
+          graduation_date?: string | null
+          has_cosigner?: boolean | null
+          has_internship?: boolean | null
+          has_return_offer?: boolean | null
+          high_gpa?: boolean | null
           id?: string
           income_floor?: number | null
           max_term_years?: number | null
           repayment_cap_multiple?: number | null
+          top_test_score?: boolean | null
           updated_at?: string
           user_id: string
-          year_of_first_payment?: number | null
         }
         Update: {
           created_at?: string
-          current_income?: number | null
-          dependents?: number | null
+          education_mode?: string | null
+          employment_date?: string | null
           funding_required?: number | null
-          household_income?: number | null
+          graduation_date?: string | null
+          has_cosigner?: boolean | null
+          has_internship?: boolean | null
+          has_return_offer?: boolean | null
+          high_gpa?: boolean | null
           id?: string
           income_floor?: number | null
           max_term_years?: number | null
           repayment_cap_multiple?: number | null
+          top_test_score?: boolean | null
           updated_at?: string
           user_id?: string
-          year_of_first_payment?: number | null
         }
         Relationships: []
       }
