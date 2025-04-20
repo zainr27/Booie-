@@ -13,9 +13,6 @@ type UserData = {
     graduation_year: number | null;
   };
   financial?: {
-    current_income: number | null;
-    household_income: number | null;
-    dependents: number | null;
     funding_required: number | null;
   };
 };

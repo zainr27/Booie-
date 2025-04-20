@@ -51,7 +51,7 @@ const ComplianceSection = () => {
         }
 
         // Generate income data regardless of whether we have financial data
-        const startingIncome = 60000; // Default starting income since current_income was removed
+        const startingIncome = 60000; // Default starting income
         const growthRate = 0.05; // 5% annual income growth
         const years = 10;
 

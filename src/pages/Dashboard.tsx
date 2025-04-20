@@ -150,7 +150,13 @@ const Dashboard = () => {
                   <CardTitle>Profile Summary</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ProfileSummary userData={userData} />
+                  <ProfileSummary userData={{
+                    demographic: userData?.demographic || undefined,
+                    academic: userData?.academic || undefined,
+                    financial: userData?.financial ? {
+                      funding_required: userData.financial.funding_required
+                    } : undefined
+                  }} />
                 </CardContent>
               </Card>
 

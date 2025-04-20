@@ -339,18 +339,23 @@ export const calculateLoanSummary = async (userId: string) => {
   const { supabase } = await import('@/integrations/supabase/client');
   
   try {
-    // Fetch user financial data
-    const { data: financialData, error: financialError } = await supabase
+    // Fetch user's financial data
+    const { data: financialData, error } = await supabase
       .from('user_financial_data')
       .select('*')
       .eq('user_id', userId)
       .single();
     
-    if (financialError) throw financialError;
-    
-    if (!financialData || financialData.funding_required === null) {
+    if (error) {
+      console.error("Error fetching financial data for calculation:", error);
       return null;
     }
+    
+    // If we previously used year_of_first_payment, now use employment_date or fallback
+    // Example:
+    const employmentDate = financialData.employment_date 
+      ? new Date(financialData.employment_date) 
+      : new Date(new Date().getFullYear() + 4, 0, 1); // Default to 4 years from now
     
     // Calculate ISA terms based on user's financial data
     const fundingRequired = financialData.funding_required;

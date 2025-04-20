@@ -374,47 +374,6 @@ const Profile = () => {
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="currentIncome">Current Income</Label>
-                        <Input
-                          id="currentIncome"
-                          type="number"
-                          value={financial?.current_income || ''}
-                          onChange={(e) => setFinancial(prev => ({ 
-                            ...prev!, 
-                            current_income: e.target.value ? Number(e.target.value) : null 
-                          }))}
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="householdIncome">Household Income</Label>
-                        <Input
-                          id="householdIncome"
-                          type="number"
-                          value={financial?.household_income || ''}
-                          onChange={(e) => setFinancial(prev => ({ 
-                            ...prev!, 
-                            household_income: e.target.value ? Number(e.target.value) : null 
-                          }))}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="dependents">Dependents</Label>
-                        <Input
-                          id="dependents"
-                          type="number"
-                          value={financial?.dependents || ''}
-                          onChange={(e) => setFinancial(prev => ({ 
-                            ...prev!, 
-                            dependents: e.target.value ? Number(e.target.value) : null 
-                          }))}
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
                         <Label htmlFor="fundingRequired">Funding Required</Label>
                         <Input
                           id="fundingRequired"
@@ -423,6 +382,48 @@ const Profile = () => {
                           onChange={(e) => setFinancial(prev => ({ 
                             ...prev!, 
                             funding_required: e.target.value ? Number(e.target.value) : null 
+                          }))}
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="incomeFloor">Income Floor</Label>
+                        <Input
+                          id="incomeFloor"
+                          type="number"
+                          value={financial?.income_floor || ''}
+                          onChange={(e) => setFinancial(prev => ({ 
+                            ...prev!, 
+                            income_floor: e.target.value ? Number(e.target.value) : null 
+                          }))}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="maxTermYears">Maximum Term (Years)</Label>
+                        <Input
+                          id="maxTermYears"
+                          type="number"
+                          value={financial?.max_term_years || ''}
+                          onChange={(e) => setFinancial(prev => ({ 
+                            ...prev!, 
+                            max_term_years: e.target.value ? Number(e.target.value) : null 
+                          }))}
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="repaymentCapMultiple">Repayment Cap Multiple</Label>
+                        <Input
+                          id="repaymentCapMultiple"
+                          type="number"
+                          step="0.1"
+                          value={financial?.repayment_cap_multiple || ''}
+                          onChange={(e) => setFinancial(prev => ({ 
+                            ...prev!, 
+                            repayment_cap_multiple: e.target.value ? Number(e.target.value) : null 
                           }))}
                         />
                       </div>
