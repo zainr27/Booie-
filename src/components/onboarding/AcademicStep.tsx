@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useOnboarding } from '@/contexts/OnboardingContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,10 +20,30 @@ import {
 const AcademicStep = () => {
   const { data, updateAcademicData, setCurrentStep } = useOnboarding();
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [visibleQuestions, setVisibleQuestions] = useState(1);
-  const [showCustomSchool, setShowCustomSchool] = useState(false);
-  const [showCustomMajor, setShowCustomMajor] = useState(false);
-  const totalQuestions = 7;
+  const [showCustomSchool, setShowCustomSchool] = useState(!!data.academic.isCustomSchool);
+  const [showCustomMajor, setShowCustomMajor] = useState(!!data.academic.isCustomMajor);
+  
+  // Controls which fields are visible
+  const [visibleFields, setVisibleFields] = useState(() => {
+    // Initialize based on existing data
+    const fieldsToShow = 1; // Start with school field
+    if (data.academic.school) return Math.max(2, fieldsToShow); // If school selected, show degree program
+    return fieldsToShow;
+  });
+
+  // Effect to update visible fields based on data
+  useEffect(() => {
+    let fieldsToShow = 1;
+    
+    if (data.academic.school) fieldsToShow = 2;
+    if (data.academic.degreeProgram) fieldsToShow = 3;
+    if (data.academic.major) fieldsToShow = 4;
+    if (data.academic.studyMode) fieldsToShow = 5;
+    if (data.academic.deliveryMode) fieldsToShow = 6;
+    if (data.academic.graduationMonth) fieldsToShow = 7;
+    
+    setVisibleFields(fieldsToShow);
+  }, [data.academic]);
 
   const validateAndNext = () => {
     const newErrors: Record<string, string> = {};
@@ -63,12 +83,6 @@ const AcademicStep = () => {
     }
   };
 
-  const showNextQuestion = () => {
-    if (visibleQuestions < totalQuestions) {
-      setVisibleQuestions(prev => prev + 1);
-    }
-  };
-
   const questionVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
@@ -93,7 +107,7 @@ const AcademicStep = () => {
         <motion.div 
           className="space-y-2"
           initial="hidden"
-          animate={visibleQuestions >= 1 ? "visible" : "hidden"}
+          animate={visibleFields >= 1 ? "visible" : "hidden"}
           variants={questionVariants}
         >
           <Label htmlFor="school" className="text-sm font-medium text-blue-600">
@@ -108,7 +122,6 @@ const AcademicStep = () => {
                   updateAcademicData({ school: '', isCustomSchool: true });
                 } else {
                   updateAcademicData({ school: value, isCustomSchool: false });
-                  showNextQuestion();
                 }
               }}
             >
@@ -129,7 +142,6 @@ const AcademicStep = () => {
               value={data.academic.school}
               onChange={(e) => {
                 updateAcademicData({ school: e.target.value });
-                if (e.target.value) showNextQuestion();
               }}
               placeholder="Enter your school name"
               className={errors.school ? 'border-red-500' : ''}
@@ -142,7 +154,7 @@ const AcademicStep = () => {
         <motion.div 
           className="space-y-2"
           initial="hidden"
-          animate={visibleQuestions >= 2 ? "visible" : "hidden"}
+          animate={visibleFields >= 2 ? "visible" : "hidden"}
           variants={questionVariants}
         >
           <Label htmlFor="degreeProgram" className="text-sm font-medium text-blue-600">
@@ -152,7 +164,6 @@ const AcademicStep = () => {
             value={data.academic.degreeProgram}
             onValueChange={(value) => {
               updateAcademicData({ degreeProgram: value });
-              showNextQuestion();
             }}
           >
             <SelectTrigger className={errors.degreeProgram ? 'border-red-500' : ''}>
@@ -173,7 +184,7 @@ const AcademicStep = () => {
         <motion.div 
           className="space-y-2"
           initial="hidden"
-          animate={visibleQuestions >= 3 ? "visible" : "hidden"}
+          animate={visibleFields >= 3 ? "visible" : "hidden"}
           variants={questionVariants}
         >
           <Label htmlFor="major" className="text-sm font-medium text-blue-600">
@@ -188,7 +199,6 @@ const AcademicStep = () => {
                   updateAcademicData({ major: '', isCustomMajor: true });
                 } else {
                   updateAcademicData({ major: value, isCustomMajor: false });
-                  showNextQuestion();
                 }
               }}
             >
@@ -201,6 +211,7 @@ const AcademicStep = () => {
                     {major.name}
                   </SelectItem>
                 ))}
+                <SelectItem value="other">Other</SelectItem>
               </SelectContent>
             </Select>
           ) : (
@@ -208,7 +219,6 @@ const AcademicStep = () => {
               value={data.academic.major}
               onChange={(e) => {
                 updateAcademicData({ major: e.target.value });
-                if (e.target.value) showNextQuestion();
               }}
               placeholder="Enter your major"
               className={errors.major ? 'border-red-500' : ''}
@@ -221,7 +231,7 @@ const AcademicStep = () => {
         <motion.div 
           className="space-y-2"
           initial="hidden"
-          animate={visibleQuestions >= 4 ? "visible" : "hidden"}
+          animate={visibleFields >= 4 ? "visible" : "hidden"}
           variants={questionVariants}
         >
           <Label htmlFor="studyMode" className="text-sm font-medium text-blue-600">
@@ -231,7 +241,6 @@ const AcademicStep = () => {
             value={data.academic.studyMode}
             onValueChange={(value) => {
               updateAcademicData({ studyMode: value });
-              showNextQuestion();
             }}
           >
             <SelectTrigger className={errors.studyMode ? 'border-red-500' : ''}>
@@ -252,7 +261,7 @@ const AcademicStep = () => {
         <motion.div 
           className="space-y-2"
           initial="hidden"
-          animate={visibleQuestions >= 5 ? "visible" : "hidden"}
+          animate={visibleFields >= 5 ? "visible" : "hidden"}
           variants={questionVariants}
         >
           <Label htmlFor="deliveryMode" className="text-sm font-medium text-blue-600">
@@ -262,7 +271,6 @@ const AcademicStep = () => {
             value={data.academic.deliveryMode}
             onValueChange={(value) => {
               updateAcademicData({ deliveryMode: value });
-              showNextQuestion();
             }}
           >
             <SelectTrigger className={errors.deliveryMode ? 'border-red-500' : ''}>
@@ -283,7 +291,7 @@ const AcademicStep = () => {
         <motion.div 
           className="space-y-2"
           initial="hidden"
-          animate={visibleQuestions >= 6 ? "visible" : "hidden"}
+          animate={visibleFields >= 6 ? "visible" : "hidden"}
           variants={questionVariants}
         >
           <Label htmlFor="graduationMonth" className="text-sm font-medium text-blue-600">
@@ -293,7 +301,6 @@ const AcademicStep = () => {
             value={data.academic.graduationMonth?.toString()}
             onValueChange={(value) => {
               updateAcademicData({ graduationMonth: parseInt(value) });
-              showNextQuestion();
             }}
           >
             <SelectTrigger className={errors.graduationMonth ? 'border-red-500' : ''}>
@@ -314,7 +321,7 @@ const AcademicStep = () => {
         <motion.div 
           className="space-y-2"
           initial="hidden"
-          animate={visibleQuestions >= 7 ? "visible" : "hidden"}
+          animate={visibleFields >= 7 ? "visible" : "hidden"}
           variants={questionVariants}
         >
           <Label htmlFor="graduationYear" className="text-sm font-medium text-blue-600">

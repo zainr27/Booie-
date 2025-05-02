@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
@@ -90,11 +91,51 @@ const defaultOnboardingData: OnboardingData = {
   },
 };
 
+// Local storage key for onboarding data
+const ONBOARDING_DATA_KEY = 'onboarding_data';
+const ONBOARDING_STEP_KEY = 'onboarding_step';
+
 const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
 
 export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [data, setData] = useState<OnboardingData>(defaultOnboardingData);
+  // Initialize from localStorage or use defaults
+  const [currentStep, setCurrentStep] = useState(() => {
+    try {
+      const savedStep = localStorage.getItem(ONBOARDING_STEP_KEY);
+      return savedStep ? parseInt(savedStep, 10) : 0;
+    } catch (error) {
+      console.error('Error loading step from localStorage:', error);
+      return 0;
+    }
+  });
+  
+  const [data, setData] = useState<OnboardingData>(() => {
+    try {
+      const savedData = localStorage.getItem(ONBOARDING_DATA_KEY);
+      return savedData ? JSON.parse(savedData) : defaultOnboardingData;
+    } catch (error) {
+      console.error('Error loading data from localStorage:', error);
+      return defaultOnboardingData;
+    }
+  });
+
+  // Save current step to localStorage when it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(ONBOARDING_STEP_KEY, currentStep.toString());
+    } catch (error) {
+      console.error('Error saving step to localStorage:', error);
+    }
+  }, [currentStep]);
+
+  // Save data to localStorage when it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(ONBOARDING_DATA_KEY, JSON.stringify(data));
+    } catch (error) {
+      console.error('Error saving data to localStorage:', error);
+    }
+  }, [data]);
 
   const nextStep = () => {
     setCurrentStep((prev) => prev + 1);
@@ -151,7 +192,8 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
             zip_code: data.demographic.zipCode,
             first_name: data.demographic.firstName,
             last_name: data.demographic.lastName,
-          }),
+          })
+          .select(),
         
         supabase
           .from('user_academic_data')
@@ -166,7 +208,8 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
             delivery_mode: data.academic.deliveryMode,
             is_custom_school: data.academic.isCustomSchool,
             is_custom_major: data.academic.isCustomMajor,
-          }),
+          })
+          .select(),
         
         supabase
           .from('user_financial_data')
@@ -184,7 +227,8 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
             has_cosigner: data.financial.hasCosigner,
             has_internship: data.financial.hasInternship,
             has_return_offer: data.financial.hasReturnOffer,
-          }),
+          })
+          .select(),
       ]);
       
       if (demographicResult.error) {
@@ -209,6 +253,14 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
         description: "Your profile information has been saved successfully.",
         variant: "default",
       });
+      
+      // Clear localStorage data after successful save to server
+      try {
+        localStorage.removeItem(ONBOARDING_DATA_KEY);
+        localStorage.removeItem(ONBOARDING_STEP_KEY);
+      } catch (error) {
+        console.error('Error clearing localStorage:', error);
+      }
       
     } catch (error) {
       console.error('Error in saveAllData:', error);

@@ -8,9 +8,10 @@ import AcademicStep from '@/components/onboarding/AcademicStep';
 import OnboardingProgress from '@/components/onboarding/OnboardingProgress';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
 
 // Step renderer component
 const OnboardingSteps = () => {
@@ -29,50 +30,104 @@ const OnboardingSteps = () => {
 const Onboarding = () => {
   const { user, hasCompletedOnboarding, setHasCompletedOnboarding } = useAuth();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   // Check if user has already completed onboarding
   useEffect(() => {
     const checkOnboardingStatus = async () => {
-      if (!user) return;
+      if (!user) {
+        setIsLoading(false);
+        return;
+      }
       
       try {
         // Check if user has demographic data
         const { data: demographicData, error: demographicError } = await supabase
-          .from('user_demographic_data' as any)
+          .from('user_demographic_data')
           .select('id')
           .eq('user_id', user.id)
           .maybeSingle();
+        
+        if (demographicError) {
+          console.error('Error checking demographic data:', demographicError);
+          throw demographicError;
+        }
         
         // Check if user has academic data
         const { data: academicData, error: academicError } = await supabase
-          .from('user_academic_data' as any)
+          .from('user_academic_data')
           .select('id')
           .eq('user_id', user.id)
           .maybeSingle();
         
+        if (academicError) {
+          console.error('Error checking academic data:', academicError);
+          throw academicError;
+        }
+        
         // Check if user has financial data
         const { data: financialData, error: financialError } = await supabase
-          .from('user_financial_data' as any)
+          .from('user_financial_data')
           .select('id')
           .eq('user_id', user.id)
           .maybeSingle();
+        
+        if (financialError) {
+          console.error('Error checking financial data:', financialError);
+          throw financialError;
+        }
         
         // If the user has all three types of data, they've completed onboarding
         if (demographicData && academicData && financialData) {
           setHasCompletedOnboarding(true);
         }
-      } catch (error) {
+        
+        setIsLoading(false);
+      } catch (error: any) {
         console.error('Error checking onboarding status:', error);
+        setError(error.message || 'Failed to load your profile data.');
+        
         toast({
           title: 'Error',
-          description: 'Failed to load your profile data.',
+          description: 'Failed to load your profile data. Please try refreshing the page.',
           variant: 'destructive',
         });
+        
+        setIsLoading(false);
       }
     };
     
     checkOnboardingStatus();
   }, [user, setHasCompletedOnboarding]);
+  
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600 mb-4" />
+        <p className="text-gray-600">Loading your profile...</p>
+      </div>
+    );
+  }
+  
+  // Show error state
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <div className="max-w-md text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Something went wrong</h2>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          >
+            Reload page
+          </button>
+        </div>
+      </div>
+    );
+  }
   
   // Redirect if user has already completed onboarding
   if (hasCompletedOnboarding) {
