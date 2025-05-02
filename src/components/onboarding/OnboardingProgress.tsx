@@ -1,5 +1,4 @@
-
-import { useOnboarding } from '@/contexts/OnboardingContext';
+import { useOnboarding } from '@/contexts/onboarding';
 
 const OnboardingProgress = () => {
   const { currentStep } = useOnboarding();

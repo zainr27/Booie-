@@ -1,6 +1,6 @@
 
 import { useAuth } from '@/contexts/AuthContext';
-import { OnboardingProvider, useOnboarding } from '@/contexts/OnboardingContext';
+import { OnboardingProvider, useOnboarding } from '@/contexts/onboarding';
 import PageTransition from '@/components/layout/PageTransition';
 import DemographicStep from '@/components/onboarding/DemographicStep';
 import FinancialStep from '@/components/onboarding/FinancialStep';
