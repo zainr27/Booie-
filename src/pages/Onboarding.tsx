@@ -28,7 +28,7 @@ const OnboardingSteps = () => {
 
 // Main onboarding component
 const Onboarding = () => {
-  const { user, hasCompletedOnboarding, setHasCompletedOnboarding } = useAuth();
+  const { user, hasCompletedOnboarding } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -99,7 +99,7 @@ const Onboarding = () => {
     };
     
     checkOnboardingStatus();
-  }, [user, setHasCompletedOnboarding]);
+  }, [user]);
   
   // Show loading state
   if (isLoading) {
