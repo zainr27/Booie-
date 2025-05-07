@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -25,7 +24,9 @@ const Auth = () => {
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
       if (data.session) {
-        navigate("/onboarding");
+        // Instead of navigating directly, we'll let the main routing handle the redirection
+        // based on onboarding status
+        navigate("/");
       }
     };
     
@@ -35,7 +36,8 @@ const Auth = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (session) {
-          navigate("/onboarding");
+          // Let the main routing handle the redirection
+          navigate("/");
         }
       }
     );

@@ -23,10 +23,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
-        setLoading(false);
+        
+        // If user logged in, check onboarding status
+        if (event === 'SIGNED_IN' && session?.user) {
+          try {
+            // Defer data fetching to prevent deadlocks
+            setTimeout(async () => {
+              const { data: profileData, error } = await supabase
+                .from('profiles')
+                .select('onboarding_completed')
+                .eq('id', session.user.id)
+                .single();
+              
+              if (error) {
+                console.error('Error fetching user profile:', error);
+              } else {
+                setHasCompletedOnboarding(profileData?.onboarding_completed ?? false);
+              }
+              
+              setLoading(false);
+            }, 0);
+          } catch (error) {
+            console.error('Error checking onboarding status:', error);
+            setLoading(false);
+          }
+        } else if (event === 'SIGNED_OUT') {
+          setHasCompletedOnboarding(false);
+          setLoading(false);
+        } else {
+          setLoading(false);
+        }
       }
     );
 
@@ -34,7 +63,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      setLoading(false);
+      
+      if (session?.user) {
+        // Check if the user has completed onboarding
+        supabase
+          .from('profiles')
+          .select('onboarding_completed')
+          .eq('id', session.user.id)
+          .single()
+          .then(({ data, error }) => {
+            if (error) {
+              console.error('Error fetching profile:', error);
+            } else {
+              setHasCompletedOnboarding(data?.onboarding_completed ?? false);
+            }
+            setLoading(false);
+          });
+      } else {
+        setLoading(false);
+      }
     });
 
     return () => subscription.unsubscribe();

@@ -11,6 +11,8 @@ import {
   saveOnboardingStepToStorage,
   clearOnboardingStorage 
 } from './storageUtils';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
 
@@ -18,6 +20,8 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   // Initialize from localStorage or use defaults
   const [currentStep, setCurrentStep] = useState(() => loadOnboardingStepFromStorage());
   const [data, setData] = useState<OnboardingData>(() => loadOnboardingDataFromStorage());
+  const { setHasCompletedOnboarding } = useAuth();
+  const navigate = useNavigate();
 
   // Save current step to localStorage when it changes
   useEffect(() => {
@@ -76,8 +80,14 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
       // Save all data to the database
       await saveOnboardingData(data, userId);
       
+      // Update the onboarding status in the context
+      setHasCompletedOnboarding(true);
+      
       // Clear localStorage data after successful save to server
       clearOnboardingStorage();
+      
+      // Redirect to the dashboard
+      navigate('/dashboard');
     } catch (error) {
       // Error handling is done in the saveOnboardingData function
       throw error;

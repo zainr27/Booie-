@@ -131,7 +131,7 @@ const Onboarding = () => {
   
   // Redirect if user has already completed onboarding
   if (hasCompletedOnboarding) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
   
   return (

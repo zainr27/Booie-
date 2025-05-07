@@ -71,6 +71,17 @@ export async function saveOnboardingData(data: OnboardingData, userId: string): 
       throw financialResult.error;
     }
     
+    // Update the profiles table to mark onboarding as completed
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .update({ onboarding_completed: true })
+      .eq('id', userId);
+    
+    if (profileError) {
+      console.error('Error updating profile onboarding status:', profileError);
+      throw profileError;
+    }
+    
     console.log('All onboarding data saved successfully');
     
     toast({
