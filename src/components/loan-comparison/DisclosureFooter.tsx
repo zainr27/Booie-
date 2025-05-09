@@ -14,7 +14,8 @@ const DisclosureFooter = () => {
             More info at <a href="https://studentaid.gov" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">studentaid.gov</a>.
           </p>
           <p>
-            We encourage you to review all of your options—particularly federal loans—before committing.
+            We encourage you to review all of your options—particularly federal loans—before committing. Income share agreements, such as Booie plans,
+            are considered student loans with payment structures that differ from traditional fixed-rate loans.
           </p>
         </div>
       </CardContent>

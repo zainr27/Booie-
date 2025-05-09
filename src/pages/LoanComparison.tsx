@@ -19,24 +19,42 @@ export type Mitigant = {
   bpsReduction: number;
 };
 
-// Sample mitigants with BPS reductions
+// Updated mitigants with new options
 const AVAILABLE_MITIGANTS: Mitigant[] = [
   {
-    id: 'upfront_payment',
-    label: 'Up-front partial payment',
-    description: 'Make a partial payment before your plan starts',
-    bpsReduction: 75, // 0.75%
-  },
-  {
-    id: 'scholarship',
-    label: 'Program-specific scholarship',
-    description: 'Apply with a qualifying scholarship',
+    id: 'gpa',
+    label: 'GPA > 3.5/4.0',
+    description: 'Maintain a high academic performance',
     bpsReduction: 50, // 0.5%
   },
   {
-    id: 'bonus_pledge',
-    label: 'Sign-on bonus pledge',
-    description: 'Commit to applying sign-on bonuses to your plan',
+    id: 'top_15_test',
+    label: 'Top 15% test score',
+    description: 'Score in the top 15% on standardized tests',
+    bpsReduction: 75, // 0.75%
+  },
+  {
+    id: 'top_5_test',
+    label: 'Top 5% test score',
+    description: 'Score in the top 5% on standardized tests',
+    bpsReduction: 100, // 1%
+  },
+  {
+    id: 'cosigner',
+    label: 'Cosigner?',
+    description: 'Add a qualified cosigner to your plan',
+    bpsReduction: 75, // 0.75%
+  },
+  {
+    id: 'internship',
+    label: 'Internship?',
+    description: 'Complete a relevant industry internship',
+    bpsReduction: 50, // 0.5%
+  },
+  {
+    id: 'return_offer',
+    label: 'Return offer?',
+    description: 'Secure a return offer from your internship',
     bpsReduction: 100, // 1%
   },
 ];
@@ -86,19 +104,15 @@ const LoanComparison = () => {
     // Log analytics event
     console.log('Analytics event: loan_compare_apply_clicked');
     
-    // Navigate based on auth status
-    if (user) {
-      navigate('/loan-application');
-    } else {
-      navigate('/auth');
-    }
+    // Navigate to apply page
+    navigate('/apply');
   };
   
   return (
     <Layout>
       <div className="container-custom py-10">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Loan Comparison</h1>
+          <h1 className="text-3xl font-bold mb-2">Plan Comparison</h1>
           <p className="text-gray-600">
             Compare Booie's innovative financing with traditional student loans to find the best option for your education.
           </p>
@@ -140,10 +154,17 @@ const LoanComparison = () => {
           </Link>
         </div>
         
+        {/* ISA Disclosure */}
+        <div className="mt-8 bg-gray-50 p-4 rounded-md border border-gray-200">
+          <p className="text-sm text-gray-600 italic">
+            Income share agreements, such as Booie plans, are considered student loans.
+          </p>
+        </div>
+        
         {/* Apply CTA Button */}
-        <div className="mt-8 sticky bottom-4 md:bottom-auto md:relative md:flex md:justify-end">
+        <div className="mt-8 flex justify-center">
           <Button 
-            className="w-full md:w-auto bg-booie-600 hover:bg-booie-700 text-white font-medium"
+            className="w-full md:w-auto bg-booie-600 hover:bg-booie-700 text-white font-medium text-lg py-6 px-8"
             size="lg"
             onClick={handleApplyClick}
           >

@@ -38,7 +38,7 @@ const RateTable = ({ booieRate, isPersonalized = false }: RateTableProps) => {
                 <span className="text-booie-600">{isPersonalized ? "" : " (expected)"}</span>
               </div>
               <div className="text-xs text-gray-500 mt-1">
-                {!isPersonalized && "auto-updates lower if IRR mitigants selected"}
+                1% origination fee
               </div>
             </TableCell>
             <TableCell className="hidden md:table-cell">
@@ -69,7 +69,7 @@ const RateTable = ({ booieRate, isPersonalized = false }: RateTableProps) => {
                 6.53% – 9.08% APR
               </div>
               <div className="text-xs text-gray-500 mt-1">
-                1.057% – 4.228% one-time origination fee
+                1.057% – 4.228% origination fee
               </div>
             </TableCell>
             <TableCell className="hidden md:table-cell">
@@ -97,7 +97,10 @@ const RateTable = ({ booieRate, isPersonalized = false }: RateTableProps) => {
             </TableCell>
             <TableCell>
               <div className="font-bold">
-                3.47% – 17.99% + APR
+                3.47% – 17.99% APR
+              </div>
+              <div className="text-xs text-gray-500 mt-1">
+                Origination fees vary by provider
               </div>
             </TableCell>
             <TableCell className="hidden md:table-cell">

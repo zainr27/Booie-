@@ -20,7 +20,7 @@ const MitigantSidebar = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl">IRR Mitigants</CardTitle>
+        <CardTitle className="text-xl">Options to Reduce Payments</CardTitle>
       </CardHeader>
       <CardContent>
         <p className="text-sm text-gray-600 mb-4">
