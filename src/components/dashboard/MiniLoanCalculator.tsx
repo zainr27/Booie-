@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -88,7 +89,7 @@ const MiniLoanCalculator = ({ initialLoanAmount }: MiniLoanCalculatorProps) => {
 
     setIsCalculating(true);
     try {
-      // Save loan calculation
+      // Save financing calculation
       await saveLoanCalculation(user.id, {
         loanAmount,
         interestRate: interestRate / 100,
@@ -97,21 +98,21 @@ const MiniLoanCalculator = ({ initialLoanAmount }: MiniLoanCalculatorProps) => {
         totalInterest,
         totalPayment,
         apr,
-        isISA: false,
+        isISA: true,
       });
 
-      // Recalculate loan summary to update dashboard
+      // Recalculate financing summary to update dashboard
       await calculateLoanSummary(user.id);
 
       toast({
         title: "Success",
-        description: "Loan calculation saved.",
+        description: "Financing calculation saved.",
       });
     } catch (error) {
-      console.error("Error saving loan calculation:", error);
+      console.error("Error saving financing calculation:", error);
       toast({
         title: "Error",
-        description: "Failed to save loan calculation.",
+        description: "Failed to save financing calculation.",
         variant: "destructive",
       });
     } finally {
@@ -122,21 +123,21 @@ const MiniLoanCalculator = ({ initialLoanAmount }: MiniLoanCalculatorProps) => {
   return (
     <div className="space-y-4">
       <div>
-        <Label htmlFor="loanAmount">Loan Amount</Label>
+        <Label htmlFor="loanAmount">Financing Amount</Label>
         <Input
           type="number"
           id="loanAmount"
-          placeholder="Enter loan amount"
+          placeholder="Enter financing amount"
           value={loanAmount || ''}
           onChange={handleLoanAmountChange}
         />
       </div>
       <div>
-        <Label htmlFor="interestRate">Interest Rate (%)</Label>
+        <Label htmlFor="interestRate">Rate (%)</Label>
         <Input
           type="number"
           id="interestRate"
-          placeholder="Enter interest rate"
+          placeholder="Enter rate"
           value={interestRate}
           onChange={handleInterestRateChange}
         />

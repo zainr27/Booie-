@@ -9,7 +9,6 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import IncomeProjection from "./pages/IncomeProjection";
 import FAQ from "./pages/FAQ";
-import LoanCalculator from "./pages/LoanCalculator";
 import AdvancedLoanCalculator from "./pages/AdvancedLoanCalculator";
 import Comparison from "./pages/Comparison";
 import LoanComparison from "./pages/LoanComparison";
@@ -69,7 +68,6 @@ const AnimatedRoutes = () => {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<IndexRoute />} />
         <Route path="/income-projection" element={<IncomeProjection />} />
-        <Route path="/loan-calculator" element={<LoanCalculator />} />
         <Route path="/advanced-loan-calculator" element={<AdvancedLoanCalculator />} />
         <Route path="/comparison" element={<Comparison />} />
         <Route path="/compare" element={<LoanComparison />} />

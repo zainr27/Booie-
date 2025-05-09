@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { GraduationCap, TrendingUp, Calculator, BarChart } from 'lucide-react';
+import { GraduationCap, TrendingUp, BarChart } from 'lucide-react';
 
 const Index = () => {
   return (
@@ -23,9 +23,9 @@ const Index = () => {
                 accessible and affordable.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link to="/loan-calculator">
+                <Link to="/compare">
                   <Button size="lg" className="bg-white text-booie-700 hover:bg-booie-100">
-                    Calculate Your Loan
+                    Compare Financing Plans
                   </Button>
                 </Link>
                 <Link to="/income-projection">
@@ -56,7 +56,7 @@ const Index = () => {
               with transparent terms and flexible repayment options.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <Card>
               <CardContent className="pt-6">
                 <div className="mb-4 inline-flex p-3 rounded-full bg-booie-100">
@@ -65,18 +65,6 @@ const Index = () => {
                 <h3 className="text-lg font-bold mb-2">Income-Based Repayment</h3>
                 <p className="text-gray-600">
                   Payments that scale with your income, ensuring affordability at every career stage.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="pt-6">
-                <div className="mb-4 inline-flex p-3 rounded-full bg-booie-100">
-                  <Calculator className="h-6 w-6 text-booie-600" />
-                </div>
-                <h3 className="text-lg font-bold mb-2">Transparent Calculations</h3>
-                <p className="text-gray-600">
-                  Clear terms and interactive tools help you understand the full cost of your education.
                 </p>
               </CardContent>
             </Card>
@@ -116,7 +104,7 @@ const Index = () => {
               <div className="md:w-2/3 space-y-4">
                 <h2 className="text-3xl font-bold text-gray-900">Ready to invest in your education?</h2>
                 <p className="text-lg text-gray-700">
-                  Get personalized loan options and see how Booie can help finance your educational journey.
+                  Get personalized financing options and see how Booie can help fund your educational journey.
                 </p>
               </div>
               <div className="md:w-1/3 flex justify-center md:justify-end">

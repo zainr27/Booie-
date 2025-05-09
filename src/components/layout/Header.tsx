@@ -55,11 +55,8 @@ const Header = () => {
           <Link to="/income-projection" className="text-gray-600 hover:text-booie-700 font-medium">
             Income Projection
           </Link>
-          <Link to="/loan-calculator" className="text-gray-600 hover:text-booie-700 font-medium">
-            Loan Calculator
-          </Link>
           <Link to="/compare" className="text-gray-600 hover:text-booie-700 font-medium">
-            Loan Comparison
+            Plan Comparison
           </Link>
           <Link to="/fees" className="text-gray-600 hover:text-booie-700 font-medium">
             Fee Structure

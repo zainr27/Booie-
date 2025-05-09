@@ -51,13 +51,8 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/loan-calculator" className="text-gray-600 hover:text-booie-600">
-                  Loan Calculator
-                </Link>
-              </li>
-              <li>
-                <Link to="/comparison" className="text-gray-600 hover:text-booie-600">
-                  Loan Comparison
+                <Link to="/compare" className="text-gray-600 hover:text-booie-600">
+                  Plan Comparison
                 </Link>
               </li>
               <li>
