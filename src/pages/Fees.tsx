@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,9 +10,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Info } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Info, CirclePercent } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PageTransition from '@/components/layout/PageTransition';
+import { Link } from 'react-router-dom';
+import DisclosureFooter from '@/components/loan-comparison/DisclosureFooter';
 
 const Fees = () => {
   return (
@@ -64,7 +68,7 @@ const Fees = () => {
                       <TableBody>
                         <TableRow>
                           <TableCell className="font-medium">Origination Fee</TableCell>
-                          <TableCell>3%</TableCell>
+                          <TableCell>1%</TableCell>
                           <TableCell>One-time fee deducted from your disbursement amount to cover administrative costs</TableCell>
                         </TableRow>
                         <TableRow>
@@ -74,12 +78,12 @@ const Fees = () => {
                         </TableRow>
                         <TableRow>
                           <TableCell className="font-medium">Repayment Cap</TableCell>
-                          <TableCell>2.0x</TableCell>
-                          <TableCell>Maximum total repayment (2x the amount financed)</TableCell>
+                          <TableCell>2.0x-3.0x</TableCell>
+                          <TableCell>Maximum total repayment (you choose between 2x to 3x the amount financed)</TableCell>
                         </TableRow>
                         <TableRow>
                           <TableCell className="font-medium">Late Payment Fee</TableCell>
-                          <TableCell>$25</TableCell>
+                          <TableCell>Up to 5%</TableCell>
                           <TableCell>Applied after a 10-day grace period</TableCell>
                         </TableRow>
                         <TableRow>
@@ -88,9 +92,9 @@ const Fees = () => {
                           <TableCell>Charged for insufficient funds or failed automatic payments</TableCell>
                         </TableRow>
                         <TableRow>
-                          <TableCell className="font-medium">Application Fee</TableCell>
-                          <TableCell>$0</TableCell>
-                          <TableCell>No cost to apply</TableCell>
+                          <TableCell className="font-medium">Credit Reporting</TableCell>
+                          <TableCell>None</TableCell>
+                          <TableCell>We don't report to credit bureaus</TableCell>
                         </TableRow>
                         <TableRow>
                           <TableCell className="font-medium">Prepayment Penalty</TableCell>
@@ -145,34 +149,34 @@ const Fees = () => {
                     </TableHeader>
                     <TableBody>
                       <TableRow>
-                        <TableCell className="font-medium">Application Fee</TableCell>
-                        <TableCell>$0</TableCell>
-                        <TableCell>$0</TableCell>
-                        <TableCell>$0-50</TableCell>
-                      </TableRow>
-                      <TableRow>
                         <TableCell className="font-medium">Origination Fee</TableCell>
-                        <TableCell>3%</TableCell>
-                        <TableCell>1.057% (Direct), 4.228% (PLUS)</TableCell>
-                        <TableCell>0-5%</TableCell>
+                        <TableCell>1%</TableCell>
+                        <TableCell>1.057% - 4.228%</TableCell>
+                        <TableCell>Varies by lender</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell className="font-medium">Interest Rate</TableCell>
-                        <TableCell>N/A (Income-based)</TableCell>
-                        <TableCell>4.99-7.54%</TableCell>
-                        <TableCell>5-14%</TableCell>
+                        <TableCell>6.53% - 9.08%</TableCell>
+                        <TableCell>4.99% - 7.54%</TableCell>
+                        <TableCell>3.47% - 17.99% or more</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell className="font-medium">Late Payment Fee</TableCell>
-                        <TableCell>$25</TableCell>
-                        <TableCell>$0</TableCell>
-                        <TableCell>$25-50</TableCell>
+                        <TableCell>Up to 5%</TableCell>
+                        <TableCell>Up to 6%</TableCell>
+                        <TableCell>Varies by lender</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Credit Reporting</TableCell>
+                        <TableCell>None</TableCell>
+                        <TableCell>Reported</TableCell>
+                        <TableCell>Reported</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell className="font-medium">Prepayment Penalty</TableCell>
                         <TableCell>None</TableCell>
                         <TableCell>None</TableCell>
-                        <TableCell>Varies by lender</TableCell>
+                        <TableCell>None</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell className="font-medium">Payment Model</TableCell>
@@ -181,20 +185,14 @@ const Fees = () => {
                         <TableCell>Fixed monthly payment</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell className="font-medium">Payment Flexibility</TableCell>
-                        <TableCell>High (automatic)</TableCell>
-                        <TableCell>Medium (application required)</TableCell>
-                        <TableCell>Low</TableCell>
-                      </TableRow>
-                      <TableRow>
                         <TableCell className="font-medium">Income-Based Options</TableCell>
                         <TableCell>Built-in</TableCell>
-                        <TableCell>Available upon request</TableCell>
-                        <TableCell>Rarely available</TableCell>
+                        <TableCell>Some loans eligible</TableCell>
+                        <TableCell>None</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell className="font-medium">Total Cost Cap</TableCell>
-                        <TableCell>2.0x original amount</TableCell>
+                        <TableCell>2.0x-3.0x financing amount (you choose!)</TableCell>
                         <TableCell>No cap</TableCell>
                         <TableCell>No cap</TableCell>
                       </TableRow>
@@ -217,7 +215,7 @@ const Fees = () => {
                       <div className="bg-gray-50 p-4 rounded-md">
                         <h4 className="font-medium mb-2">Predictable Cost Cap</h4>
                         <p className="text-gray-700">
-                          With our 2.0x repayment cap, you'll never pay more than twice your original financing amount, 
+                          With our 2.0x-3.0x repayment cap (you choose!), you'll never pay more than your chosen cap of the original financing amount, 
                           even if your income grows significantly. This contrasts with traditional loans where total 
                           repayment can be 3-4x the original loan amount with compounding interest.
                         </p>
@@ -272,8 +270,8 @@ const Fees = () => {
                           <div>
                             <h4 className="font-medium mb-3">Costs Breakdown</h4>
                             <ul className="space-y-2">
-                              <li><strong>Origination Fee:</strong> $900 (3% of $30,000)</li>
-                              <li><strong>Net Disbursement:</strong> $29,100</li>
+                              <li><strong>Origination Fee:</strong> $300 (1% of $30,000)</li>
+                              <li><strong>Net Disbursement:</strong> $29,700</li>
                               <li><strong>Initial Monthly Payment:</strong> $425 (6% of monthly income)</li>
                               <li><strong>Total Repayment Cap:</strong> $60,000 (2.0x $30,000)</li>
                             </ul>
@@ -310,8 +308,8 @@ const Fees = () => {
                           <div>
                             <h4 className="font-medium mb-3">Costs Breakdown</h4>
                             <ul className="space-y-2">
-                              <li><strong>Origination Fee:</strong> $750 (3% of $25,000)</li>
-                              <li><strong>Net Disbursement:</strong> $24,250</li>
+                              <li><strong>Origination Fee:</strong> $250 (1% of $25,000)</li>
+                              <li><strong>Net Disbursement:</strong> $24,750</li>
                               <li><strong>Initial Monthly Payment:</strong> $263 (7% of monthly income)</li>
                               <li><strong>Total Repayment Cap:</strong> $50,000 (2.0x $25,000)</li>
                             </ul>
@@ -337,7 +335,7 @@ const Fees = () => {
                           <TableHeader>
                             <TableRow>
                               <TableHead>Scenario</TableHead>
-                              <TableHead>Booie (Income Share)</TableHead>
+                              <TableHead>Booie Plan (Income Share)</TableHead>
                               <TableHead>Traditional Loan (6% Fixed)</TableHead>
                             </TableRow>
                           </TableHeader>
@@ -349,7 +347,7 @@ const Fees = () => {
                             </TableRow>
                             <TableRow>
                               <TableCell className="font-medium">Initial Fee</TableCell>
-                              <TableCell>$900 (3% origination)</TableCell>
+                              <TableCell>$300 (1% origination)</TableCell>
                               <TableCell>$1,200 (4% origination)</TableCell>
                             </TableRow>
                             <TableRow>
@@ -382,7 +380,7 @@ const Fees = () => {
                           The optimal choice depends on your career path and financial situation:
                         </p>
                         <ul className="list-disc pl-6 space-y-2 mt-3">
-                          <li><strong>Booie may be better</strong> if you value payment flexibility, anticipate income fluctuations, or want built-in protections.</li>
+                          <li><strong>Booie Plan may be better</strong> if you value payment flexibility, anticipate income fluctuations, or want built-in protections.</li>
                           <li><strong>Traditional loans may be better</strong> if you expect consistently high income that would exceed the income share payments, or if you plan to pay off your loan very quickly.</li>
                         </ul>
                       </div>
@@ -392,6 +390,19 @@ const Fees = () => {
               </Card>
             </TabsContent>
           </Tabs>
+          
+          <div className="mt-10">
+            <DisclosureFooter />
+          </div>
+          
+          <div className="mt-10 flex justify-center">
+            <Link to="/apply">
+              <Button size="lg" className="bg-booie-600 hover:bg-booie-700 text-white font-bold py-3 px-8 rounded-md transition-all flex items-center gap-2">
+                <CirclePercent className="h-5 w-5" />
+                Apply for a Booie Plan
+              </Button>
+            </Link>
+          </div>
         </div>
       </PageTransition>
     </Layout>
