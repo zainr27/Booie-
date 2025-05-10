@@ -1,7 +1,5 @@
-
 import React from 'react';
-import { formatCurrency } from '@/utils/incomeUtils';
-import { roundHundred } from '@/utils/incomeUtils';
+import { formatCurrency, roundHundred } from '@/utils/incomeUtils';
 
 interface AnalysisSummaryProps {
   selectedDegreeObj: any;
