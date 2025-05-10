@@ -6,6 +6,8 @@ import { UserDemographicData, UserFinancialData, UserAcademicData } from '@/type
 import { fetchLatestLoanCalculation, calculateLoanSummary } from '@/utils/calculatorUtils';
 import DashboardContent from '@/components/dashboard/DashboardContent';
 import { DisclosureFooter } from '@/components/shared';
+import { Link } from 'react-router-dom';
+import { GraduationCap } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -98,6 +100,12 @@ const Dashboard = () => {
 
   return (
     <PageTransition>
+      <div className="mb-6 pl-6 pt-4 flex items-center">
+        <Link to="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
+          <GraduationCap className="h-10 w-10 text-purple-500 dark:text-purple-400" />
+          <span className="text-2xl font-bold gradient-text bg-gradient-to-r from-purple-600 to-purple-400">Booie</span>
+        </Link>
+      </div>
       <DashboardContent userData={userData} loading={loading} />
       <div className="container-custom">
         <DisclosureFooter />

@@ -50,13 +50,13 @@ const FinancialOverview = ({ userData, isLoading }: FinancialOverviewProps) => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Card>
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-2 bg-gradient-to-r from-purple-900/10 to-purple-700/10 dark:from-purple-900/20 dark:to-purple-700/30 border-b border-purple-100 dark:border-purple-900/30">
               <CardTitle className="text-sm font-medium flex items-center">
-                <DollarSign className="h-4 w-4 mr-1 text-blue-500" />
+                <DollarSign className="h-4 w-4 mr-1 text-purple-500 dark:text-purple-400" />
                 Funding Amount
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="bg-muted/30 dark:bg-muted">
               <div className="text-2xl font-bold">
                 {plan?.loanAmount
                   ? formatCurrency(plan.loanAmount)
@@ -66,13 +66,13 @@ const FinancialOverview = ({ userData, isLoading }: FinancialOverviewProps) => {
           </Card>
 
           <Card>
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-2 bg-gradient-to-r from-purple-900/10 to-purple-700/10 dark:from-purple-900/20 dark:to-purple-700/30 border-b border-purple-100 dark:border-purple-900/30">
               <CardTitle className="text-sm font-medium flex items-center">
-                <DollarSign className="h-4 w-4 mr-1 text-blue-500" />
+                <DollarSign className="h-4 w-4 mr-1 text-purple-500 dark:text-purple-400" />
                 Income Floor
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="bg-muted/30 dark:bg-muted">
               <div className="text-2xl font-bold">
                 {plan?.incomeFloor
                   ? formatCurrency(plan.incomeFloor)
@@ -82,13 +82,13 @@ const FinancialOverview = ({ userData, isLoading }: FinancialOverviewProps) => {
           </Card>
 
           <Card>
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-2 bg-gradient-to-r from-purple-900/10 to-purple-700/10 dark:from-purple-900/20 dark:to-purple-700/30 border-b border-purple-100 dark:border-purple-900/30">
               <CardTitle className="text-sm font-medium flex items-center">
-                <Percent className="h-4 w-4 mr-1 text-blue-500" /> 
+                <Percent className="h-4 w-4 mr-1 text-purple-500 dark:text-purple-400" /> 
                 Income Share Rate
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="bg-muted/30 dark:bg-muted">
               <div className="text-2xl font-bold">
                 {plan?.maxRate
                   ? `${(plan.maxRate / 100).toFixed(2)}%`
@@ -101,13 +101,13 @@ const FinancialOverview = ({ userData, isLoading }: FinancialOverviewProps) => {
           </Card>
 
           <Card>
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-2 bg-gradient-to-r from-purple-900/10 to-purple-700/10 dark:from-purple-900/20 dark:to-purple-700/30 border-b border-purple-100 dark:border-purple-900/30">
               <CardTitle className="text-sm font-medium flex items-center">
-                <Clock className="h-4 w-4 mr-1 text-blue-500" />
+                <Clock className="h-4 w-4 mr-1 text-purple-500 dark:text-purple-400" />
                 Max Term
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="bg-muted/30 dark:bg-muted">
               <div className="text-2xl font-bold">
                 {plan?.loanTerm
                   ? `${plan.loanTerm} years`
@@ -120,7 +120,7 @@ const FinancialOverview = ({ userData, isLoading }: FinancialOverviewProps) => {
       
       <div className="mt-6">
         <Link to="/advanced-loan-calculator">
-          <Button className="w-full">
+          <Button className="w-full bg-gradient-to-r from-purple-700 to-purple-500 hover:from-purple-800 hover:to-purple-600">
             Explore Booie Plan Options
           </Button>
         </Link>

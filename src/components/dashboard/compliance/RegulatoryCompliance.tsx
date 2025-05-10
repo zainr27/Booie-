@@ -5,12 +5,12 @@ import { Shield, Check } from "lucide-react";
 const RegulatoryCompliance = () => {
   return (
     <Card className="shadow-md">
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-3 bg-gradient-to-r from-purple-900/10 to-purple-700/10 dark:from-purple-900/20 dark:to-purple-700/30 border-b border-purple-100 dark:border-purple-900/30">
         <CardTitle className="text-xl font-bold">Regulatory Compliance</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="bg-muted/30 dark:bg-muted">
         <div className="flex items-center gap-4 mb-4">
-          <Shield className="h-8 w-8 text-green-500" />
+          <Shield className="h-8 w-8 text-purple-500 dark:text-purple-400" />
           <div>
             <h3 className="text-lg font-medium">CFPB Compliant</h3>
             <p className="text-muted-foreground text-sm">Your plan meets Consumer Financial Protection Bureau standards</p>
@@ -18,15 +18,15 @@ const RegulatoryCompliance = () => {
         </div>
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <Check className="h-4 w-4 text-green-500" />
+            <Check className="h-4 w-4 text-green-500 dark:text-green-400" />
             <span className="text-sm">Clear disclosures</span>
           </div>
           <div className="flex items-center gap-2">
-            <Check className="h-4 w-4 text-green-500" />
+            <Check className="h-4 w-4 text-green-500 dark:text-green-400" />
             <span className="text-sm">No prepayment penalties</span>
           </div>
           <div className="flex items-center gap-2">
-            <Check className="h-4 w-4 text-green-500" />
+            <Check className="h-4 w-4 text-green-500 dark:text-green-400" />
             <span className="text-sm">Fair collection practices</span>
           </div>
         </div>

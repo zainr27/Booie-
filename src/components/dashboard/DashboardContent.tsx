@@ -27,13 +27,13 @@ const ActivityTimeline = () => {
 
   return (
     <Card className="shadow-md overflow-hidden transition-all hover:shadow-lg">
-      <CardHeader className="pb-2 bg-gradient-to-r from-background to-muted/40">
+      <CardHeader className="pb-2 bg-gradient-to-r from-purple-900/10 to-purple-700/10 dark:from-purple-900/20 dark:to-purple-700/30 border-b border-purple-100 dark:border-purple-900/30">
         <CardTitle className="text-xl flex items-center">
-          <Clock className="mr-2 h-5 w-5 text-primary" />
+          <Clock className="mr-2 h-5 w-5 text-purple-500 dark:text-purple-400" />
           Activity Timeline
         </CardTitle>
       </CardHeader>
-      <CardContent className="pt-4">
+      <CardContent className="pt-4 bg-muted/30 dark:bg-muted">
         <div className="space-y-6">
           {activities.map((activity, i) => (
             <div key={activity.id} className="flex items-start">
@@ -43,8 +43,8 @@ const ActivityTimeline = () => {
                     <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
                   </div>
                 ) : activity.status === 'current' ? (
-                  <div className="bg-blue-100 dark:bg-blue-900/20 p-1 rounded-full">
-                    <Circle className="h-5 w-5 text-blue-600 dark:text-blue-400 animate-pulse" />
+                  <div className="bg-purple-100 dark:bg-purple-900/20 p-1 rounded-full">
+                    <Circle className="h-5 w-5 text-purple-600 dark:text-purple-400 animate-pulse" />
                   </div>
                 ) : (
                   <div className="bg-gray-100 dark:bg-gray-800 p-1 rounded-full">
@@ -75,7 +75,7 @@ const ActivityTimeline = () => {
 const StatsCard = ({ title, value, change, icon }: { title: string; value: string; change?: string; icon: React.ReactNode }) => {
   return (
     <Card className="shadow-sm overflow-hidden transition-all hover:shadow-md">
-      <CardContent className="p-6">
+      <CardContent className="p-6 bg-muted/30 dark:bg-muted">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-muted-foreground">{title}</p>
@@ -98,7 +98,7 @@ const StatsCard = ({ title, value, change, icon }: { title: string; value: strin
 
 const DashboardContent = ({ userData, loading }: DashboardContentProps) => {
   return (
-    <div className="container py-10">
+    <div className="container py-6">
       <div className="flex flex-col gap-8">
         <div className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
@@ -110,10 +110,10 @@ const DashboardContent = ({ userData, loading }: DashboardContentProps) => {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="lg:col-span-1 space-y-8">
             <Card className="shadow-md overflow-hidden transition-all hover:shadow-lg">
-              <CardHeader className="pb-2 bg-gradient-to-r from-background to-muted/40">
+              <CardHeader className="pb-2 bg-gradient-to-r from-purple-900/10 to-purple-700/10 dark:from-purple-900/20 dark:to-purple-700/30 border-b border-purple-100 dark:border-purple-900/30">
                 <CardTitle className="text-xl">Profile Summary</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="bg-muted/30 dark:bg-muted">
                 <ProfileSummary userData={{
                   demographic: userData?.demographic || undefined,
                   academic: userData?.academic || undefined,
