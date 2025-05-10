@@ -49,10 +49,10 @@ const FinancialOverview = ({ userData, isLoading }: FinancialOverviewProps) => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Card className="shadow-md overflow-hidden">
+          <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center">
-                <DollarSign className="h-4 w-4 mr-1 text-purple-500 dark:text-purple-400" />
+                <DollarSign className="h-4 w-4 mr-1 text-blue-500" />
                 Funding Amount
               </CardTitle>
             </CardHeader>
@@ -65,10 +65,10 @@ const FinancialOverview = ({ userData, isLoading }: FinancialOverviewProps) => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-md overflow-hidden">
+          <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center">
-                <DollarSign className="h-4 w-4 mr-1 text-purple-500 dark:text-purple-400" />
+                <DollarSign className="h-4 w-4 mr-1 text-blue-500" />
                 Income Floor
               </CardTitle>
             </CardHeader>
@@ -81,10 +81,10 @@ const FinancialOverview = ({ userData, isLoading }: FinancialOverviewProps) => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-md overflow-hidden">
+          <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center">
-                <Percent className="h-4 w-4 mr-1 text-purple-500 dark:text-purple-400" /> 
+                <Percent className="h-4 w-4 mr-1 text-blue-500" /> 
                 Income Share Rate
               </CardTitle>
             </CardHeader>
@@ -100,10 +100,10 @@ const FinancialOverview = ({ userData, isLoading }: FinancialOverviewProps) => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-md overflow-hidden">
+          <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center">
-                <Clock className="h-4 w-4 mr-1 text-purple-500 dark:text-purple-400" />
+                <Clock className="h-4 w-4 mr-1 text-blue-500" />
                 Max Term
               </CardTitle>
             </CardHeader>
@@ -120,7 +120,7 @@ const FinancialOverview = ({ userData, isLoading }: FinancialOverviewProps) => {
       
       <div className="mt-6">
         <Link to="/advanced-loan-calculator">
-          <Button className="w-full bg-gradient-to-r from-purple-700 to-purple-500 hover:from-purple-800 hover:to-purple-600 shadow-lg">
+          <Button className="w-full">
             Explore Booie Plan Options
           </Button>
         </Link>

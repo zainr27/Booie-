@@ -40,10 +40,10 @@ const BooiePlanSummary = () => {
   const netAmount = (plan.loanAmount || 0) - originationFee;
 
   return (
-    <Card className="border-purple-500/40 shadow-lg overflow-hidden">
-      <CardHeader className="rounded-t-lg">
+    <Card className="border-booie-500/40">
+      <CardHeader className="bg-gradient-to-r from-booie-50 to-blue-50 rounded-t-lg border-b border-booie-100">
         <CardTitle className="text-xl flex items-center gap-2">
-          <GraduationCap className="h-5 w-5 text-purple-600 dark:text-purple-400" /> 
+          <GraduationCap className="h-5 w-5 text-booie-600" /> 
           Your Booie Plan
         </CardTitle>
       </CardHeader>
@@ -51,21 +51,21 @@ const BooiePlanSummary = () => {
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground flex items-center">
-              <BadgeCheck className="h-4 w-4 mr-1 text-purple-500 dark:text-purple-400" /> Program
+              <BadgeCheck className="h-4 w-4 mr-1 text-booie-500" /> Program
             </p>
             <p className="font-medium">{plan.school || "Not specified"}</p>
             <p className="text-sm">{plan.degree || "Not specified"}</p>
           </div>
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground flex items-center">
-              <CirclePercent className="h-4 w-4 mr-1 text-purple-500 dark:text-purple-400" /> Income Share
+              <CirclePercent className="h-4 w-4 mr-1 text-booie-500" /> Income Share
             </p>
             <p className="font-medium">{(plan.maxRate || 0) / 100}% of income</p>
             <p className="text-sm">above {formatCurrency(plan.incomeFloor || 0)}/year</p>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-500/10 to-purple-700/20 dark:from-purple-500/20 dark:to-purple-700/30 p-4 rounded-md space-y-3">
+        <div className="bg-blue-50 p-4 rounded-md space-y-3">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Funding Amount:</span>
             <span className="font-bold">{formatCurrency(plan.loanAmount || 0)}</span>
@@ -88,9 +88,9 @@ const BooiePlanSummary = () => {
           </div>
         </div>
 
-        <div className="flex items-center px-4 py-3 bg-gradient-to-r from-green-500/10 to-green-700/20 dark:from-green-500/20 dark:to-green-700/30 rounded-md border border-green-100/30 dark:border-green-900/30">
-          <ShieldCheck className="h-5 w-5 text-green-600 dark:text-green-400 mr-2 flex-shrink-0" /> 
-          <p className="text-sm text-green-700 dark:text-green-300">
+        <div className="flex items-center px-4 py-3 bg-green-50 rounded-md border border-green-100">
+          <ShieldCheck className="h-5 w-5 text-green-600 mr-2 flex-shrink-0" /> 
+          <p className="text-sm text-green-700">
             <span className="font-medium">Income protection:</span> No payments when earning below {formatCurrency(plan.incomeFloor || 0)}/year
           </p>
         </div>
