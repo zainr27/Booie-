@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ProfileSummary from '@/components/dashboard/ProfileSummary';
-import MiniLoanCalculator from '@/components/dashboard/MiniLoanCalculator';
 import { useAuth } from '@/contexts/AuthContext';
 import PageTransition from '@/components/layout/PageTransition';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,8 +8,10 @@ import ComplianceSection from '@/components/dashboard/ComplianceSection';
 import { UserDemographicData, UserFinancialData, UserAcademicData } from '@/types/custom';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, TrendingUp, DollarSign, Clock, Percent } from 'lucide-react';
-import { fetchLatestLoanCalculation, calculateLoanSummary, formatCurrency } from '@/utils/calculatorUtils';
+import { ArrowRight, DollarSign, Clock, Percent } from 'lucide-react';
+import { formatCurrency } from '@/utils/calculatorUtils';
+import BooiePlanSummary from '@/components/dashboard/BooiePlanSummary';
+import { useUserPlan } from '@/hooks/use-user-plan';
 
 interface LoanMetrics {
   fundingRequired: number;
@@ -34,6 +35,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [calculationLoading, setCalculationLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const { plan } = useUserPlan(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -93,6 +95,8 @@ const Dashboard = () => {
     fetchUserData();
   }, [user]);
 
+  // Keep the loanMetrics effect for now to avoid breaking existing functionality
+  // This will be used for displaying financial overview metrics
   useEffect(() => {
     const fetchLoanMetrics = async () => {
       if (!user) return;
@@ -160,19 +164,7 @@ const Dashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle>Loan Calculator</CardTitle>
-                  <Link to="/advanced-loan-calculator">
-                    <Button variant="ghost" size="sm" className="gap-1">
-                      Advanced <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </Link>
-                </CardHeader>
-                <CardContent>
-                  <MiniLoanCalculator initialLoanAmount={userData?.financial?.funding_required || null} />
-                </CardContent>
-              </Card>
+              <BooiePlanSummary />
             </div>
 
             <div className="lg:col-span-2 space-y-8">
@@ -208,13 +200,13 @@ const Dashboard = () => {
                       <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium flex items-center">
                           <DollarSign className="h-4 w-4 mr-1 text-blue-500" />
-                          Requested Funding
+                          Funding Amount
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="text-2xl font-bold">
-                          {loanMetrics?.fundingRequired
-                            ? formatCurrency(loanMetrics.fundingRequired)
+                          {plan?.loanAmount
+                            ? formatCurrency(plan.loanAmount)
                             : formatCurrency(userData?.financial?.funding_required || 0)}
                         </div>
                       </CardContent>
@@ -229,8 +221,8 @@ const Dashboard = () => {
                       </CardHeader>
                       <CardContent>
                         <div className="text-2xl font-bold">
-                          {loanMetrics?.incomeFloor
-                            ? formatCurrency(loanMetrics.incomeFloor)
+                          {plan?.incomeFloor
+                            ? formatCurrency(plan.incomeFloor)
                             : formatCurrency(userData?.financial?.income_floor || 0)}
                         </div>
                       </CardContent>
@@ -240,14 +232,16 @@ const Dashboard = () => {
                       <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium flex items-center">
                           <Percent className="h-4 w-4 mr-1 text-blue-500" /> 
-                          Payment Rate
+                          Income Share Rate
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="text-2xl font-bold">
-                          {loanMetrics?.repaymentRate
-                            ? `${(loanMetrics.repaymentRate * 100).toFixed(1)}%`
-                            : '10.0%'}
+                          {plan?.maxRate
+                            ? `${(plan.maxRate / 100).toFixed(2)}%`
+                            : loanMetrics?.repaymentRate
+                              ? `${(loanMetrics.repaymentRate * 100).toFixed(1)}%`
+                              : '0.0%'}
                         </div>
                         <div className="text-sm text-muted-foreground">
                           of income above floor
@@ -264,47 +258,9 @@ const Dashboard = () => {
                       </CardHeader>
                       <CardContent>
                         <div className="text-2xl font-bold">
-                          {loanMetrics?.maxTermYears
-                            ? `${loanMetrics.maxTermYears} years`
+                          {plan?.loanTerm
+                            ? `${plan.loanTerm} years`
                             : `${userData?.financial?.max_term_years || 0} years`}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
-
-                {!calculationLoading && loanMetrics && (
-                  <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Card className="bg-blue-50">
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium flex items-center">
-                          <DollarSign className="h-4 w-4 mr-1 text-blue-600" />
-                          Average Monthly Payment
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold text-blue-700">
-                          {formatCurrency(loanMetrics.avgMonthlyPayment)}
-                        </div>
-                        <div className="text-sm text-blue-600">
-                          varies based on income
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="bg-blue-50">
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium flex items-center">
-                          <TrendingUp className="h-4 w-4 mr-1 text-blue-600" />
-                          Effective Interest Rate
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold text-blue-700">
-                          {loanMetrics.effectiveRate.toFixed(2)}%
-                        </div>
-                        <div className="text-sm text-blue-600">
-                          based on projected income
                         </div>
                       </CardContent>
                     </Card>
@@ -314,7 +270,7 @@ const Dashboard = () => {
                 <div className="mt-6">
                   <Link to="/advanced-loan-calculator">
                     <Button className="w-full">
-                      Use Advanced Loan Calculator
+                      Explore Booie Plan Options
                     </Button>
                   </Link>
                 </div>
@@ -322,6 +278,17 @@ const Dashboard = () => {
 
               <ComplianceSection />
             </div>
+          </div>
+
+          <div className="mt-4 border-t pt-6">
+            <p className="text-sm text-muted-foreground mb-6 text-center">
+              Income share agreements, such as Booie plans, are considered student loans.
+            </p>
+            <Link to="/apply" className="block w-full md:w-1/2 mx-auto">
+              <Button className="w-full bg-booie-600 hover:bg-booie-700 text-lg py-6 transition-all" size="lg">
+                Apply Now <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

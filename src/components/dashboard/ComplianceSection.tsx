@@ -8,9 +8,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatCurrency, projectIncomeGrowth } from "@/utils/calculatorUtils";
 import { useToast } from "@/hooks/use-toast";
 import { AlertTriangle } from "lucide-react";
+import { useUserPlan } from "@/hooks/use-user-plan";
 
 const ComplianceSection = () => {
   const { user } = useAuth();
+  const { plan } = useUserPlan();
   const [incomeData, setIncomeData] = useState([]);
   const [loanData, setLoanData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,19 +41,30 @@ const ComplianceSection = () => {
           });
         }
 
-        // Fetch loan application data - allow this to fail gracefully
-        const { data: loanApplications, error: loanError } = await supabase
+        // Fetch academic data to get degree program
+        const { data: academicData, error: academicError } = await supabase
+          .from('user_academic_data')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
+        
+        if (academicError && academicError.code !== 'PGRST116') {
+          console.error("Error fetching academic data:", academicError);
+        }
+
+        // Fetch application data - allow this to fail gracefully
+        const { data: applications, error: applicationsError } = await supabase
           .from('loan_applications')
           .select('*')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false });
 
-        if (loanError) {
-          console.error("Error fetching loan data:", loanError);
+        if (applicationsError) {
+          console.error("Error fetching application data:", applicationsError);
         }
 
         // Generate income data regardless of whether we have financial data
-        const startingIncome = 60000; // Default starting income
+        const startingIncome = plan?.loanAmount ? 60000 : 60000; // Default starting income
         const growthRate = 0.05; // 5% annual income growth
         const years = 10;
 
@@ -65,36 +78,37 @@ const ComplianceSection = () => {
 
         const incomeChartData = projectedIncomes.map((income, index) => ({
           year: new Date().getFullYear() + index,
-          income: income
+          income: income,
+          program: academicData?.degree_program || plan?.degree || 'Your Degree'
         }));
 
         setIncomeData(incomeChartData);
 
-        // Process loan data if available
-        if (loanApplications && loanApplications.length > 0) {
-          // Prepare data for loan comparison chart
-          const compareData = loanApplications.slice(0, 5).map((loan, index) => {
+        // Process application data if available
+        if (applications && applications.length > 0) {
+          // Prepare data for comparison chart
+          const compareData = applications.slice(0, 5).map((application, index) => {
             return {
               id: index,
-              name: `Loan ${index + 1}`,
-              amount: loan.loan_amount,
-              interest: loan.total_interest || (loan.loan_amount * loan.interest_rate * (loan.term_months / 12)),
-              payment: loan.total_payment || (loan.loan_amount + (loan.loan_amount * loan.interest_rate * (loan.term_months / 12)))
+              name: `Plan ${index + 1}`,
+              amount: application.loan_amount,
+              interest: application.total_interest || (application.loan_amount * 0.05),
+              payment: application.total_payment || (application.loan_amount + (application.loan_amount * 0.05))
             };
           });
           
           setLoanData(compareData);
         } else {
           // Create sample data for visualization
-          if (financialData?.funding_required) {
-            const sampleLoan = {
+          if (financialData?.funding_required || plan?.loanAmount) {
+            const samplePlan = {
               id: 0,
-              name: "Sample Loan",
-              amount: financialData.funding_required,
-              interest: financialData.funding_required * 0.05,
-              payment: financialData.funding_required * 1.05
+              name: "Your Plan",
+              amount: plan?.loanAmount || financialData?.funding_required || 50000,
+              interest: (plan?.loanAmount || financialData?.funding_required || 50000) * 0.05,
+              payment: (plan?.loanAmount || financialData?.funding_required || 50000) * 1.05
             };
-            setLoanData([sampleLoan]);
+            setLoanData([samplePlan]);
           }
         }
       } catch (error) {
@@ -108,25 +122,26 @@ const ComplianceSection = () => {
         // Set fallback data
         const fallbackIncomeData = Array(10).fill(0).map((_, index) => ({
           year: new Date().getFullYear() + index,
-          income: 60000 * Math.pow(1.05, index)
+          income: 60000 * Math.pow(1.05, index),
+          program: plan?.degree || 'Your Degree'
         }));
         setIncomeData(fallbackIncomeData);
         
-        const fallbackLoanData = [{
+        const fallbackPlanData = [{
           id: 0,
-          name: "Sample Loan",
+          name: "Sample Plan",
           amount: 50000,
           interest: 2500,
           payment: 52500
         }];
-        setLoanData(fallbackLoanData);
+        setLoanData(fallbackPlanData);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [user, toast]);
+  }, [user, toast, plan]);
 
   const chartConfig = {
     income: {
@@ -163,7 +178,7 @@ const ComplianceSection = () => {
     <div className="space-y-6">
       <h2 className="text-2xl font-bold tracking-tight">Financial Analysis</h2>
       <div className="grid gap-6 md:grid-cols-2">
-        {/* Income Projection Chart */}
+        {/* Income Projection Chart - Changed to Bar Chart */}
         <Card className="shadow-md">
           <CardHeader className="pb-3">
             <CardTitle className="text-xl font-bold">Income Projection</CardTitle>
@@ -179,7 +194,7 @@ const ComplianceSection = () => {
             ) : incomeData.length > 0 ? (
               <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart 
+                  <BarChart 
                     data={incomeData}
                     margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
                   >
@@ -202,16 +217,20 @@ const ComplianceSection = () => {
                       labelFormatter={(label) => `Year: ${label}`}
                       contentStyle={{ fontSize: '12px' }}
                     />
-                    <Line 
-                      type="monotone" 
+                    <Bar 
                       dataKey="income" 
-                      stroke="#0070f3" 
-                      strokeWidth={2}
-                      dot={{ stroke: '#0070f3', strokeWidth: 2, fill: 'white', r: 3 }}
-                      activeDot={{ r: 5 }}
                       name="Income"
+                      fill="#0070f3"
+                      radius={[4, 4, 0, 0]}
                     />
-                  </LineChart>
+                    <Legend
+                      formatter={(value) => {
+                        const program = incomeData[0]?.program || 'Your Degree';
+                        return `${value} (${program})`;
+                      }}
+                      wrapperStyle={{ fontSize: '12px' }}
+                    />
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
             ) : (
@@ -223,18 +242,18 @@ const ComplianceSection = () => {
           </CardContent>
         </Card>
 
-        {/* Loan Comparison Chart */}
+        {/* Plan Comparison Chart */}
         <Card className="shadow-md">
           <CardHeader className="pb-3">
-            <CardTitle className="text-xl font-bold">Loan Analysis</CardTitle>
+            <CardTitle className="text-xl font-bold">Plan Analysis</CardTitle>
             <CardDescription>
-              Comparison of your loan options
+              Comparison of your Booie Plan options
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-2">
             {loading ? (
               <div className="h-64 flex items-center justify-center">
-                <p className="text-muted-foreground">Loading loan data...</p>
+                <p className="text-muted-foreground">Loading plan data...</p>
               </div>
             ) : loanData.length > 0 ? (
               <div className="h-64 w-full">
@@ -261,7 +280,7 @@ const ComplianceSection = () => {
                       labelFormatter={(label) => `${label}`}
                       contentStyle={{ fontSize: '12px' }}
                     />
-                    <Bar dataKey="amount" name="Principal" fill="#0070f3" />
+                    <Bar dataKey="amount" name="Amount" fill="#0070f3" />
                     <Bar dataKey="interest" name="Interest" fill="#f97316" />
                     <Legend
                       wrapperStyle={{ fontSize: '12px', marginTop: '10px' }}
@@ -272,7 +291,7 @@ const ComplianceSection = () => {
             ) : (
               <div className="h-64 flex flex-col items-center justify-center gap-2">
                 <AlertTriangle className="h-8 w-8 text-yellow-500" />
-                <p className="text-muted-foreground text-center">No loan data available. Try using the loan calculator to see comparisons.</p>
+                <p className="text-muted-foreground text-center">No plan data available. Try using the calculator to see comparisons.</p>
               </div>
             )}
           </CardContent>
