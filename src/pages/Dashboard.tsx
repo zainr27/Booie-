@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ProfileSummary from '@/components/dashboard/ProfileSummary';
@@ -9,7 +10,7 @@ import { UserDemographicData, UserFinancialData, UserAcademicData } from '@/type
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, DollarSign, Clock, Percent } from 'lucide-react';
-import { formatCurrency } from '@/utils/calculatorUtils';
+import { formatCurrency, fetchLatestLoanCalculation, calculateLoanSummary } from '@/utils/calculatorUtils';
 import BooiePlanSummary from '@/components/dashboard/BooiePlanSummary';
 import { useUserPlan } from '@/hooks/use-user-plan';
 
