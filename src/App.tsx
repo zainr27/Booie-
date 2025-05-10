@@ -19,6 +19,8 @@ import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { ThemeProvider } from "./components/theme/ThemeProvider";
+import LoanCalculator from "./pages/LoanCalculator";
 
 const queryClient = new QueryClient();
 
@@ -69,6 +71,7 @@ const AnimatedRoutes = () => {
         <Route path="/" element={<IndexRoute />} />
         <Route path="/income-projection" element={<IncomeProjection />} />
         <Route path="/advanced-loan-calculator" element={<AdvancedLoanCalculator />} />
+        <Route path="/loan-calculator" element={<LoanCalculator />} />
         <Route path="/comparison" element={<Comparison />} />
         <Route path="/compare" element={<LoanComparison />} />
         <Route path="/compare/personalized" element={
@@ -105,13 +108,15 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <AuthProvider>
-          <TooltipProvider>
-            <AnimatedRoutes />
-            <Toaster />
-            <Sonner />
-          </TooltipProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <TooltipProvider>
+              <AnimatedRoutes />
+              <Toaster />
+              <Sonner />
+            </TooltipProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </BrowserRouter>
     </QueryClientProvider>
   );
