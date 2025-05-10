@@ -28,14 +28,14 @@ interface IncomeProjectionChartProps {
   formatPercentage: (value: number) => string;
 }
 
-// Custom tooltip component
+// Fix for the TypeScript error - use a more generic type for the tooltip
 const CustomTooltip = ({ 
   active, 
   payload, 
   label,
   formatCurrency,
   formatPercentage
-}: TooltipProps<number, string> & { 
+}: TooltipProps<any, any> & { 
   formatCurrency: (amount: number) => string;
   formatPercentage: (value: number) => string;
 }) => {
@@ -88,11 +88,8 @@ const IncomeProjectionChart: React.FC<IncomeProjectionChartProps> = ({
           />
           <Tooltip 
             content={
-              ({ active, payload, label }) => 
-              CustomTooltip({ 
-                active, 
-                payload, 
-                label, 
+              (props) => CustomTooltip({ 
+                ...props, 
                 formatCurrency, 
                 formatPercentage 
               })
