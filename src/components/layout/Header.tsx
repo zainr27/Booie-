@@ -80,13 +80,16 @@ const Header = () => {
             </Button>
           )}
           
-          <Button 
-            variant="outline" 
-            className="font-medium"
-            onClick={handleAuthAction}
-          >
-            {user ? 'Logout' : 'Login'}
-          </Button>
+          {/* Show logout button only if user is logged in */}
+          {user && (
+            <Button 
+              variant="outline" 
+              className="font-medium"
+              onClick={handleAuthAction}
+            >
+              Logout
+            </Button>
+          )}
           
           {!user && (
             <Link to="/auth?tab=signup">
