@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -148,7 +147,7 @@ const LoanCalculator = () => {
   }, [irrDeterminants, maxAPR]);
 
   return (
-    <Layout>
+    <Layout hideApplyCTA={true}>
       <div className="container-custom py-12">
         <h1 className="text-3xl font-bold mb-8 flex items-center">
           <Calculator className="mr-2 h-7 w-7 text-primary" />
@@ -239,14 +238,8 @@ const LoanCalculator = () => {
               </TabsContent>
             </Tabs>
             
-            <div className="mt-8 flex justify-center">
-              <Button 
-                size="lg" 
-                className="px-12 py-6 text-lg font-bold bg-booie-600 hover:bg-booie-700 hover:scale-105 transition-transform"
-                onClick={() => navigate('/apply')}
-              >
-                Apply for Your Booie Plan
-              </Button>
+            <div className="mt-8">
+              <ApplyCTA />
             </div>
           </div>
         </div>

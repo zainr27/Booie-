@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import PageTransition from '@/components/layout/PageTransition';
@@ -7,7 +6,6 @@ import { UserDemographicData, UserFinancialData, UserAcademicData } from '@/type
 import { fetchLatestLoanCalculation, calculateLoanSummary } from '@/utils/calculatorUtils';
 import DashboardContent from '@/components/dashboard/DashboardContent';
 import { DisclosureFooter } from '@/components/shared';
-import FooterApply from '@/components/dashboard/FooterApply';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -103,7 +101,6 @@ const Dashboard = () => {
       <DashboardContent userData={userData} loading={loading} />
       <div className="container-custom">
         <DisclosureFooter />
-        <FooterApply />
       </div>
     </PageTransition>
   );

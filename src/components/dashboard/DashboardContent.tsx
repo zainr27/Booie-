@@ -4,7 +4,6 @@ import ProfileSummary from "./ProfileSummary";
 import BooiePlanSummary from "./BooiePlanSummary";
 import ComplianceSection from "./ComplianceSection";
 import FinancialOverview from "./FinancialOverview";
-import FooterApply from "./FooterApply";
 import { UserDemographicData, UserAcademicData, UserFinancialData } from "@/types/custom";
 
 interface DashboardContentProps {
@@ -56,8 +55,6 @@ const DashboardContent = ({ userData, loading }: DashboardContentProps) => {
             <ComplianceSection />
           </div>
         </div>
-
-        <FooterApply />
       </div>
     </div>
   );
