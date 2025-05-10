@@ -11,6 +11,7 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const isDashboard = location.pathname === '/dashboard';
   
   console.log('Current route:', location.pathname);
 
@@ -69,15 +70,16 @@ const Header = () => {
         
         {/* Right section: Authentication buttons */}
         <div className="flex items-center gap-4">
-          {!isHome && (
-            <Button 
-              variant="outline" 
-              className="font-medium gap-2"
-              onClick={goToHomePage}
-            >
-              <Home className="h-4 w-4" />
-              Home
-            </Button>
+          {/* Only show Dashboard button when user is logged in and not on dashboard or home page */}
+          {user && !isDashboard && !isHome && (
+            <Link to="/dashboard">
+              <Button 
+                variant="outline" 
+                className="font-medium gap-2"
+              >
+                Dashboard
+              </Button>
+            </Link>
           )}
           
           {/* Show logout button only if user is logged in */}
