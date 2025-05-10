@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import PageTransition from '@/components/layout/PageTransition';
@@ -5,6 +6,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { UserDemographicData, UserFinancialData, UserAcademicData } from '@/types/custom';
 import { fetchLatestLoanCalculation, calculateLoanSummary } from '@/utils/calculatorUtils';
 import DashboardContent from '@/components/dashboard/DashboardContent';
+import { DisclosureFooter } from '@/components/shared';
+import FooterApply from '@/components/dashboard/FooterApply';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -98,6 +101,10 @@ const Dashboard = () => {
   return (
     <PageTransition>
       <DashboardContent userData={userData} loading={loading} />
+      <div className="container-custom">
+        <DisclosureFooter />
+        <FooterApply />
+      </div>
     </PageTransition>
   );
 };

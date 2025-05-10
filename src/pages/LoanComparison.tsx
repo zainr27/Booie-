@@ -109,7 +109,7 @@ const LoanComparison = () => {
   };
   
   return (
-    <Layout>
+    <Layout hideApplyCTA={true} hideDisclosure={true}>
       <div className="container-custom py-10">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Plan Comparison</h1>
