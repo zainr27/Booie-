@@ -1,9 +1,20 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { cleanupAuthState } from "@/utils/authUtils";
 
 export const signInWithPassword = async (email: string, password: string) => {
   try {
+    // Clean up existing state before attempting sign in
+    cleanupAuthState();
+    
+    // Attempt global sign out first to clear any existing sessions
+    try {
+      await supabase.auth.signOut({ scope: 'global' });
+    } catch (err) {
+      // Continue even if this fails
+    }
+    
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -24,6 +35,9 @@ export const signInWithPassword = async (email: string, password: string) => {
 
 export const signUp = async (email: string, password: string) => {
   try {
+    // Clean up existing state before attempting sign up
+    cleanupAuthState();
+    
     // Get the current origin (hostname including protocol) for the redirect URL
     const redirectTo = `${window.location.origin}/auth`;
     

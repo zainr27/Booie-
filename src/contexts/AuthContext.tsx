@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { checkOnboardingStatus, performSignOut } from '@/utils/authUtils';
 
 type AuthContextType = {
   session: Session | null;
@@ -21,29 +22,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
 
   useEffect(() => {
-    // Set up auth state listener
+    // Set up auth state listener first to capture all auth events
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        // Update session and user state synchronously
         setSession(session);
         setUser(session?.user ?? null);
         
-        // If user logged in, check onboarding status
+        // Handle signed in event
         if (event === 'SIGNED_IN' && session?.user) {
           try {
             // Defer data fetching to prevent deadlocks
             setTimeout(async () => {
-              const { data: profileData, error } = await supabase
-                .from('profiles')
-                .select('onboarding_completed')
-                .eq('id', session.user.id)
-                .single();
-              
-              if (error) {
-                console.error('Error fetching user profile:', error);
-              } else {
-                setHasCompletedOnboarding(profileData?.onboarding_completed ?? false);
-              }
-              
+              const onboardingCompleted = await checkOnboardingStatus(session.user.id);
+              setHasCompletedOnboarding(onboardingCompleted);
               setLoading(false);
             }, 0);
           } catch (error) {
@@ -59,24 +51,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     );
 
-    // Get initial session
+    // Get initial session after setting up listener
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       
       if (session?.user) {
         // Check if the user has completed onboarding
-        supabase
-          .from('profiles')
-          .select('onboarding_completed')
-          .eq('id', session.user.id)
-          .single()
-          .then(({ data, error }) => {
-            if (error) {
-              console.error('Error fetching profile:', error);
-            } else {
-              setHasCompletedOnboarding(data?.onboarding_completed ?? false);
-            }
+        checkOnboardingStatus(session.user.id)
+          .then(onboardingCompleted => {
+            setHasCompletedOnboarding(onboardingCompleted);
+            setLoading(false);
+          })
+          .catch(error => {
+            console.error('Error fetching profile:', error);
             setLoading(false);
           });
       } else {
@@ -84,12 +72,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     });
 
+    // Cleanup subscription on unmount
     return () => subscription.unsubscribe();
   }, []);
-
-  const signOut = async () => {
-    await supabase.auth.signOut();
-  };
 
   const value = {
     session,
@@ -97,7 +82,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loading,
     hasCompletedOnboarding,
     setHasCompletedOnboarding,
-    signOut,
+    signOut: performSignOut,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

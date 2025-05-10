@@ -22,7 +22,8 @@ const Header = () => {
           title: "Logged out successfully",
           description: "You have been signed out of your account.",
         });
-        navigate('/');
+        // Force a page reload to clear any lingering state
+        window.location.href = '/';
       } catch (error: any) {
         toast({
           variant: "destructive",
