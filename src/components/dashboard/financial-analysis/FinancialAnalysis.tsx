@@ -2,6 +2,7 @@
 import { useFinancialData } from './useFinancialData';
 import IncomeProjectionChart from './IncomeProjectionChart';
 import PlanAnalysisChart from './PlanAnalysisChart';
+import { ComplianceCard } from '../compliance';
 
 const FinancialAnalysis = () => {
   const { incomeData, loanData, loading } = useFinancialData();
