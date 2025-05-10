@@ -6,12 +6,14 @@ import DemographicStep from '@/components/onboarding/DemographicStep';
 import FinancialStep from '@/components/onboarding/FinancialStep';
 import AcademicStep from '@/components/onboarding/AcademicStep';
 import OnboardingProgress from '@/components/onboarding/OnboardingProgress';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Home, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 
 // Step renderer component
 const OnboardingSteps = () => {
@@ -23,6 +25,19 @@ const OnboardingSteps = () => {
       {currentStep === 1 && <AcademicStep key="academic" />}
       {currentStep === 2 && <FinancialStep key="financial" />}
     </AnimatePresence>
+  );
+};
+
+// Disclosure footer component
+const DisclosureFooter = () => {
+  return (
+    <Card className="mt-8 bg-gray-50">
+      <CardContent className="pt-6">
+        <p className="text-sm text-gray-600">
+          <strong>Disclosure:</strong> Income share agreements, such as Booie plans, are considered student loans with payment structures that differ from traditional fixed-rate loans.
+        </p>
+      </CardContent>
+    </Card>
   );
 };
 
@@ -118,12 +133,20 @@ const Onboarding = () => {
         <div className="max-w-md text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-4">Something went wrong</h2>
           <p className="text-gray-600 mb-6">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Reload page
-          </button>
+          <div className="flex flex-col gap-4 items-center">
+            <Button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+              Reload page
+            </Button>
+            <Link to="/">
+              <Button variant="outline" className="gap-2">
+                <Home size={18} />
+                Return to Home
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -139,16 +162,41 @@ const Onboarding = () => {
       <div className="min-h-screen flex">
         {/* Left section (form) */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center px-4 sm:px-6 lg:px-8 py-12">
-          <div className="max-w-md w-full mx-auto space-y-6">
-            <div>
-              <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-6">
-                Complete your profile
-              </h1>
+          <div className="max-w-md w-full mx-auto">
+            {/* Home link */}
+            <div className="mb-6">
+              <Link to="/">
+                <Button variant="outline" className="flex items-center gap-2 text-booie-600 hover:text-booie-700 transition-colors">
+                  <Home size={18} />
+                  <span>Return to Home</span>
+                </Button>
+              </Link>
+            </div>
+            
+            <div className="space-y-6">
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-6">
+                  Complete your profile
+                </h1>
+                
+                <OnboardingProvider>
+                  <OnboardingProgress />
+                  <OnboardingSteps />
+                </OnboardingProvider>
+              </div>
               
-              <OnboardingProvider>
-                <OnboardingProgress />
-                <OnboardingSteps />
-              </OnboardingProvider>
+              {/* Disclosure footer */}
+              <DisclosureFooter />
+              
+              {/* Apply button */}
+              <div className="pt-6">
+                <Link to="/apply">
+                  <Button className="w-full bg-booie-600 hover:bg-booie-700 text-white py-3 flex items-center justify-center gap-2 text-lg font-medium">
+                    Apply for a Booie Plan
+                    <ArrowRight size={18} />
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
