@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import PageTransition from '@/components/layout/PageTransition';
@@ -6,11 +7,12 @@ import { UserDemographicData, UserFinancialData, UserAcademicData } from '@/type
 import { fetchLatestLoanCalculation, calculateLoanSummary } from '@/utils/calculatorUtils';
 import DashboardContent from '@/components/dashboard/DashboardContent';
 import { DisclosureFooter } from '@/components/shared';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { GraduationCap } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [userData, setUserData] = useState<{
     demographic?: UserDemographicData | null;
     academic?: UserAcademicData | null;

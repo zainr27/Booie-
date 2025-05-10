@@ -12,7 +12,7 @@ export function ThemeToggle() {
       variant="ghost" 
       size="icon" 
       onClick={toggleTheme}
-      className="rounded-full w-9 h-9 bg-muted/50 hover:bg-muted"
+      className="rounded-full w-9 h-9 bg-gradient-to-br from-muted/70 to-muted/30 hover:from-muted/90 hover:to-muted/50 backdrop-blur-sm"
       aria-label="Toggle theme"
     >
       {theme === 'light' ? (

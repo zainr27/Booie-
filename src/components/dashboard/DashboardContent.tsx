@@ -26,29 +26,29 @@ const ActivityTimeline = () => {
   ];
 
   return (
-    <Card className="shadow-md overflow-hidden transition-all hover:shadow-lg">
-      <CardHeader className="pb-2 bg-gradient-to-r from-purple-900/10 to-purple-700/10 dark:from-purple-900/20 dark:to-purple-700/30 border-b border-purple-100 dark:border-purple-900/30">
+    <Card className="shadow-lg overflow-hidden transition-all hover:shadow-xl">
+      <CardHeader className="pb-2">
         <CardTitle className="text-xl flex items-center">
           <Clock className="mr-2 h-5 w-5 text-purple-500 dark:text-purple-400" />
           Activity Timeline
         </CardTitle>
       </CardHeader>
-      <CardContent className="pt-4 bg-muted/30 dark:bg-muted">
+      <CardContent className="pt-4">
         <div className="space-y-6">
           {activities.map((activity, i) => (
             <div key={activity.id} className="flex items-start">
               <div className="flex-shrink-0 mr-3">
                 {activity.status === 'complete' ? (
-                  <div className="bg-green-100 dark:bg-green-900/20 p-1 rounded-full">
+                  <div className="bg-gradient-to-br from-green-400/20 to-green-500/30 dark:from-green-400/30 dark:to-green-500/40 p-1 rounded-full">
                     <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
                   </div>
                 ) : activity.status === 'current' ? (
-                  <div className="bg-purple-100 dark:bg-purple-900/20 p-1 rounded-full">
+                  <div className="bg-gradient-to-br from-purple-400/20 to-purple-500/30 dark:from-purple-400/30 dark:to-purple-500/40 p-1 rounded-full">
                     <Circle className="h-5 w-5 text-purple-600 dark:text-purple-400 animate-pulse" />
                   </div>
                 ) : (
-                  <div className="bg-gray-100 dark:bg-gray-800 p-1 rounded-full">
-                    <Circle className="h-5 w-5 text-gray-400" />
+                  <div className="bg-gradient-to-br from-gray-300/20 to-gray-400/30 dark:from-gray-600/30 dark:to-gray-700/40 p-1 rounded-full">
+                    <Circle className="h-5 w-5 text-gray-400 dark:text-gray-500" />
                   </div>
                 )}
                 {i < activities.length - 1 && (
@@ -75,7 +75,7 @@ const ActivityTimeline = () => {
 const StatsCard = ({ title, value, change, icon }: { title: string; value: string; change?: string; icon: React.ReactNode }) => {
   return (
     <Card className="shadow-sm overflow-hidden transition-all hover:shadow-md">
-      <CardContent className="p-6 bg-muted/30 dark:bg-muted">
+      <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-muted-foreground">{title}</p>
@@ -87,7 +87,7 @@ const StatsCard = ({ title, value, change, icon }: { title: string; value: strin
               </div>
             )}
           </div>
-          <div className="bg-primary/10 p-3 rounded-full">
+          <div className="bg-gradient-to-br from-primary/20 to-primary/10 dark:from-primary/30 dark:to-primary/20 p-3 rounded-full">
             {icon}
           </div>
         </div>
@@ -109,11 +109,11 @@ const DashboardContent = ({ userData, loading }: DashboardContentProps) => {
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="lg:col-span-1 space-y-8">
-            <Card className="shadow-md overflow-hidden transition-all hover:shadow-lg">
-              <CardHeader className="pb-2 bg-gradient-to-r from-purple-900/10 to-purple-700/10 dark:from-purple-900/20 dark:to-purple-700/30 border-b border-purple-100 dark:border-purple-900/30">
+            <Card className="shadow-lg overflow-hidden transition-all hover:shadow-xl">
+              <CardHeader>
                 <CardTitle className="text-xl">Profile Summary</CardTitle>
               </CardHeader>
-              <CardContent className="bg-muted/30 dark:bg-muted">
+              <CardContent>
                 <ProfileSummary userData={{
                   demographic: userData?.demographic || undefined,
                   academic: userData?.academic || undefined,

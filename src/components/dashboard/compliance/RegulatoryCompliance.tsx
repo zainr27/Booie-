@@ -4,11 +4,11 @@ import { Shield, Check } from "lucide-react";
 
 const RegulatoryCompliance = () => {
   return (
-    <Card className="shadow-md">
-      <CardHeader className="pb-3 bg-gradient-to-r from-purple-900/10 to-purple-700/10 dark:from-purple-900/20 dark:to-purple-700/30 border-b border-purple-100 dark:border-purple-900/30">
+    <Card className="shadow-md overflow-hidden">
+      <CardHeader className="pb-3">
         <CardTitle className="text-xl font-bold">Regulatory Compliance</CardTitle>
       </CardHeader>
-      <CardContent className="bg-muted/30 dark:bg-muted">
+      <CardContent>
         <div className="flex items-center gap-4 mb-4">
           <Shield className="h-8 w-8 text-purple-500 dark:text-purple-400" />
           <div>
