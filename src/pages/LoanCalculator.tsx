@@ -14,6 +14,7 @@ import {
   ProjectionSummaryTable,
   BooieTermsSummary
 } from '@/components/financial-model';
+import { ApplyCTA } from '@/components/shared';
 
 const LoanCalculator = () => {
   const navigate = useNavigate();
