@@ -1,10 +1,11 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Eye, EyeOff, Facebook, Github, Mail } from "lucide-react";
+import { Eye, EyeOff, Mail } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import PageTransition from "@/components/layout/PageTransition";
@@ -251,36 +252,6 @@ const Auth = () => {
                   >
                     {loading ? "Signing in..." : "Sign In"}
                   </Button>
-                  
-                  <div className="relative my-6">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-white text-gray-500">or sign in with</span>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-3 gap-3">
-                    <button
-                      type="button"
-                      className="flex justify-center items-center py-2.5 border rounded-lg hover:bg-gray-50 transition duration-150"
-                    >
-                      <Facebook className="h-5 w-5 text-blue-600" />
-                    </button>
-                    <button
-                      type="button"
-                      className="flex justify-center items-center py-2.5 border rounded-lg hover:bg-gray-50 transition duration-150"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line></svg>
-                    </button>
-                    <button
-                      type="button"
-                      className="flex justify-center items-center py-2.5 border rounded-lg hover:bg-gray-50 transition duration-150"
-                    >
-                      <Github className="h-5 w-5" />
-                    </button>
-                  </div>
                 </motion.form>
               </TabsContent>
               
@@ -344,36 +315,6 @@ const Auth = () => {
                   >
                     {loading ? "Creating account..." : "Sign Up"}
                   </Button>
-                  
-                  <div className="relative my-6">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-white text-gray-500">or sign up with</span>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-3 gap-3">
-                    <button
-                      type="button"
-                      className="flex justify-center items-center py-2.5 border rounded-lg hover:bg-gray-50 transition duration-150"
-                    >
-                      <Facebook className="h-5 w-5 text-blue-600" />
-                    </button>
-                    <button
-                      type="button"
-                      className="flex justify-center items-center py-2.5 border rounded-lg hover:bg-gray-50 transition duration-150"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line></svg>
-                    </button>
-                    <button
-                      type="button"
-                      className="flex justify-center items-center py-2.5 border rounded-lg hover:bg-gray-50 transition duration-150"
-                    >
-                      <Github className="h-5 w-5" />
-                    </button>
-                  </div>
                 </motion.form>
               </TabsContent>
             </Tabs>
