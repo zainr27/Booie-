@@ -13,7 +13,6 @@ import {
   ProjectionSummaryTable,
   BooieTermsSummary
 } from '@/components/financial-model';
-import { ApplyCTA } from '@/components/shared';
 import { LoanSummaryTab } from '@/components/loan-calculator/LoanSummaryTab';
 import { LoanProjectionsTab } from '@/components/loan-calculator/LoanProjectionsTab';
 
@@ -148,6 +147,9 @@ const LoanCalculatorContainer = () => {
     return maxAPR + rateAdjustment;
   }, [irrDeterminants, maxAPR]);
 
+  // State to track active tab
+  const [activeTab, setActiveTab] = useState<string>("summary");
+
   return (
     <Layout hideApplyCTA={true}>
       <div className="container-custom py-12">
@@ -176,7 +178,7 @@ const LoanCalculatorContainer = () => {
           
           {/* Results Section */}
           <div className="md:col-span-2">
-            <Tabs defaultValue="summary">
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="mb-4">
                 <TabsTrigger value="summary">Summary</TabsTrigger>
                 <TabsTrigger value="projections">Income Projection</TabsTrigger>
@@ -215,9 +217,7 @@ const LoanCalculatorContainer = () => {
               </TabsContent>
             </Tabs>
             
-            <div className="mt-8">
-              <ApplyCTA />
-            </div>
+            {/* Apply CTA button removed */}
           </div>
         </div>
       </div>
