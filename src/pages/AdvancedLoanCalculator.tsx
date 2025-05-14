@@ -220,22 +220,13 @@ const AdvancedLoanCalculator = () => {
     }
   };
 
-  // Apply for loan
+  // Apply for loan - Updated to navigate to document upload
   const applyForLoan = () => {
-    // Navigate to a dedicated application form
-    navigate('/loan-application', {
-      state: {
-        loanAmount,
-        repaymentRate,
-        school,
-        degreeProgram,
-        maxTermYears,
-        minimumIncome,
-        educationMode,
-        graduationDate,
-        employmentDate
-      }
-    });
+    // Log analytics event
+    console.log('Analytics event: advanced_loan_calculator_apply_clicked');
+    
+    // Navigate to document upload page
+    navigate('/document-upload');
   };
 
   // Determine if the application would require manual review
