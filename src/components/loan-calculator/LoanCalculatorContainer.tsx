@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calculator } from "lucide-react";
+import { Calculator, Upload } from "lucide-react";
 import Layout from '@/components/layout/Layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import { 
   BooiePlanDisclosure, 
 } from '@/components/loan-calculator';
@@ -217,7 +218,16 @@ const LoanCalculatorContainer = () => {
               </TabsContent>
             </Tabs>
             
-            {/* Apply CTA button removed */}
+            {/* Document Upload CTA */}
+            <div className="mt-8 flex justify-center">
+              <Button 
+                onClick={() => navigate('/document-upload')} 
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3"
+              >
+                <Upload className="mr-2 h-5 w-5" />
+                Upload Required Documents
+              </Button>
+            </div>
           </div>
         </div>
       </div>
