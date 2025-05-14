@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -16,19 +15,7 @@ import { toast } from '@/hooks/use-toast';
 import { formatCurrency } from '@/utils/calculatorUtils';
 import { calculateBooieRepaymentRate } from '@/utils/calculatorUtils';
 import { schools, degreePrograms } from '@/utils/incomeUtils';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  ComposedChart
-} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, ComposedChart } from 'recharts';
 import PageTransition from '@/components/layout/PageTransition';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { Calendar } from "@/components/ui/calendar";
@@ -36,22 +23,35 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns";
 
 // Education mode options
-const educationModes = [
-  { value: 'full-time-in-person', label: 'Full-time in-person' },
-  { value: 'part-time-in-person', label: 'Part-time in-person' },
-  { value: 'full-time-online', label: 'Full-time online' },
-  { value: 'part-time-online', label: 'Part-time online' },
-  { value: 'full-time-hybrid', label: 'Full-time hybrid' },
-  { value: 'part-time-hybrid', label: 'Part-time hybrid' },
-];
+const educationModes = [{
+  value: 'full-time-in-person',
+  label: 'Full-time in-person'
+}, {
+  value: 'part-time-in-person',
+  label: 'Part-time in-person'
+}, {
+  value: 'full-time-online',
+  label: 'Full-time online'
+}, {
+  value: 'part-time-online',
+  label: 'Part-time online'
+}, {
+  value: 'full-time-hybrid',
+  label: 'Full-time hybrid'
+}, {
+  value: 'part-time-hybrid',
+  label: 'Part-time hybrid'
+}];
 
 // Default graduation date (May 2026)
 const defaultGraduationDate = new Date(2026, 4, 15); // May 15, 2026
 
 const AdvancedLoanCalculator = () => {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const navigate = useNavigate();
-  
+
   // Main calculator inputs
   const [school, setSchool] = useState<string>('');
   const [degreeProgram, setDegreeProgram] = useState<string>('');
@@ -62,7 +62,7 @@ const AdvancedLoanCalculator = () => {
   const [minimumIncome, setMinimumIncome] = useState<number>(0);
   const [maxTermYears, setMaxTermYears] = useState<number>(10);
   const [repaymentCapMultiple, setRepaymentCapMultiple] = useState<number>(2.0);
-  
+
   // Optional rate reducing factors
   const [highGPA, setHighGPA] = useState<boolean>(false);
   const [topTestScore15, setTopTestScore15] = useState<boolean>(false);
@@ -70,7 +70,7 @@ const AdvancedLoanCalculator = () => {
   const [hasCosigner, setHasCosigner] = useState<boolean>(false);
   const [hasInternship, setHasInternship] = useState<boolean>(false);
   const [hasReturnOffer, setHasReturnOffer] = useState<boolean>(false);
-  
+
   // Calculated results
   const [originationFee, setOriginationFee] = useState<number>(0);
   const [loanAmount, setLoanAmount] = useState<number>(0);
@@ -95,7 +95,6 @@ const AdvancedLoanCalculator = () => {
     // Loan amount is fundingAmount / 0.99 to account for the fee being taken from loan amount
     const calculatedLoanAmount = Math.round(fundingAmount / 0.99);
     const calculatedOriginationFee = calculatedLoanAmount - fundingAmount;
-    
     setLoanAmount(calculatedLoanAmount);
     setOriginationFee(calculatedOriginationFee);
   }, [fundingAmount]);
@@ -103,36 +102,35 @@ const AdvancedLoanCalculator = () => {
   // Calculate adjusted IRR based on selected factors
   useEffect(() => {
     let adjustedRate = baselineIRR;
-    
     if (highGPA) adjustedRate -= 0.5;
     if (topTestScore15) adjustedRate -= 0.5;
     if (topTestScore5) adjustedRate -= 0.5;
     if (hasCosigner) adjustedRate -= 0.5;
     if (hasInternship) adjustedRate -= 0.5;
     if (hasReturnOffer) adjustedRate -= 1.0;
-    
+
     // Ensure adjusted rate doesn't go below 0
     adjustedRate = Math.max(0, adjustedRate);
     setAdjustedIRR(adjustedRate);
-    
   }, [baselineIRR, highGPA, topTestScore15, topTestScore5, hasCosigner, hasInternship, hasReturnOffer]);
 
   // Calculate repayment rate and projections when relevant inputs change
   useEffect(() => {
     if (!degreeProgram || !school) return;
-    
+
     // Generate sample income projection based on degree and school
     // In a real implementation, this would come from your data based on the selected program
-    const projectedIncomes = Array.from({ length: maxTermYears }, (_, i) => {
+    const projectedIncomes = Array.from({
+      length: maxTermYears
+    }, (_, i) => {
       // Sample starting income based on degree program selection
       const selectedDegree = degreePrograms.find(d => d.id === degreeProgram);
       const selectedSchool = schools.find(s => s.id === school);
-      
       let startingSalary = 50000; // Default fallback
-      
+
       if (selectedDegree && selectedSchool) {
         startingSalary = selectedDegree.avgStartingSalary * selectedSchool.employmentFactor;
-        
+
         // Apply adjustments based on education mode
         if (educationMode.includes('part-time')) {
           startingSalary *= 0.95; // 5% reduction for part-time
@@ -144,49 +142,39 @@ const AdvancedLoanCalculator = () => {
           startingSalary *= 0.97; // 3% reduction for hybrid
         }
       }
-      
+
       // Apply annual growth rate
       const growthRate = selectedDegree?.growthRate || 0.04; // Default 4% growth
       const income = Math.round(startingSalary * Math.pow(1 + growthRate, i));
-      
       return {
         year: i + 1,
         income: income
       };
     });
-    
     setIncomeProjection(projectedIncomes);
-    
+
     // Calculate repayment rate based on all factors
     // This is a simplified approximation of the calculation described in requirements
-    const calculatedRate = calculateBooieRepaymentRate(
-      loanAmount, 
-      projectedIncomes.map(p => p.income),
-      maxTermYears
-    );
-    
+    const calculatedRate = calculateBooieRepaymentRate(loanAmount, projectedIncomes.map(p => p.income), maxTermYears);
     setRepaymentRate(calculatedRate);
-    
+
     // Generate payment projection based on income and rate
     const payments = projectedIncomes.map(yearData => {
       const incomeAboveMinimum = Math.max(0, yearData.income - minimumIncome);
       const payment = Math.round(incomeAboveMinimum * calculatedRate);
-      
       return {
         ...yearData,
         payment: payment
       };
     });
-    
     setPaymentProjection(payments);
-    
+
     // Calculate total projected repayment
     const totalRepay = payments.reduce((sum, year) => sum + year.payment, 0);
-    
+
     // Cap total repayment at repaymentCapMultiple * loanAmount
     const cappedRepayment = Math.min(totalRepay, loanAmount * repaymentCapMultiple);
     setTotalRepayment(cappedRepayment);
-    
   }, [degreeProgram, school, educationMode, loanAmount, minimumIncome, maxTermYears, repaymentCapMultiple]);
 
   // Save loan parameters to database
@@ -199,31 +187,29 @@ const AdvancedLoanCalculator = () => {
       });
       return;
     }
-    
     try {
-      const { data, error } = await supabase
-        .from('loan_applications')
-        .insert([{
-          user_id: user.id,
-          loan_amount: loanAmount,
-          interest_rate: adjustedIRR,
-          term_months: maxTermYears * 12,
-          monthly_payment: repaymentRate, // This represents the repayment rate
-          institution_id: school,
-          degree_program_id: degreeProgram,
-          status: 'draft'
-        }]);
-        
+      const {
+        data,
+        error
+      } = await supabase.from('loan_applications').insert([{
+        user_id: user.id,
+        loan_amount: loanAmount,
+        interest_rate: adjustedIRR,
+        term_months: maxTermYears * 12,
+        monthly_payment: repaymentRate,
+        // This represents the repayment rate
+        institution_id: school,
+        degree_program_id: degreeProgram,
+        status: 'draft'
+      }]);
       if (error) throw error;
-      
       toast({
         title: "Parameters saved",
-        description: "Your loan parameters have been saved successfully",
+        description: "Your loan parameters have been saved successfully"
       });
-      
+
       // Switch to application tab
       setActiveTab('application');
-      
     } catch (error: any) {
       console.error("Error saving loan parameters:", error);
       toast({
@@ -237,8 +223,8 @@ const AdvancedLoanCalculator = () => {
   // Apply for loan
   const applyForLoan = () => {
     // Navigate to a dedicated application form
-    navigate('/loan-application', { 
-      state: { 
+    navigate('/loan-application', {
+      state: {
         loanAmount,
         repaymentRate,
         school,
@@ -248,32 +234,28 @@ const AdvancedLoanCalculator = () => {
         educationMode,
         graduationDate,
         employmentDate
-      } 
+      }
     });
   };
 
   // Determine if the application would require manual review
   const requiresManualReview = () => {
     if (!employmentDate || !graduationDate) return true;
-    
+
     // If employment date is more than 4 months after graduation
     const fourMonthsAfterGrad = new Date(graduationDate);
     fourMonthsAfterGrad.setMonth(fourMonthsAfterGrad.getMonth() + 4);
-    
     if (employmentDate > fourMonthsAfterGrad) return true;
-    
+
     // Check other conditions
     if (educationMode.includes('part-time')) return true;
     if (educationMode.includes('online') || educationMode.includes('hybrid')) return true;
     if (loanAmount > 30000) return true;
     if (repaymentRate > 0.10) return true;
     if (minimumIncome > 30000) return true;
-    
     return false;
   };
-
-  return (
-    <PageTransition>
+  return <PageTransition>
       <Layout>
         <div className="container py-8">
           <h1 className="text-3xl font-bold mb-6">Advanced Income-Share Agreement Calculator</h1>
@@ -298,19 +280,14 @@ const AdvancedLoanCalculator = () => {
                     {/* School Selection */}
                     <div className="space-y-2">
                       <Label htmlFor="school">School</Label>
-                      <Select
-                        value={school}
-                        onValueChange={setSchool}
-                      >
+                      <Select value={school} onValueChange={setSchool}>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select your school" />
                         </SelectTrigger>
                         <SelectContent>
-                          {schools.map(school => (
-                            <SelectItem key={school.id} value={school.id}>
+                          {schools.map(school => <SelectItem key={school.id} value={school.id}>
                               {school.name}
-                            </SelectItem>
-                          ))}
+                            </SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
@@ -318,19 +295,14 @@ const AdvancedLoanCalculator = () => {
                     {/* Degree Program */}
                     <div className="space-y-2">
                       <Label htmlFor="degree">Degree Program</Label>
-                      <Select
-                        value={degreeProgram}
-                        onValueChange={setDegreeProgram}
-                      >
+                      <Select value={degreeProgram} onValueChange={setDegreeProgram}>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select your degree program" />
                         </SelectTrigger>
                         <SelectContent>
-                          {degreePrograms.map(program => (
-                            <SelectItem key={program.id} value={program.id}>
+                          {degreePrograms.map(program => <SelectItem key={program.id} value={program.id}>
                               {program.name} ({program.level})
-                            </SelectItem>
-                          ))}
+                            </SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
@@ -338,19 +310,14 @@ const AdvancedLoanCalculator = () => {
                     {/* Mode of Education */}
                     <div className="space-y-2">
                       <Label htmlFor="mode">Mode of Education</Label>
-                      <Select
-                        value={educationMode}
-                        onValueChange={setEducationMode}
-                      >
+                      <Select value={educationMode} onValueChange={setEducationMode}>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select mode of education" />
                         </SelectTrigger>
                         <SelectContent>
-                          {educationModes.map(mode => (
-                            <SelectItem key={mode.value} value={mode.value}>
+                          {educationModes.map(mode => <SelectItem key={mode.value} value={mode.value}>
                               {mode.label}
-                            </SelectItem>
-                          ))}
+                            </SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
@@ -360,21 +327,13 @@ const AdvancedLoanCalculator = () => {
                       <Label htmlFor="graduation-date">Expected Graduation Date</Label>
                       <Popover>
                         <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="w-full justify-start text-left font-normal"
-                          >
+                          <Button variant="outline" className="w-full justify-start text-left font-normal">
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {graduationDate ? format(graduationDate, "PPP") : <span>Pick a date</span>}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0">
-                          <Calendar
-                            mode="single"
-                            selected={graduationDate}
-                            onSelect={(date) => date && setGraduationDate(date)}
-                            initialFocus
-                          />
+                          <Calendar mode="single" selected={graduationDate} onSelect={date => date && setGraduationDate(date)} initialFocus />
                         </PopoverContent>
                       </Popover>
                     </div>
@@ -384,28 +343,18 @@ const AdvancedLoanCalculator = () => {
                       <Label htmlFor="employment-date">Expected Full-Time Employment Date</Label>
                       <Popover>
                         <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="w-full justify-start text-left font-normal"
-                          >
+                          <Button variant="outline" className="w-full justify-start text-left font-normal">
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {employmentDate ? format(employmentDate, "PPP") : <span>Pick a date</span>}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0">
-                          <Calendar
-                            mode="single"
-                            selected={employmentDate || undefined}
-                            onSelect={(date) => date && setEmploymentDate(date)}
-                            initialFocus
-                          />
+                          <Calendar mode="single" selected={employmentDate || undefined} onSelect={date => date && setEmploymentDate(date)} initialFocus />
                         </PopoverContent>
                       </Popover>
-                      {employmentDate && graduationDate && new Date(employmentDate) > new Date(new Date(graduationDate).setMonth(graduationDate.getMonth() + 4)) && (
-                        <p className="text-sm text-amber-600">
+                      {employmentDate && graduationDate && new Date(employmentDate) > new Date(new Date(graduationDate).setMonth(graduationDate.getMonth() + 4)) && <p className="text-sm text-amber-600">
                           Note: Employment date is more than 4 months after graduation. You will be asked to explain your post-graduation plans.
-                        </p>
-                      )}
+                        </p>}
                     </div>
                     
                     {/* Funding Amount */}
@@ -414,14 +363,7 @@ const AdvancedLoanCalculator = () => {
                         <Label htmlFor="funding-amount">Funding Amount</Label>
                         <span className="font-medium">{formatCurrency(fundingAmount)}</span>
                       </div>
-                      <Slider
-                        value={[fundingAmount]}
-                        min={5000}
-                        max={50000}
-                        step={1000}
-                        onValueChange={(value) => setFundingAmount(value[0])}
-                        className="mt-2"
-                      />
+                      <Slider value={[fundingAmount]} min={5000} max={50000} step={1000} onValueChange={value => setFundingAmount(value[0])} className="mt-2" />
                       <div className="flex justify-between text-xs text-gray-500">
                         <span>$5,000</span>
                         <span>$50,000</span>
@@ -440,14 +382,7 @@ const AdvancedLoanCalculator = () => {
                         <Label htmlFor="minimum-income">Minimum Income</Label>
                         <span className="font-medium">{formatCurrency(minimumIncome)}</span>
                       </div>
-                      <Slider
-                        value={[minimumIncome]}
-                        min={0}
-                        max={40000}
-                        step={1000}
-                        onValueChange={(value) => setMinimumIncome(value[0])}
-                        className="mt-2"
-                      />
+                      <Slider value={[minimumIncome]} min={0} max={40000} step={1000} onValueChange={value => setMinimumIncome(value[0])} className="mt-2" />
                       <div className="flex justify-between text-xs text-gray-500">
                         <span>$0</span>
                         <span>$40,000</span>
@@ -463,14 +398,7 @@ const AdvancedLoanCalculator = () => {
                         <Label htmlFor="max-term">Max Term (Years)</Label>
                         <span className="font-medium">{maxTermYears} years</span>
                       </div>
-                      <Slider
-                        value={[maxTermYears]}
-                        min={3}
-                        max={20}
-                        step={0.5}
-                        onValueChange={(value) => setMaxTermYears(value[0])}
-                        className="mt-2"
-                      />
+                      <Slider value={[maxTermYears]} min={3} max={20} step={0.5} onValueChange={value => setMaxTermYears(value[0])} className="mt-2" />
                       <div className="flex justify-between text-xs text-gray-500">
                         <span>3 years</span>
                         <span>20 years</span>
@@ -483,14 +411,7 @@ const AdvancedLoanCalculator = () => {
                         <Label htmlFor="repayment-cap">Repayment Cap Multiple</Label>
                         <span className="font-medium">{repaymentCapMultiple.toFixed(1)}x</span>
                       </div>
-                      <Slider
-                        value={[repaymentCapMultiple * 10]}
-                        min={15}
-                        max={30}
-                        step={1}
-                        onValueChange={(value) => setRepaymentCapMultiple(value[0] / 10)}
-                        className="mt-2"
-                      />
+                      <Slider value={[repaymentCapMultiple * 10]} min={15} max={30} step={1} onValueChange={value => setRepaymentCapMultiple(value[0] / 10)} className="mt-2" />
                       <div className="flex justify-between text-xs text-gray-500">
                         <span>1.5x</span>
                         <span>3.0x</span>
@@ -511,27 +432,27 @@ const AdvancedLoanCalculator = () => {
                     <CardContent className="space-y-4">
                       <div className="space-y-2">
                         <div className="flex items-center space-x-2">
-                          <Checkbox id="gpa" checked={highGPA} onCheckedChange={(checked) => setHighGPA(!!checked)} />
+                          <Checkbox id="gpa" checked={highGPA} onCheckedChange={checked => setHighGPA(!!checked)} />
                           <Label htmlFor="gpa">Cumulative GPA ≥ 3.5/4.0 (-0.5%)</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Checkbox id="test15" checked={topTestScore15} onCheckedChange={(checked) => setTopTestScore15(!!checked)} />
+                          <Checkbox id="test15" checked={topTestScore15} onCheckedChange={checked => setTopTestScore15(!!checked)} />
                           <Label htmlFor="test15">Top 15% test score (-0.5%)</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Checkbox id="test5" checked={topTestScore5} onCheckedChange={(checked) => setTopTestScore5(!!checked)} />
+                          <Checkbox id="test5" checked={topTestScore5} onCheckedChange={checked => setTopTestScore5(!!checked)} />
                           <Label htmlFor="test5">Top 5% test score (-0.5%)</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Checkbox id="cosigner" checked={hasCosigner} onCheckedChange={(checked) => setHasCosigner(!!checked)} />
+                          <Checkbox id="cosigner" checked={hasCosigner} onCheckedChange={checked => setHasCosigner(!!checked)} />
                           <Label htmlFor="cosigner">Cosigner (-0.5%)</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Checkbox id="internship" checked={hasInternship} onCheckedChange={(checked) => setHasInternship(!!checked)} />
+                          <Checkbox id="internship" checked={hasInternship} onCheckedChange={checked => setHasInternship(!!checked)} />
                           <Label htmlFor="internship">Relevant internship of 10+ weeks (-0.5%)</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Checkbox id="return-offer" checked={hasReturnOffer} onCheckedChange={(checked) => setHasReturnOffer(!!checked)} />
+                          <Checkbox id="return-offer" checked={hasReturnOffer} onCheckedChange={checked => setHasReturnOffer(!!checked)} />
                           <Label htmlFor="return-offer">Return offer from internship (-1.0%)</Label>
                         </div>
                       </div>
@@ -570,10 +491,7 @@ const AdvancedLoanCalculator = () => {
                         </div>
                       </div>
                       
-                      <Button 
-                        className="w-full mt-4" 
-                        onClick={() => setActiveTab('results')}
-                      >
+                      <Button className="w-full mt-4" onClick={() => setActiveTab('results')}>
                         View Detailed Projections
                       </Button>
                     </CardContent>
@@ -592,46 +510,32 @@ const AdvancedLoanCalculator = () => {
                   <CardContent>
                     <div className="h-96">
                       <ResponsiveContainer width="100%" height="100%">
-                        <ComposedChart
-                          data={paymentProjection}
-                          margin={{
-                            top: 20,
-                            right: 30,
-                            left: 20,
-                            bottom: 5,
-                          }}
-                        >
+                        <ComposedChart data={paymentProjection} margin={{
+                        top: 20,
+                        right: 30,
+                        left: 20,
+                        bottom: 5
+                      }}>
                           <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="year" label={{ value: 'Year', position: 'insideBottomRight', offset: -10 }} />
-                          <YAxis 
-                            yAxisId="left"
-                            tickFormatter={(value) => `$${(value/1000).toFixed(0)}k`}
-                            label={{ value: 'Annual Income', angle: -90, position: 'insideLeft' }}
-                          />
-                          <YAxis 
-                            yAxisId="right"
-                            orientation="right"
-                            tickFormatter={(value) => `$${(value/1000).toFixed(0)}k`}
-                            label={{ value: 'Payment', angle: 90, position: 'insideRight' }}
-                          />
-                          <Tooltip 
-                            formatter={(value: any) => [`$${Number(value).toLocaleString()}`, '']}
-                            labelFormatter={(label) => `Year ${label}`}
-                          />
+                          <XAxis dataKey="year" label={{
+                          value: 'Year',
+                          position: 'insideBottomRight',
+                          offset: -10
+                        }} />
+                          <YAxis yAxisId="left" tickFormatter={value => `$${(value / 1000).toFixed(0)}k`} label={{
+                          value: 'Annual Income',
+                          angle: -90,
+                          position: 'insideLeft'
+                        }} />
+                          <YAxis yAxisId="right" orientation="right" tickFormatter={value => `$${(value / 1000).toFixed(0)}k`} label={{
+                          value: 'Payment',
+                          angle: 90,
+                          position: 'insideRight'
+                        }} />
+                          <Tooltip formatter={(value: any) => [`$${Number(value).toLocaleString()}`, '']} labelFormatter={label => `Year ${label}`} />
                           <Legend />
-                          <Bar 
-                            dataKey="income" 
-                            name="Annual Income" 
-                            fill="#8884d8" 
-                            yAxisId="left"
-                          />
-                          <Line 
-                            type="monotone" 
-                            dataKey="payment" 
-                            name="Annual Payment" 
-                            stroke="#ff7300" 
-                            yAxisId="right"
-                          />
+                          <Bar dataKey="income" name="Annual Income" fill="#8884d8" yAxisId="left" />
+                          <Line type="monotone" dataKey="payment" name="Annual Payment" stroke="#ff7300" yAxisId="right" />
                         </ComposedChart>
                       </ResponsiveContainer>
                     </div>
@@ -654,16 +558,14 @@ const AdvancedLoanCalculator = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {paymentProjection.map((year) => (
-                            <tr key={year.year} className="border-t">
+                          {paymentProjection.map(year => <tr key={year.year} className="border-t">
                               <td className="p-2">{year.year}</td>
                               <td className="text-right p-2">{formatCurrency(year.income)}</td>
                               <td className="text-right p-2">{formatCurrency(year.payment)}</td>
                               <td className="text-right p-2">
-                                {year.income > 0 ? `${((year.payment / year.income) * 100).toFixed(1)}%` : '0%'}
+                                {year.income > 0 ? `${(year.payment / year.income * 100).toFixed(1)}%` : '0%'}
                               </td>
-                            </tr>
-                          ))}
+                            </tr>)}
                           <tr className="border-t font-bold">
                             <td className="p-2">Total</td>
                             <td className="text-right p-2"></td>
@@ -690,12 +592,7 @@ const AdvancedLoanCalculator = () => {
                       </div>
                       
                       <div className="pt-4">
-                        <Button 
-                          className="w-full" 
-                          onClick={saveLoanParameters}
-                        >
-                          Save Parameters & Continue
-                        </Button>
+                        
                       </div>
                     </div>
                   </CardContent>
@@ -747,11 +644,7 @@ const AdvancedLoanCalculator = () => {
                       </div>
                       
                       <div className="flex justify-end mt-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => setActiveTab('inputs')}
-                        >
+                        <Button variant="outline" size="sm" onClick={() => setActiveTab('inputs')}>
                           Edit Parameters
                         </Button>
                       </div>
@@ -760,8 +653,7 @@ const AdvancedLoanCalculator = () => {
                     <div>
                       <h3 className="font-semibold mb-2">Application Status</h3>
                       
-                      {requiresManualReview() ? (
-                        <div className="bg-amber-50 border-l-4 border-amber-400 p-4">
+                      {requiresManualReview() ? <div className="bg-amber-50 border-l-4 border-amber-400 p-4">
                           <div className="flex">
                             <div className="ml-3">
                               <p className="text-sm text-amber-700 font-medium">Manual Review Required</p>
@@ -769,30 +661,16 @@ const AdvancedLoanCalculator = () => {
                                 Your application will require manual review due to one or more of the following factors:
                               </p>
                               <ul className="list-disc pl-5 mt-1 text-sm text-amber-700">
-                                {educationMode.includes('part-time') && (
-                                  <li>Part-time student status</li>
-                                )}
-                                {(educationMode.includes('online') || educationMode.includes('hybrid')) && (
-                                  <li>Online or hybrid program</li>
-                                )}
-                                {loanAmount > 30000 && (
-                                  <li>Loan amount exceeds $30,000</li>
-                                )}
-                                {repaymentRate > 0.10 && (
-                                  <li>Repayment rate exceeds 10%</li>
-                                )}
-                                {minimumIncome > 30000 && (
-                                  <li>Income floor exceeds $30,000</li>
-                                )}
-                                {employmentDate && graduationDate && new Date(employmentDate) > new Date(new Date(graduationDate).setMonth(graduationDate.getMonth() + 4)) && (
-                                  <li>Employment date more than 4 months after graduation</li>
-                                )}
+                                {educationMode.includes('part-time') && <li>Part-time student status</li>}
+                                {(educationMode.includes('online') || educationMode.includes('hybrid')) && <li>Online or hybrid program</li>}
+                                {loanAmount > 30000 && <li>Loan amount exceeds $30,000</li>}
+                                {repaymentRate > 0.10 && <li>Repayment rate exceeds 10%</li>}
+                                {minimumIncome > 30000 && <li>Income floor exceeds $30,000</li>}
+                                {employmentDate && graduationDate && new Date(employmentDate) > new Date(new Date(graduationDate).setMonth(graduationDate.getMonth() + 4)) && <li>Employment date more than 4 months after graduation</li>}
                               </ul>
                             </div>
                           </div>
-                        </div>
-                      ) : (
-                        <div className="bg-green-50 border-l-4 border-green-400 p-4">
+                        </div> : <div className="bg-green-50 border-l-4 border-green-400 p-4">
                           <div className="flex">
                             <div className="ml-3">
                               <p className="text-sm text-green-700 font-medium">Eligible for Pre-Approval</p>
@@ -801,8 +679,7 @@ const AdvancedLoanCalculator = () => {
                               </p>
                             </div>
                           </div>
-                        </div>
-                      )}
+                        </div>}
                     </div>
                     
                     <div>
@@ -831,58 +708,45 @@ const AdvancedLoanCalculator = () => {
                           <p className="text-sm">Proof of funding gap</p>
                         </div>
                         
-                        {highGPA && (
-                          <div className="flex items-center">
+                        {highGPA && <div className="flex items-center">
                             <div className="w-4 h-4 mr-2 rounded-full bg-blue-100 flex items-center justify-center">
                               <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                             </div>
                             <p className="text-sm">Proof of cumulative GPA (for rate reduction)</p>
-                          </div>
-                        )}
+                          </div>}
                         
-                        {(topTestScore5 || topTestScore15) && (
-                          <div className="flex items-center">
+                        {(topTestScore5 || topTestScore15) && <div className="flex items-center">
                             <div className="w-4 h-4 mr-2 rounded-full bg-blue-100 flex items-center justify-center">
                               <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                             </div>
                             <p className="text-sm">Proof of test score result (for rate reduction)</p>
-                          </div>
-                        )}
+                          </div>}
                         
-                        {hasCosigner && (
-                          <div className="flex items-center">
+                        {hasCosigner && <div className="flex items-center">
                             <div className="w-4 h-4 mr-2 rounded-full bg-blue-100 flex items-center justify-center">
                               <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                             </div>
                             <p className="text-sm">Cosigner agreement (for rate reduction)</p>
-                          </div>
-                        )}
+                          </div>}
                         
-                        {hasInternship && (
-                          <div className="flex items-center">
+                        {hasInternship && <div className="flex items-center">
                             <div className="w-4 h-4 mr-2 rounded-full bg-blue-100 flex items-center justify-center">
                               <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                             </div>
                             <p className="text-sm">Proof of internship and salary (for rate reduction)</p>
-                          </div>
-                        )}
+                          </div>}
                         
-                        {hasReturnOffer && (
-                          <div className="flex items-center">
+                        {hasReturnOffer && <div className="flex items-center">
                             <div className="w-4 h-4 mr-2 rounded-full bg-blue-100 flex items-center justify-center">
                               <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                             </div>
                             <p className="text-sm">Proof of return offer, acceptance, and expected salary (for rate reduction)</p>
-                          </div>
-                        )}
+                          </div>}
                       </div>
                     </div>
                     
                     <div className="pt-4">
-                      <Button 
-                        className="w-full" 
-                        onClick={applyForLoan}
-                      >
+                      <Button className="w-full" onClick={applyForLoan}>
                         Continue to Application
                       </Button>
                     </div>
@@ -966,8 +830,6 @@ const AdvancedLoanCalculator = () => {
           </Tabs>
         </div>
       </Layout>
-    </PageTransition>
-  );
+    </PageTransition>;
 };
-
 export default AdvancedLoanCalculator;
