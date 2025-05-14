@@ -36,10 +36,14 @@ interface UploadedDocument {
   id: string;
   file_name: string;
   document_type: string;
-  description: string | null;
+  description?: string | null;
   status: string;
   created_at: string;
   file_path: string;
+  uploaded_at: string;
+  user_id: string;
+  loan_application_id?: string | null;
+  verified?: boolean | null;
 }
 
 const DocumentUpload = () => {
@@ -67,13 +71,31 @@ const DocumentUpload = () => {
   const fetchUserDocuments = async () => {
     try {
       const { data, error } = await supabase
-        .from('loan_documents')
+        .from('user_documents')
         .select('*')
-        .eq('user_id', user?.id)
-        .order('created_at', { ascending: false });
+        .eq('user_id', user?.id);
 
       if (error) throw error;
-      setDocuments(data || []);
+      
+      if (data) {
+        // Map the data to match our UploadedDocument interface
+        const formattedData: UploadedDocument[] = data.map(doc => ({
+          id: doc.id,
+          file_name: doc.file_path.split('/').pop() || '',
+          document_type: doc.document_type,
+          description: null,
+          status: doc.verified ? 'Approved' : 'Pending',
+          created_at: doc.uploaded_at,
+          file_path: doc.file_path,
+          uploaded_at: doc.uploaded_at,
+          user_id: doc.user_id,
+          loan_application_id: doc.loan_application_id,
+          verified: doc.verified
+        }));
+        setDocuments(formattedData);
+      } else {
+        setDocuments([]);
+      }
     } catch (error: any) {
       console.error('Error fetching documents:', error.message);
       toast({
@@ -158,13 +180,11 @@ const DocumentUpload = () => {
 
         // Add document metadata to the database
         const { error: insertError } = await supabase
-          .from('loan_documents')
+          .from('user_documents')
           .insert({
             user_id: user.id,
-            file_name: file.name,
-            file_path: filePath,
             document_type: documentType,
-            description: description || null
+            file_path: filePath
           });
 
         if (insertError) throw insertError;
@@ -407,7 +427,7 @@ const DocumentUpload = () => {
                                   {doc.status}
                                 </span>
                               </TableCell>
-                              <TableCell>{formatDate(doc.created_at)}</TableCell>
+                              <TableCell>{formatDate(doc.uploaded_at || doc.created_at)}</TableCell>
                               <TableCell>
                                 <Button
                                   variant="outline"
