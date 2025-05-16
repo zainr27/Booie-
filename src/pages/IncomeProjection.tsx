@@ -7,6 +7,8 @@ import { degreePrograms, schools, calculateIncomeProjection } from '@/utils/inco
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { ProjectionChart, AnalysisSummary, ProgramInputs } from '@/components/income-projection';
+import DisclosureFooter from '@/components/shared/DisclosureFooter';
+
 const IncomeProjection = () => {
   const [selectedDegree, setSelectedDegree] = useState<string>('cs-bs');
   const [selectedSchool, setSelectedSchool] = useState<string>('mit');
@@ -110,9 +112,9 @@ const IncomeProjection = () => {
           {/* Input Section */}
           <div className="md:col-span-1">
             <Card>
-              <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg bg-slate-950">
+              <CardHeader className="bg-black text-white rounded-t-lg">
                 <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="text-booie-600" />
+                  <TrendingUp className="text-primary" />
                   Program Information
                 </CardTitle>
               </CardHeader>
@@ -125,9 +127,9 @@ const IncomeProjection = () => {
           {/* Projection Chart */}
           <div className="md:col-span-2">
             <Card className="h-full">
-              <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg bg-zinc-950">
+              <CardHeader className="bg-black text-white rounded-t-lg">
                 <CardTitle className="flex items-center gap-2">
-                  <DollarSign className="text-booie-600" />
+                  <DollarSign className="text-primary" />
                   {projectionYears}-Year Income Projection
                 </CardTitle>
               </CardHeader>
@@ -139,6 +141,8 @@ const IncomeProjection = () => {
             </Card>
           </div>
         </div>
+        
+        <DisclosureFooter className="mt-8" />
       </div>
     </Layout>;
 };
