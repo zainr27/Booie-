@@ -35,9 +35,8 @@ const BooiePlanSummary = () => {
     );
   }
 
-  // Calculate origination fee (1%)
-  const originationFee = (plan.loanAmount || 0) * 0.01;
-  const netAmount = (plan.loanAmount || 0) - originationFee;
+  // Remove origination fee calculation
+  const netAmount = plan.loanAmount || 0;
 
   return (
     <Card className="border-booie-500/40">
@@ -69,10 +68,6 @@ const BooiePlanSummary = () => {
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Funding Amount:</span>
             <span className="font-bold">{formatCurrency(plan.loanAmount || 0)}</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">Origination Fee (1%):</span>
-            <span>{formatCurrency(originationFee)}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Net Disbursement:</span>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Card, 
@@ -47,8 +46,7 @@ const FeeExamples = () => {
                 <div>
                   <h4 className="font-medium mb-3">Costs Breakdown</h4>
                   <ul className="space-y-2">
-                    <li><strong>Origination Fee:</strong> $300 (1% of $30,000)</li>
-                    <li><strong>Net Disbursement:</strong> $29,700</li>
+                    <li><strong>Net Disbursement:</strong> $30,000</li>
                     <li><strong>Initial Monthly Payment:</strong> $425 (6% of monthly income)</li>
                     <li><strong>Total Repayment Cap:</strong> $60,000 (2.0x $30,000)</li>
                   </ul>
@@ -88,8 +86,7 @@ const FeeExamples = () => {
                 <div>
                   <h4 className="font-medium mb-3">Costs Breakdown</h4>
                   <ul className="space-y-2">
-                    <li><strong>Origination Fee:</strong> $250 (1% of $25,000)</li>
-                    <li><strong>Net Disbursement:</strong> $24,750</li>
+                    <li><strong>Net Disbursement:</strong> $25,000</li>
                     <li><strong>Initial Monthly Payment:</strong> $263 (7% of monthly income)</li>
                     <li><strong>Total Repayment Cap:</strong> $50,000 (2.0x $25,000)</li>
                   </ul>
@@ -131,8 +128,7 @@ const FeeExamples = () => {
                 <div>
                   <h4 className="font-medium mb-3">Costs Breakdown</h4>
                   <ul className="space-y-2">
-                    <li><strong>Origination Fee:</strong> $100 (1% of $10,000)</li>
-                    <li><strong>Net Disbursement:</strong> $9,900</li>
+                    <li><strong>Net Disbursement:</strong> $10,000</li>
                     <li><strong>Initial Monthly Payment:</strong> $152 (2.8% of monthly income above protected amount)</li>
                   </ul>
                 </div>
@@ -193,8 +189,7 @@ const FeeExamples = () => {
                 <div>
                   <h4 className="font-medium mb-3">Costs Breakdown</h4>
                   <ul className="space-y-2">
-                    <li><strong>Origination Fee:</strong> $200 (1% of $20,000)</li>
-                    <li><strong>Net Disbursement:</strong> $19,800</li>
+                    <li><strong>Net Disbursement:</strong> $20,000</li>
                     <li><strong>Initial Monthly Payment:</strong> $96 (4.18% of monthly income above protected amount)</li>
                   </ul>
                 </div>
@@ -253,7 +248,7 @@ const FeeExamples = () => {
                   </TableRow>
                   <TableRow>
                     <TableCell className="font-medium">Initial Fee</TableCell>
-                    <TableCell>$300 (1% origination)</TableCell>
+                    <TableCell>$0 (no fees)</TableCell>
                     <TableCell>$1,200 (4% origination)</TableCell>
                   </TableRow>
                   <TableRow>

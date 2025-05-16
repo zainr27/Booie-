@@ -38,7 +38,7 @@ const RateTable = ({ booieRate, isPersonalized = false }: RateTableProps) => {
                 <span className="text-booie-600">{isPersonalized ? "" : " (expected)"}</span>
               </div>
               <div className="text-xs text-gray-500 mt-1">
-                1% origination fee
+                No fees
               </div>
             </TableCell>
             <TableCell className="hidden md:table-cell">

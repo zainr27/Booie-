@@ -47,11 +47,6 @@ const BooieFeesStructure = () => {
             </TableHeader>
             <TableBody>
               <TableRow>
-                <TableCell className="font-medium">Origination Fee</TableCell>
-                <TableCell>1%</TableCell>
-                <TableCell>One-time fee deducted from your disbursement amount to cover administrative costs</TableCell>
-              </TableRow>
-              <TableRow>
                 <TableCell className="font-medium">Income Share Percentage</TableCell>
                 <TableCell>2-10%</TableCell>
                 <TableCell>Percentage of your monthly income you pay during the repayment period (varies based on program and amount)</TableCell>

@@ -34,7 +34,7 @@ const FeeComparison = () => {
           <TableBody>
             <TableRow>
               <TableCell className="font-medium">Origination Fee</TableCell>
-              <TableCell>1%</TableCell>
+              <TableCell>None</TableCell>
               <TableCell>1.057% - 4.228%</TableCell>
               <TableCell>Varies by lender</TableCell>
             </TableRow>
@@ -117,8 +117,8 @@ const FeeComparison = () => {
             <div className="bg-gray-50 p-4 rounded-md">
               <h4 className="font-medium mb-2">Transparency and Simplicity</h4>
               <p className="text-gray-700">
-                Our fee structure is straightforward: one origination fee at the beginning, and then a simple 
-                percentage of your income during repayment. No compound interest calculations or hidden fees.
+                Our fee structure is straightforward: a simple percentage of your income during repayment. 
+                No origination fees, no compound interest calculations, and no hidden charges.
               </p>
             </div>
           </div>
