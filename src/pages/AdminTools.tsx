@@ -12,7 +12,6 @@ const AdminTools = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   const handleMakeAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
