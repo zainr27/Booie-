@@ -298,7 +298,7 @@ const LoanSimulator: React.FC<LoanSimulatorProps> = ({
       
       {/* Disclosure bar */}
       <Alert className="bg-yellow-100 border-yellow-300">
-        <AlertDescription>
+        <AlertDescription className="">
           Red text = allows input | Rates as of 19 Apr 2025 | Review federal options at{' '}
           <a href="https://studentaid.gov" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
             studentaid.gov
