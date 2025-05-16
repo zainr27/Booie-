@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +21,7 @@ import Profile from "./pages/Profile";
 import DocumentUpload from "./pages/DocumentUpload";
 import FinalSubmission from "./pages/FinalSubmission";
 import LoanStatus from "./pages/LoanStatus";
+import AdminPanel from "./pages/AdminPanel";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
@@ -36,6 +38,22 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <Navigate to="/auth" replace />;
   }
   
+  return <>{children}</>;
+};
+
+// Admin route component that checks if the user is an admin
+const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  }
+  
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+  
+  // The AdminPanel component will handle checking if the user is an admin
   return <>{children}</>;
 };
 
@@ -111,6 +129,11 @@ const AnimatedRoutes = () => {
           <ProtectedRoute>
             <LoanStatus />
           </ProtectedRoute>
+        } />
+        <Route path="/admin" element={
+          <AdminRoute>
+            <AdminPanel />
+          </AdminRoute>
         } />
         <Route path="*" element={<NotFound />} />
       </Routes>
