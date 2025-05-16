@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, FileText, Check, AlertTriangle } from 'lucide-react';
@@ -21,12 +22,79 @@ const FinalSubmissionForm = () => {
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [documents, setDocuments] = useState<any[]>([]);
   const [applicationData, setApplicationData] = useState<any>(null);
+  const [institution, setInstitution] = useState<any>(null);
+  const [degreeProgram, setDegreeProgram] = useState<any>(null);
 
   useEffect(() => {
     if (user) {
       loadUserDocuments();
+      fetchInstitutionAndDegree();
     }
   }, [user]);
+
+  const fetchInstitutionAndDegree = async () => {
+    try {
+      // Fetch or create a default institution if one doesn't exist
+      const { data: existingInstitutions, error: institutionError } = await supabase
+        .from('institutions')
+        .select('*')
+        .limit(1);
+
+      if (institutionError) throw institutionError;
+
+      let institutionId;
+      
+      if (!existingInstitutions || existingInstitutions.length === 0) {
+        // Create a default institution
+        const { data: newInstitution, error: createError } = await supabase
+          .from('institutions')
+          .insert({
+            name: 'Default Institution',
+            type: 'University'
+          })
+          .select()
+          .single();
+
+        if (createError) throw createError;
+        institutionId = newInstitution.id;
+        setInstitution(newInstitution);
+      } else {
+        institutionId = existingInstitutions[0].id;
+        setInstitution(existingInstitutions[0]);
+      }
+
+      // Now check for degree programs
+      const { data: existingPrograms, error: programError } = await supabase
+        .from('degree_programs')
+        .select('*')
+        .eq('institution_id', institutionId)
+        .limit(1);
+
+      if (programError) throw programError;
+
+      if (!existingPrograms || existingPrograms.length === 0) {
+        // Create a default degree program
+        const { data: newProgram, error: createProgramError } = await supabase
+          .from('degree_programs')
+          .insert({
+            name: 'Default Degree Program',
+            institution_id: institutionId,
+            level: 'Bachelor',
+            field_of_study: 'General',
+            duration: 48 // 4 years
+          })
+          .select()
+          .single();
+
+        if (createProgramError) throw createProgramError;
+        setDegreeProgram(newProgram);
+      } else {
+        setDegreeProgram(existingPrograms[0]);
+      }
+    } catch (error: any) {
+      console.error('Error fetching institution and degree:', error.message);
+    }
+  };
 
   const loadUserDocuments = async () => {
     setIsLoading(true);
@@ -46,8 +114,6 @@ const FinalSubmissionForm = () => {
           loan_amount: plan.loanAmount || 0,
           interest_rate: 0.0, // Default value, adjust as needed
           term_months: (plan.loanTerm || 10) * 12,
-          institution_id: '00000000-0000-0000-0000-000000000000', // Default placeholder
-          degree_program_id: '00000000-0000-0000-0000-000000000000', // Default placeholder
           income_floor: plan.incomeFloor || 0,
           repayment_cap: plan.repaymentCap || 0,
           document_ids: data?.map(doc => doc.id) || []
@@ -86,6 +152,15 @@ const FinalSubmissionForm = () => {
       return;
     }
 
+    if (!institution || !degreeProgram) {
+      toast({
+        variant: "destructive",
+        title: "Missing institution data",
+        description: "Unable to retrieve institution and degree program data. Please try again.",
+      });
+      return;
+    }
+
     if (documents.length === 0) {
       toast({
         variant: "destructive",
@@ -107,8 +182,8 @@ const FinalSubmissionForm = () => {
           loan_amount: applicationData.loan_amount,
           interest_rate: applicationData.interest_rate,
           term_months: applicationData.term_months,
-          institution_id: applicationData.institution_id,
-          degree_program_id: applicationData.degree_program_id,
+          institution_id: institution.id,
+          degree_program_id: degreeProgram.id,
           income_floor: applicationData.income_floor,
           repayment_cap: applicationData.repayment_cap,
           status: 'Submitted'
@@ -227,7 +302,7 @@ const FinalSubmissionForm = () => {
               <Button 
                 type="submit" 
                 className="w-full bg-green-600 hover:bg-green-700 text-white"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !institution || !degreeProgram}
               >
                 {isSubmitting ? (
                   <>
