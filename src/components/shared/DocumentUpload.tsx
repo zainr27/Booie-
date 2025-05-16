@@ -1,12 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { UploadForm, DocumentList, PageHeader, Document } from '@/components/document-upload';
+import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 
 const DocumentUpload: React.FC = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -86,6 +90,18 @@ const DocumentUpload: React.FC = () => {
             />
           </div>
         </div>
+        
+        {documents.length > 0 && (
+          <div className="flex justify-center mt-8">
+            <Button 
+              onClick={() => navigate('/final-submission')}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3"
+            >
+              Proceed to Final Submission
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

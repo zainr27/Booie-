@@ -1,13 +1,49 @@
 
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUserPlan } from "@/hooks/use-user-plan";
 import { formatCurrency } from "@/utils/calculatorUtils";
-import { BadgeCheck, GraduationCap, ShieldCheck, CirclePercent } from "lucide-react";
+import { BadgeCheck, GraduationCap, ShieldCheck, CirclePercent, Clock, CheckCircle2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from '@/contexts/AuthContext';
 
 const BooiePlanSummary = () => {
   const { plan, isLoading } = useUserPlan();
+  const { user } = useAuth();
+  const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
+  const [isLoadingStatus, setIsLoadingStatus] = useState(false);
   
-  if (isLoading) {
+  useEffect(() => {
+    if (user) {
+      fetchApplicationStatus();
+    }
+  }, [user]);
+  
+  const fetchApplicationStatus = async () => {
+    if (!user) return;
+    
+    setIsLoadingStatus(true);
+    try {
+      const { data, error } = await supabase
+        .from('loan_applications')
+        .select('status')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1);
+        
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        setApplicationStatus(data[0].status);
+      }
+    } catch (error) {
+      console.error('Error fetching application status:', error);
+    } finally {
+      setIsLoadingStatus(false);
+    }
+  };
+  
+  if (isLoading || isLoadingStatus) {
     return (
       <Card>
         <CardHeader>
@@ -37,14 +73,53 @@ const BooiePlanSummary = () => {
 
   // Remove origination fee calculation
   const netAmount = plan.loanAmount || 0;
+  
+  // Render status badge based on application status
+  const renderStatusBadge = () => {
+    if (!applicationStatus) return null;
+    
+    let badgeClass = "px-2.5 py-1 rounded-full text-xs font-medium flex items-center";
+    let icon = <Clock className="h-3 w-3 mr-1" />;
+    
+    switch (applicationStatus) {
+      case 'Submitted':
+        badgeClass += " bg-blue-100 text-blue-800";
+        icon = <Clock className="h-3 w-3 mr-1" />;
+        break;
+      case 'Under Review':
+        badgeClass += " bg-yellow-100 text-yellow-800";
+        icon = <Clock className="h-3 w-3 mr-1" />;
+        break;
+      case 'Approved':
+        badgeClass += " bg-green-100 text-green-800";
+        icon = <CheckCircle2 className="h-3 w-3 mr-1" />;
+        break;
+      case 'Rejected':
+        badgeClass += " bg-red-100 text-red-800";
+        icon = <Clock className="h-3 w-3 mr-1" />;
+        break;
+      default:
+        badgeClass += " bg-gray-100 text-gray-800";
+    }
+    
+    return (
+      <div className={badgeClass}>
+        {icon}
+        {applicationStatus}
+      </div>
+    );
+  };
 
   return (
     <Card className="border-booie-500/40">
       <CardHeader className="bg-gradient-to-r from-booie-50 to-blue-50 rounded-t-lg border-b border-booie-100">
-        <CardTitle className="text-xl flex items-center gap-2">
-          <GraduationCap className="h-5 w-5 text-booie-600" /> 
-          Your Booie Plan
-        </CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle className="text-xl flex items-center">
+            <GraduationCap className="h-5 w-5 text-booie-600 mr-2" /> 
+            Your Booie Plan
+          </CardTitle>
+          {renderStatusBadge()}
+        </div>
       </CardHeader>
       <CardContent className="pt-6 space-y-5">
         <div className="grid grid-cols-2 gap-4">

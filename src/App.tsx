@@ -19,6 +19,7 @@ import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import DocumentUpload from "./pages/DocumentUpload";
+import FinalSubmission from "./pages/FinalSubmission";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
@@ -99,6 +100,11 @@ const AnimatedRoutes = () => {
         <Route path="/document-upload" element={
           <ProtectedRoute>
             <DocumentUpload />
+          </ProtectedRoute>
+        } />
+        <Route path="/final-submission" element={
+          <ProtectedRoute>
+            <FinalSubmission />
           </ProtectedRoute>
         } />
         <Route path="*" element={<NotFound />} />
