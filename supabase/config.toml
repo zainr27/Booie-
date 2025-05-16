@@ -1,1 +1,26 @@
+
 project_id = "sgkdegvakeapaidifbnt"
+
+[global.functions]
+[global.functions.deploy]
+include = ["supabase/functions/**"]
+
+[global.api]
+port = 54321
+protocol = "http"
+
+[global.db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[global.realtime]
+enabled = true
+
+[global.studio]
+enabled = true
+port = 54323
+protocol = "http"
+
+[functions.send-status-notification]
+verify_jwt = false
