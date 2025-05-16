@@ -176,7 +176,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ userData, loading }
                     <div>
                       <p className="text-sm text-gray-500">Application Status</p>
                       <div className="flex items-center mt-1">
-                        <Badge variant={application.status === 'approved' ? 'success' : 
+                        <Badge variant={application.status === 'approved' ? 'default' : 
                                       application.status === 'rejected' ? 'destructive' : 'secondary'}>
                           {application.status}
                         </Badge>
