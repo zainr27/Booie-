@@ -4,14 +4,33 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import AdminLayout from '@/components/admin/AdminLayout';
-import ApplicationTable from '@/components/admin/ApplicationTable';
 import { toast } from "@/hooks/use-toast";
+import { makeUserAdmin } from '@/utils/adminUtils';
 
 const AdminPanel = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
+  const [makingAdmin, setMakingAdmin] = useState(false);
+
+  // This effect will execute once when the component mounts to make zrahman9668@gmail.com an admin
+  useEffect(() => {
+    const makeZRahmanAdmin = async () => {
+      setMakingAdmin(true);
+      try {
+        // This will make the user an admin when the admin panel loads
+        await makeUserAdmin('zrahman9668@gmail.com');
+      } catch (error) {
+        console.error('Error making zrahman9668@gmail.com an admin:', error);
+      } finally {
+        setMakingAdmin(false);
+      }
+    };
+
+    // Uncomment this to run the makeAdmin function when the component loads
+    // makeZRahmanAdmin();
+  }, []);
 
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -56,12 +75,14 @@ const AdminPanel = () => {
     }
   }, [isAdmin, loading, navigate]);
 
-  if (loading) {
+  if (loading || makingAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-gray-600">Verifying permissions...</p>
+          <p className="mt-4 text-gray-600">
+            {makingAdmin ? "Making zrahman9668@gmail.com an admin..." : "Verifying permissions..."}
+          </p>
         </div>
       </div>
     );

@@ -22,6 +22,7 @@ import DocumentUpload from "./pages/DocumentUpload";
 import FinalSubmission from "./pages/FinalSubmission";
 import LoanStatus from "./pages/LoanStatus";
 import AdminPanel from "./pages/AdminPanel";
+import AdminTools from "./pages/AdminTools";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
@@ -133,6 +134,11 @@ const AnimatedRoutes = () => {
         <Route path="/admin" element={
           <AdminRoute>
             <AdminPanel />
+          </AdminRoute>
+        } />
+        <Route path="/admin/tools" element={
+          <AdminRoute>
+            <AdminTools />
           </AdminRoute>
         } />
         <Route path="*" element={<NotFound />} />
