@@ -39,7 +39,6 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ onViewApplication }
         .from('loan_applications')
         .select(`
           *,
-          user:user_id(email),
           degree_program:degree_program_id(
             name,
             institution:institution_id(name)
@@ -48,8 +47,8 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ onViewApplication }
       
       // Add search if present
       if (searchQuery) {
-        // Add search by user email using joins
-        query = query.or(`user.email.ilike.%${searchQuery}%,id.ilike.%${searchQuery}%`);
+        // Just search by ID since we can't directly search by email
+        query = query.ilike('id', `%${searchQuery}%`);
       }
       
       // Add sorting and pagination
@@ -60,22 +59,42 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ onViewApplication }
       if (error) throw error;
       
       // Transform the data to ensure it matches the Application type
-      const transformedData: Application[] = (data || []).map(item => ({
-        id: item.id,
-        user_id: item.user_id,
-        loan_amount: item.loan_amount,
-        status: item.status,
-        created_at: item.created_at,
-        user: item.user ? { email: item.user.email || 'Unknown' } : { email: 'Unknown' },
-        degree_program: item.degree_program
-          ? {
-              name: item.degree_program.name || 'Unknown',
-              institution: item.degree_program.institution
-                ? { name: item.degree_program.institution.name }
-                : { name: 'Unknown' }
-            }
-          : { name: 'Unknown', institution: { name: 'Unknown' } }
-      }));
+      const transformedData: Application[] = [];
+      
+      // Process each loan application
+      for (const item of data || []) {
+        // For each application, fetch the user email separately
+        let userEmail = 'Unknown';
+        if (item.user_id) {
+          const { data: userData, error: userError } = await supabase
+            .from('profiles')
+            .select('email')
+            .eq('id', item.user_id)
+            .single();
+            
+          if (!userError && userData) {
+            userEmail = userData.email || 'Unknown';
+          }
+        }
+        
+        // Create the application object with all required fields
+        transformedData.push({
+          id: item.id,
+          user_id: item.user_id,
+          loan_amount: item.loan_amount,
+          status: item.status,
+          created_at: item.created_at,
+          user: { email: userEmail },
+          degree_program: item.degree_program
+            ? {
+                name: item.degree_program.name || 'Unknown',
+                institution: item.degree_program.institution
+                  ? { name: item.degree_program.institution.name }
+                  : { name: 'Unknown' }
+              }
+            : { name: 'Unknown', institution: { name: 'Unknown' } }
+        });
+      }
       
       setApplications(transformedData);
       setTotalPages(count ? Math.ceil(count / PAGE_SIZE) : 1);
