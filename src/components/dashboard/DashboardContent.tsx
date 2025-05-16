@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -7,7 +8,7 @@ import { formatCurrency } from '@/utils/calculatorUtils';
 import { CreditCard, User, Book, FileText, CheckCircle, AlertTriangle } from 'lucide-react';
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
-import { LoanStatusCard } from './LoanStatusCard';
+import LoanStatusCard from './LoanStatusCard';
 
 interface DashboardContentProps {
   userData: {
