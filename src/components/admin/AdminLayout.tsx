@@ -1,10 +1,14 @@
 
-import React from 'react';
+import React, { ReactNode } from 'react';
 import AdminHeader from './AdminHeader';
 import AdminContent from './AdminContent';
 import { DisclosureFooter } from '@/components/shared';
 
-const AdminLayout = () => {
+interface AdminLayoutProps {
+  children?: ReactNode;
+}
+
+const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <AdminHeader />
@@ -18,7 +22,7 @@ const AdminLayout = () => {
           </p>
         </div>
         
-        <AdminContent />
+        {children || <AdminContent />}
       </div>
       
       <div className="container mx-auto px-4 py-6 mt-auto">
