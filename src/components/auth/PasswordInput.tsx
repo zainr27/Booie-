@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Eye, EyeOff, Lock } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
 interface PasswordInputProps {
   id: string;
@@ -23,34 +23,28 @@ const PasswordInput = ({
   
   return (
     <div className="space-y-2">
-      <Label htmlFor={id} className="block text-sm font-medium text-primary">
+      <Label htmlFor={id} className="block text-sm font-medium text-blue-600">
         {label}
       </Label>
-      <div className="relative group">
-        <div className="absolute left-3 top-3 text-foreground/40 group-hover:text-primary/70 transition-colors">
-          <Lock className="h-5 w-5" />
-        </div>
+      <div className="relative">
         <Input
           id={id}
           type={showPassword ? "text" : "password"}
           value={value}
           onChange={onChange}
-          className="pl-10 pr-10 py-3 w-full border rounded-lg bg-background/50 backdrop-blur-sm focus:ring-primary focus:border-primary transition-all duration-200 group-hover:border-primary/80"
+          className="pl-3 pr-10 py-3 w-full border rounded-lg focus:ring-blue-500 focus:border-blue-500"
           required={required}
         />
         <button 
           type="button" 
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 top-3 text-foreground/40 hover:text-primary transition-colors"
+          className="absolute right-3 top-3 text-gray-400"
         >
           {showPassword ? 
             <EyeOff className="h-5 w-5" /> : 
             <Eye className="h-5 w-5" />
           }
         </button>
-      </div>
-      <div className="text-xs text-foreground/50 pl-1 mt-1">
-        {label === "Password" && "Use at least 8 characters with letters and numbers"}
       </div>
     </div>
   );

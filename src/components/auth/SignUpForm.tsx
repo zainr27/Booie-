@@ -50,7 +50,7 @@ const SignUpForm = ({ email, setEmail, loading, setLoading }: SignUpFormProps) =
       
       <Button 
         type="submit" 
-        className="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-lg transition duration-150"
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition duration-150"
         disabled={loading}
       >
         {loading ? "Creating account..." : "Sign Up"}
