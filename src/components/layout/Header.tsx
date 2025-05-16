@@ -1,9 +1,11 @@
+
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { GraduationCap, Menu, Home } from 'lucide-react';
+import { GraduationCap, Menu, Home, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
+
 const Header = () => {
   const {
     user,
@@ -13,7 +15,7 @@ const Header = () => {
   const location = useLocation();
   const isHome = location.pathname === '/';
   const isDashboard = location.pathname === '/dashboard';
-  console.log('Current route:', location.pathname);
+  
   const handleAuthAction = async () => {
     if (user) {
       try {
@@ -35,9 +37,11 @@ const Header = () => {
       navigate('/auth');
     }
   };
+  
   const goToHomePage = () => {
     navigate('/');
   };
+  
   return <header className="border-b bg-white">
       <div className="container-custom flex h-16 items-center justify-between">
         {/* Left section: Logo */}
@@ -62,6 +66,10 @@ const Header = () => {
           <Link to="/faq" className="text-gray-600 hover:text-booie-700 font-medium">
             FAQ
           </Link>
+          {user && <Link to="/admin" className="text-gray-600 hover:text-booie-700 font-medium flex items-center">
+            <Shield className="h-4 w-4 mr-1" />
+            Admin
+          </Link>}
         </nav>
         
         {/* Right section: Authentication buttons */}
@@ -96,4 +104,5 @@ const Header = () => {
       </div>
     </header>;
 };
+
 export default Header;
