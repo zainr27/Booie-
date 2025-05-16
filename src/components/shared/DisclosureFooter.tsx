@@ -8,10 +8,10 @@ interface DisclosureFooterProps {
 
 const DisclosureFooter: React.FC<DisclosureFooterProps> = ({ className }) => {
   return (
-    <Card className={`bg-gray-50 ${className || ''}`}>
+    <Card className={`bg-muted ${className || ''}`}>
       <CardContent className="pt-6">
-        <p className="text-sm text-gray-600">
-          <strong>Disclosure:</strong> Income share agreements, such as Booie plans, are considered student loans with payment structures that differ from traditional fixed-rate loans.
+        <p className="text-sm text-foreground/70">
+          <strong className="text-primary">Disclosure:</strong> Income share agreements, such as Booie plans, are considered student loans with payment structures that differ from traditional fixed-rate loans.
         </p>
       </CardContent>
     </Card>

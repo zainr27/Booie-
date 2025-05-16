@@ -62,7 +62,7 @@ const SignInForm = ({ email, setEmail, loading, setLoading }: SignInFormProps) =
           <button
             type="button"
             onClick={handlePasswordReset}
-            className="text-sm text-blue-600 hover:text-blue-800 transition duration-150"
+            className="text-sm text-primary hover:text-primary/80 transition duration-150"
           >
             Forgot password?
           </button>
@@ -71,7 +71,7 @@ const SignInForm = ({ email, setEmail, loading, setLoading }: SignInFormProps) =
       
       <Button 
         type="submit" 
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition duration-150"
+        className="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-lg transition duration-150"
         disabled={loading}
       >
         {loading ? "Signing in..." : "Sign In"}

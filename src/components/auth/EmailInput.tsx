@@ -13,7 +13,7 @@ interface EmailInputProps {
 const EmailInput = ({ id, value, onChange, required = true }: EmailInputProps) => {
   return (
     <div className="space-y-2">
-      <Label htmlFor={id} className="block text-sm font-medium text-blue-600">
+      <Label htmlFor={id} className="block text-sm font-medium text-primary">
         E-mail
       </Label>
       <div className="relative">
@@ -23,10 +23,10 @@ const EmailInput = ({ id, value, onChange, required = true }: EmailInputProps) =
           value={value}
           onChange={onChange}
           placeholder="example@email.com"
-          className="pl-3 pr-10 py-3 w-full border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+          className="pl-3 pr-10 py-3 w-full border rounded-lg bg-background/50 focus:ring-primary focus:border-primary"
           required={required}
         />
-        <Mail className="absolute right-3 top-3 text-gray-400 h-5 w-5" />
+        <Mail className="absolute right-3 top-3 text-foreground/40 h-5 w-5" />
       </div>
     </div>
   );

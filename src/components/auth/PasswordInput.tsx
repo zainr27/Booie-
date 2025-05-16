@@ -23,7 +23,7 @@ const PasswordInput = ({
   
   return (
     <div className="space-y-2">
-      <Label htmlFor={id} className="block text-sm font-medium text-blue-600">
+      <Label htmlFor={id} className="block text-sm font-medium text-primary">
         {label}
       </Label>
       <div className="relative">
@@ -32,13 +32,13 @@ const PasswordInput = ({
           type={showPassword ? "text" : "password"}
           value={value}
           onChange={onChange}
-          className="pl-3 pr-10 py-3 w-full border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+          className="pl-3 pr-10 py-3 w-full border rounded-lg bg-background/50 focus:ring-primary focus:border-primary"
           required={required}
         />
         <button 
           type="button" 
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 top-3 text-gray-400"
+          className="absolute right-3 top-3 text-foreground/40 hover:text-foreground/70"
         >
           {showPassword ? 
             <EyeOff className="h-5 w-5" /> : 

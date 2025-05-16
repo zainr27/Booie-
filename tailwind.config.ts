@@ -64,21 +64,22 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				booie: {
-					50: '#f0f7ff',
-					100: '#e0eefe',
-					200: '#bae0fd',
-					300: '#7dc9fc',
-					400: '#39acf7',
-					500: '#0c8ee8',
-					600: '#0071c6',
-					700: '#0059a1',
-					800: '#044b85',
-					900: '#0a406e',
-					950: '#062a4a',
+					50: '#fff8ed',
+					100: '#ffefd6',
+					200: '#ffdcad',
+					300: '#ffc477',
+					400: '#ffa441',
+					500: '#ff8116',
+					600: '#fb6707',
+					700: '#cc4e08',
+					800: '#a33e10',
+					900: '#853511',
+					950: '#491a06',
 				}
 			},
 			fontFamily: {
 				sans: ['Inter', 'sans-serif'],
+				display: ['Space Grotesk', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
