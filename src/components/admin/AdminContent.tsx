@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import ApplicationTable from './ApplicationTable';
 import ApplicationModal from './ApplicationModal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Application, ApplicationDocument, StatusHistoryItem } from './types/ApplicationTypes';
+import { Application } from './types/ApplicationTypes';
 
 const AdminContent = () => {
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
