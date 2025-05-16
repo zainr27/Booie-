@@ -104,14 +104,30 @@ export default {
 					}
 				},
 				'fade-in': {
-					'0%': { opacity: '0' },
-					'100%': { opacity: '1' }
+					'0%': { opacity: '0', transform: 'translateY(10px)' },
+					'100%': { opacity: '1', transform: 'translateY(0)' }
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' }
+				},
+				'pulse-soft': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.8' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'fade-in': 'fade-in 0.5s ease-out'
+				'fade-in': 'fade-in 0.5s ease-out',
+				'float': 'float 6s ease-in-out infinite',
+				'pulse-soft': 'pulse-soft 4s ease-in-out infinite'
+			},
+			backgroundImage: {
+				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+				'hero-pattern': 'url("https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?q=80&w=2074")',
+				'feature-pattern': 'url("https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1740")',
+				'testimonial-pattern': 'url("https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1748")'
 			}
 		}
 	},

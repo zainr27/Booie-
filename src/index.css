@@ -7,22 +7,22 @@
 
 @layer base {
   :root {
-    --background: 215 50% 10%;
+    --background: 215 50% 8%;
     --foreground: 210 40% 98%;
 
-    --card: 215 50% 15%;
+    --card: 215 50% 12%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 215 50% 15%;
+    --popover: 215 50% 12%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 25 100% 50%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 215 70% 25%;
+    --secondary: 215 70% 15%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 215 40% 20%;
+    --muted: 215 40% 18%;
     --muted-foreground: 215 20% 70%;
 
     --accent: 25 90% 55%;
@@ -31,11 +31,11 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 215 40% 20%;
-    --input: 215 40% 20%;
+    --border: 215 40% 18%;
+    --input: 215 40% 18%;
     --ring: 25 90% 55%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 215 50% 15%;
     --sidebar-foreground: 210 40% 90%;
@@ -97,7 +97,7 @@
   }
 
   .gradient-bg {
-    background: linear-gradient(135deg, hsl(215, 70%, 15%), hsl(215, 70%, 25%));
+    background: linear-gradient(135deg, hsl(215, 70%, 10%), hsl(215, 70%, 20%));
   }
 
   .container-custom {
@@ -105,11 +105,11 @@
   }
 
   h1 {
-    @apply text-4xl font-bold tracking-tight font-display sm:text-5xl;
+    @apply text-4xl font-bold tracking-tight font-display sm:text-5xl lg:text-6xl;
   }
 
   h2 {
-    @apply text-3xl font-bold tracking-tight font-display;
+    @apply text-3xl font-bold tracking-tight font-display sm:text-4xl;
   }
 
   h3 {
@@ -129,11 +129,65 @@
   }
   
   .hero-gradient {
-    background: linear-gradient(90deg, hsla(215, 70%, 15%, 1) 0%, hsla(215, 70%, 25%, 1) 100%);
+    background: linear-gradient(90deg, hsla(215, 70%, 5%, 0.9) 0%, hsla(215, 70%, 15%, 0.8) 100%);
   }
   
   .accent-gradient {
     background: linear-gradient(90deg, hsla(25, 100%, 50%, 1) 0%, hsla(25, 100%, 60%, 1) 100%);
   }
-}
 
+  /* Glass card effect */
+  .glass-card {
+    @apply bg-card/70 backdrop-blur-md border border-white/10 shadow-lg;
+  }
+
+  /* Animated gradient background */
+  .animated-gradient {
+    background: linear-gradient(-45deg, #1E293B, #0F172A, #1E40AF, #1E3A8A);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+  }
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Background with texture overlay */
+  .texture-bg {
+    @apply bg-background relative;
+    position: relative;
+  }
+
+  .texture-bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23ffffff' fill-opacity='0.05' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  .feature-card {
+    @apply rounded-xl overflow-hidden relative bg-gradient-to-br from-card to-card/70 shadow-xl hover:shadow-2xl transition-all duration-300;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    @apply bg-gradient-to-r from-primary to-accent;
+  }
+}
