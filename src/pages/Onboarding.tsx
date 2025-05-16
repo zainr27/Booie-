@@ -14,6 +14,7 @@ import { toast } from '@/hooks/use-toast';
 import { Loader2, Home, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import DisclosureFooter from '@/components/shared/DisclosureFooter';
 
 // Step renderer component
 const OnboardingSteps = () => {
@@ -25,19 +26,6 @@ const OnboardingSteps = () => {
       {currentStep === 1 && <AcademicStep key="academic" />}
       {currentStep === 2 && <FinancialStep key="financial" />}
     </AnimatePresence>
-  );
-};
-
-// Disclosure footer component
-const DisclosureFooter = () => {
-  return (
-    <Card className="mt-8 bg-gray-50">
-      <CardContent className="pt-6">
-        <p className="text-sm text-gray-600">
-          <strong>Disclosure:</strong> Income share agreements, such as Booie plans, are considered student loans with payment structures that differ from traditional fixed-rate loans.
-        </p>
-      </CardContent>
-    </Card>
   );
 };
 
@@ -185,11 +173,11 @@ const Onboarding = () => {
                 </OnboardingProvider>
               </div>
               
-              {/* Disclosure footer */}
-              <DisclosureFooter />
+              {/* Disclosure footer with proper spacing */}
+              <DisclosureFooter className="mt-8 mb-6" />
               
               {/* Apply button */}
-              <div className="pt-6">
+              <div className="pt-4">
                 <Link to="/apply">
                   <Button className="w-full bg-booie-600 hover:bg-booie-700 text-white py-3 flex items-center justify-center gap-2 text-lg font-medium">
                     Apply for a Booie Plan

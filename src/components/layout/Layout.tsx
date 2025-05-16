@@ -3,7 +3,8 @@ import React from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import PageTransition from './PageTransition';
-import { DisclosureFooter, ApplyCTA } from '@/components/shared';
+import { ApplyCTA } from '@/components/shared';
+import DisclosureFooter from '@/components/shared/DisclosureFooter';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -19,8 +20,8 @@ const Layout = ({ children, hideApplyCTA = false, hideDisclosure = false }: Layo
         <main className="flex-grow">
           {children}
           
-          <div className="container-custom">
-            {!hideDisclosure && <DisclosureFooter />}
+          <div className="container-custom pb-12">
+            {!hideDisclosure && <DisclosureFooter className="my-8" />}
             {!hideApplyCTA && <ApplyCTA />}
           </div>
         </main>

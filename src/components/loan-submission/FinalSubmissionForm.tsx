@@ -93,6 +93,11 @@ const FinalSubmissionForm = () => {
       }
     } catch (error: any) {
       console.error('Error fetching institution and degree:', error.message);
+      toast({
+        variant: "destructive",
+        title: "Error fetching institutional data",
+        description: "Could not load institution information. Please try again later."
+      });
     }
   };
 
@@ -158,16 +163,6 @@ const FinalSubmissionForm = () => {
         title: "Missing institution data",
         description: "Unable to retrieve institution and degree program data. Please try again.",
       });
-      return;
-    }
-
-    if (documents.length === 0) {
-      toast({
-        variant: "destructive",
-        title: "No documents uploaded",
-        description: "Please upload required documents before submitting your application.",
-      });
-      navigate('/document-upload');
       return;
     }
 
@@ -302,7 +297,7 @@ const FinalSubmissionForm = () => {
               <Button 
                 type="submit" 
                 className="w-full bg-green-600 hover:bg-green-700 text-white"
-                disabled={isSubmitting || !institution || !degreeProgram}
+                disabled={isSubmitting || !institution || !degreeProgram || !acceptTerms}
               >
                 {isSubmitting ? (
                   <>
