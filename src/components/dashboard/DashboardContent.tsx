@@ -1,18 +1,18 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { useNavigate } from 'react-router-dom';
+import { LogOut, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UserDemographicData, UserFinancialData, UserAcademicData } from '@/types/custom';
-import { formatCurrency } from '@/utils/calculatorUtils';
-import { CreditCard, User, Book, FileText, CheckCircle, AlertTriangle, LogOut } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import LoanStatusCard from './LoanStatusCard';
 import LoanApplicationProgress from './LoanApplicationProgress';
 import RecentActivity from './RecentActivity';
+import ApplicationSummary from './ApplicationSummary';
+import ProfileSidebar from './ProfileSidebar';
+import SecurityNotice from './SecurityNotice';
+import DashboardFooter from './DashboardFooter';
 
 interface DashboardContentProps {
   userData: {
@@ -163,74 +163,11 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ userData, loading }
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
         {/* Main Content - Left 2/3 */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Loan Status Card */}
-          <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg">Application Summary</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {application ? (
-                <div>
-                  {/* Application Details */}
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-sm text-gray-500">Application Status</p>
-                      <div className="flex items-center mt-1">
-                        <Badge variant={application.status === 'approved' ? 'default' : 
-                                      application.status === 'rejected' ? 'destructive' : 'secondary'}>
-                          {application.status}
-                        </Badge>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm text-gray-500">Submission Date</p>
-                        <p className="font-medium">
-                          {new Date(application.created_at).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Funding Amount</p>
-                        <p className="font-medium">{formatCurrency(application.loan_amount)}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm text-gray-500">Income Floor</p>
-                        <p className="font-medium">{formatCurrency(application.income_floor || 0)}/year</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Documents Uploaded</p>
-                        <p className="font-medium">{documentCount}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-4">
-                  <p className="text-gray-500 mb-4">You haven't completed a loan application yet.</p>
-                  <Button 
-                    onClick={() => navigate('/advanced-loan-calculator')}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    Start Pre-Approval
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-            {application && (
-              <CardFooter>
-                <Button 
-                  onClick={() => navigate('/loan-status')}
-                  className="w-full bg-blue-600 hover:bg-blue-700"
-                >
-                  View Full Application Details
-                </Button>
-              </CardFooter>
-            )}
-          </Card>
+          {/* Application Summary */}
+          <ApplicationSummary 
+            application={application} 
+            documentCount={documentCount} 
+          />
           
           {/* Recent Activity */}
           <RecentActivity 
@@ -242,62 +179,18 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ userData, loading }
         {/* Sidebar - Right 1/3 */}
         <div className="space-y-6">
           {/* Profile Card */}
-          <Card className="shadow-sm">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <User className="h-5 w-5 text-primary" />
-                <CardTitle className="text-lg">Profile Information</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {demographic ? (
-                <>
-                  <p className="text-sm text-gray-500">
-                    Name: {demographic.first_name} {demographic.last_name}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Age: {demographic.age}
-                  </p>
-                  {academic && (
-                    <p className="text-sm text-gray-500">
-                      School: {academic.school}
-                    </p>
-                  )}
-                  <Link to="/profile">
-                    <Button variant="secondary" className="w-full">Update Profile</Button>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <p className="text-sm text-gray-500">
-                    No profile information available.
-                  </p>
-                  <Link to="/profile">
-                    <Button className="w-full">Complete Profile</Button>
-                  </Link>
-                </>
-              )}
-            </CardContent>
-          </Card>
+          <ProfileSidebar 
+            demographic={demographic} 
+            academic={academic} 
+          />
 
           {/* Security Notice */}
-          <div className="bg-blue-50 border border-blue-200 rounded p-4 text-sm text-blue-800">
-            <p>Your data is securely stored and accessible only to you.</p>
-          </div>
+          <SecurityNotice />
         </div>
       </div>
       
       {/* Footer Information */}
-      <div className="mt-12 pt-6 border-t border-gray-200">
-        <p className="text-sm text-gray-500 mb-4">
-          Income share agreements, such as Booie plans, are considered student loans.
-        </p>
-        <div>
-          <a href="/support" className="text-blue-600 hover:underline flex items-center">
-            <span>Contact Support</span>
-          </a>
-        </div>
-      </div>
+      <DashboardFooter />
     </div>
   );
 };
