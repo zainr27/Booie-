@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, FileText, Check, AlertTriangle } from 'lucide-react';
@@ -123,9 +122,9 @@ const FinalSubmissionForm = () => {
         description: "Check your email for confirmation of your submission.",
       });
 
-      // Navigate to dashboard after successful submission
+      // Navigate to loan status page after successful submission
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate('/loan-status');
       }, 2000);
     } catch (error: any) {
       console.error('Error submitting application:', error);
@@ -182,6 +181,22 @@ const FinalSubmissionForm = () => {
               documents={documents} 
               formatCurrency={formatCurrency} 
             />
+            
+            {/* Add a link to check application status for users who have already submitted */}
+            {documents.length > 0 && (
+              <div className="mt-6 bg-blue-50 p-4 rounded-lg border border-blue-100">
+                <p className="text-blue-800 mb-2">
+                  Already submitted your application? Check your application status:
+                </p>
+                <Button 
+                  onClick={() => navigate('/loan-status')} 
+                  variant="outline"
+                  className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                >
+                  View Application Status
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Submission Form */}

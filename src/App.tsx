@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +19,7 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import DocumentUpload from "./pages/DocumentUpload";
 import FinalSubmission from "./pages/FinalSubmission";
+import LoanStatus from "./pages/LoanStatus";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
@@ -105,6 +105,11 @@ const AnimatedRoutes = () => {
         <Route path="/final-submission" element={
           <ProtectedRoute>
             <FinalSubmission />
+          </ProtectedRoute>
+        } />
+        <Route path="/loan-status" element={
+          <ProtectedRoute>
+            <LoanStatus />
           </ProtectedRoute>
         } />
         <Route path="*" element={<NotFound />} />
