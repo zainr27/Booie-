@@ -44,13 +44,13 @@ const FinalSubmissionForm = () => {
       // Create application data from plan info
       if (plan) {
         setApplicationData({
-          school_program: `${plan.school || 'Not specified'} - ${plan.degree || 'Not specified'}`,
-          funding_amount: plan.loanAmount || 0,
-          payment_cap_multiple: plan.repaymentCap && plan.loanAmount ? 
-            (plan.repaymentCap / plan.loanAmount) : 2.0,
-          protected_income: plan.incomeFloor || 0,
-          // IRR determinants would come from user selection in pre-approval
-          irr_determinants: [],
+          loan_amount: plan.loanAmount || 0,
+          interest_rate: 0.0, // Default value, adjust as needed
+          term_months: (plan.loanTerm || 10) * 12,
+          institution_id: '00000000-0000-0000-0000-000000000000', // Default placeholder
+          degree_program_id: '00000000-0000-0000-0000-000000000000', // Default placeholder
+          income_floor: plan.incomeFloor || 0,
+          repayment_cap: plan.repaymentCap || 0,
           document_ids: data?.map(doc => doc.id) || []
         });
       }
@@ -100,16 +100,18 @@ const FinalSubmissionForm = () => {
     setIsSubmitting(true);
 
     try {
+      // Ensure all required fields are present to match the database schema
       const { data, error } = await supabase
         .from('loan_applications')
         .insert({
           user_id: user?.id,
-          school_program: applicationData.school_program,
-          funding_amount: applicationData.funding_amount,
-          payment_cap_multiple: applicationData.payment_cap_multiple,
-          protected_income: applicationData.protected_income,
-          irr_determinants: applicationData.irr_determinants,
-          document_ids: applicationData.document_ids,
+          loan_amount: applicationData.loan_amount,
+          interest_rate: applicationData.interest_rate,
+          term_months: applicationData.term_months,
+          institution_id: applicationData.institution_id,
+          degree_program_id: applicationData.degree_program_id,
+          income_floor: applicationData.income_floor,
+          repayment_cap: applicationData.repayment_cap,
           status: 'Submitted'
         })
         .select();
