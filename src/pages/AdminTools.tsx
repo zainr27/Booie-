@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { makeUserAdmin } from '@/utils/adminUtils';
 import { toast } from "@/hooks/use-toast";
-import { useAuth } from '@/contexts/AuthContext';
 import AdminLayout from '@/components/admin/AdminLayout';
 
 const AdminTools = () => {
