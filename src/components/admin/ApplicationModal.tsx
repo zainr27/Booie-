@@ -15,7 +15,7 @@ import {
   TabsContent
 } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Application, ApplicationDocument, StatusHistoryItem } from './AdminContent';
+import { Application, ApplicationDocument, StatusHistoryItem } from './types/ApplicationTypes';
 import { supabase } from '@/integrations/supabase/client';
 import StatusBadge from '../loan-status/StatusBadge';
 import { formatCurrency } from '@/utils/financeUtils';

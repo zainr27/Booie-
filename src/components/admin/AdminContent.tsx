@@ -3,39 +3,7 @@ import React, { useState } from 'react';
 import ApplicationTable from './ApplicationTable';
 import ApplicationModal from './ApplicationModal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
-export type Application = {
-  id: string;
-  user_id: string;
-  loan_amount: number;
-  status: string;
-  created_at: string;
-  user?: {
-    email: string;
-  };
-  degree_program?: {
-    name: string;
-    institution?: {
-      name: string;
-    };
-  };
-};
-
-export type ApplicationDocument = {
-  id: string;
-  document_type: string;
-  file_path: string;
-  verified: boolean;
-  uploaded_at: string;
-};
-
-export type StatusHistoryItem = {
-  id: string;
-  application_id: string;
-  status: string;
-  notes: string;
-  created_at: string;
-};
+import { Application, ApplicationDocument, StatusHistoryItem } from './types/ApplicationTypes';
 
 const AdminContent = () => {
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
