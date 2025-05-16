@@ -125,7 +125,7 @@ const IncomeProjection = () => {
           {/* Projection Chart */}
           <div className="md:col-span-2">
             <Card className="h-full">
-              <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg">
+              <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg bg-zinc-950">
                 <CardTitle className="flex items-center gap-2">
                   <DollarSign className="text-booie-600" />
                   {projectionYears}-Year Income Projection
