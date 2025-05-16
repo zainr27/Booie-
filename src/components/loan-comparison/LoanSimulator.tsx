@@ -250,7 +250,7 @@ const LoanSimulator: React.FC<LoanSimulatorProps> = ({
                 <TableHead></TableHead>
                 <TableHead></TableHead>
                 <TableHead></TableHead>
-                <TableHead className="bg-zinc-900">
+                <TableHead className="bg-gray-900">
                   <div className="text-xs text-center">{loanParams.booieTerm} years</div>
                 </TableHead>
                 <TableHead className="bg-slate-900">
