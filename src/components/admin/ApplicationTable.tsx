@@ -59,7 +59,25 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ onViewApplication }
       
       if (error) throw error;
       
-      setApplications(data || []);
+      // Transform the data to ensure it matches the Application type
+      const transformedData: Application[] = (data || []).map(item => ({
+        id: item.id,
+        user_id: item.user_id,
+        loan_amount: item.loan_amount,
+        status: item.status,
+        created_at: item.created_at,
+        user: item.user ? { email: item.user.email || 'Unknown' } : { email: 'Unknown' },
+        degree_program: item.degree_program
+          ? {
+              name: item.degree_program.name || 'Unknown',
+              institution: item.degree_program.institution
+                ? { name: item.degree_program.institution.name }
+                : { name: 'Unknown' }
+            }
+          : { name: 'Unknown', institution: { name: 'Unknown' } }
+      }));
+      
+      setApplications(transformedData);
       setTotalPages(count ? Math.ceil(count / PAGE_SIZE) : 1);
     } catch (error: any) {
       console.error('Error fetching applications:', error);
